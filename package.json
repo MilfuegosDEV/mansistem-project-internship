@@ -1,0 +1,36 @@
+{
+  "name": "mansistem",
+  "version": "1.0.0",
+  "description": "Man Sistem Help Desk",
+  "main": "index.js",
+  "scripts": {
+    "test": "index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/MilfuegosDEV/ManSistem.git"
+  },
+  "keywords": [
+    "Help",
+    "desk"
+  ],
+  "author": "MilfuegosDEV",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/MilfuegosDEV/ManSistem/issues"
+  },
+  "homepage": "https://github.com/MilfuegosDEV/ManSistem#readme",
+  "devDependencies": {
+    "dotenv": "^16.3.1",
+    "nodemon": "^3.0.1"
+  },
+  "dependencies": {
+    "express": "^4.18.2",
+    "express-flash": "^0.0.2",
+    "express-session": "^1.17.3",
+    "mysql": "^2.18.1",
+    "mysql2": "^3.6.2",
+    "passport": "^0.6.0",
+    "passport-local": "^1.0.0"
+  }
+}
