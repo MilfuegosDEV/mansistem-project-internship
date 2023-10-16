@@ -6,7 +6,11 @@ router.get("/", (req, res, next) => {
 });
 
 router.get("/register", (req, res, next) => {
-  res.render("register", { layout: false, title: "Register", errors: [] });
+  res.render("register", {
+    layout: false,
+    title: "Register",
+    message: { errors: [], success: [] },
+  });
 });
 
 module.exports = router;
