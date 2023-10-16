@@ -20,10 +20,8 @@ router.post("/register", (req, res, next) => {
   }
 
   if (errors.length > 0) {
-    // Flashing the errors to be available in the next request
     req.flash("errors", errors);
 
-    // Redirecting back to the registration form along with the flashed messages
     res.render("register", {
       layout: false,
       title: "Register",
