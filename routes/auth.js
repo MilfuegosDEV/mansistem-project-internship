@@ -6,7 +6,6 @@ router.post("/register", (req, res, next) => {
   const { name, lastname, username, password, password2, role } = req.body;
 
   let errors = [];
-  let success = [];
 
   if (!name || !lastname || !username || !password || !password2 || !role) {
     errors.push("Todos los campos deben estar llenos.");
@@ -21,19 +20,14 @@ router.post("/register", (req, res, next) => {
   }
 
   if (errors.length > 0) {
+    // Flashing the errors to be available in the next request
     req.flash("errors", errors);
-    req.flash("success", success);
 
-    res.locals.message = req.flash();
+    // Redirecting back to the registration form along with the flashed messages
     res.render("register", {
-      title: "register",
       layout: false,
-      name,
-      lastname,
-      username,
-      password,
-      password2,
-      role,
+      title: "Register",
+      message: req.flash(),
     });
   }
 });

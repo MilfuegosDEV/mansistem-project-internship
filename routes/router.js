@@ -9,7 +9,7 @@ router.get("/register", (req, res, next) => {
   res.render("register", {
     layout: false,
     title: "Register",
-    message: { errors: [], success: [] },
+    message: { },
   });
 });
 

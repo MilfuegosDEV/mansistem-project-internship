@@ -1,4 +1,5 @@
-<% if (message) { %> 
+<% console.log(locals) %>
+<% if (message && message.errors && Array.isArray(message.errors)) { %> 
   <% message.errors.forEach(error => { %>
     <div class="alert alert-danger mb-1 py-1">
       <strong>¡Error!</strong> <%= error %>
@@ -6,14 +7,10 @@
   <% }) %> 
 <% } %>
 
-
-
-<% if (typeof message.success !== 'undefined') { %> 
+<% if (message && typeof message.success !== 'undefined' && Array.isArray(message.success)) { %> 
   <% message.success.forEach(archieve => { %>
     <div class="alert alert-success mb-1 py-1">
       <strong>¡Hecho!</strong> <%= archieve %>
     </div>
   <% }) %> 
 <% } %>
-  
-  
