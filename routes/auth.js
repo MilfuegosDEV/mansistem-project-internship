@@ -18,10 +18,18 @@ router.post("/register", (req, res, next) => {
   if (password < 6 || password2 < 6) {
     errors.push("La contraseña debe ser mayor a 6 caracteres.");
   }
-
   if (errors.length > 0) {
-    req.flash("errors", errors);
-    res.render('/register', {})
+    res.render("register", {
+      title: "register",
+      layout: false,
+      errors,
+      name,
+      lastname,
+      username,
+      password,
+      password2,
+      role,
+    });
   }
 });
 
