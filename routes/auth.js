@@ -11,18 +11,20 @@ router.post("/register", (req, res, next) => {
     errors.push("Todos los campos deben estar llenos.");
   }
 
+  if (password.length < 6 || password2.length < 6) {
+    errors.push("La contraseña debe ser mayor a 6 caracteres.");
+  }
+
   if (password !== password2) {
     errors.push("Las contraseñas no coinciden.");
   }
 
-  if (password < 6 || password2 < 6) {
-    errors.push("La contraseña debe ser mayor a 6 caracteres.");
-  }
   if (errors.length > 0) {
+    req.flash("errors", errors);
+    res.locals.message = req.flash();
     res.render("register", {
       title: "register",
       layout: false,
-      errors,
       name,
       lastname,
       username,

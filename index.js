@@ -4,7 +4,7 @@ const path = require("path");
 const express = require("express");
 const layout = require("express-ejs-layouts");
 const session = require("express-session");
-const flash = require("express-flash");
+const flash = require("connect-flash");
 
 const cookie = require("cookie-parser");
 
@@ -24,6 +24,7 @@ app.use(
     secret: "secret",
     saveUninitialized: true,
     resave: true,
+    cookie: { maxAge: 60000 },
   })
 );
 
