@@ -10,8 +10,8 @@ const contentSecurityPolicy = require("helmet-csp");
 const morgan = require("morgan");
 const cookie = require("cookie-parser");
 
-const router = require("./routes/router");
-const authRouter = require("./routes/auth");
+const router = require("./app/routes/router");
+const authRouter = require("./app/routes/auth");
 
 const app = express();
 

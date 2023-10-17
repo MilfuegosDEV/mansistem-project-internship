@@ -1,4 +1,4 @@
-const db = require("../db-connection/connection");
+const db = require("../../config/db-config");
 const bcrypt = require("bcryptjs");
 const util = require("util");
 
@@ -10,7 +10,7 @@ class RegisterController {
   async doesUserExist(username) {
     try {
       const query = "SELECT id FROM users WHERE username = ?";
-      const results = await db.query(query, [username]);
+      const results = await db.query(query, username);
 
       // Si hay resultados, el usuario existe
       return results.length > 0;

@@ -1,5 +1,5 @@
-const db = require("../db-connection/connection");
-const util = require('util');
+const db = require("../../config/db-config");
+const util = require("util");
 
 // Promisificar db.query para poder usar async/await
 db.query = util.promisify(db.query);
@@ -16,7 +16,7 @@ class Province {
       return provinces;
     } catch (error) {
       console.error(error);
-      throw new Error('Error al recuperar las provincias.');
+      throw new Error("Error al recuperar las provincias.");
     }
   }
 }

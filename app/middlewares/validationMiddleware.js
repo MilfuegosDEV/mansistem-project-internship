@@ -1,3 +1,6 @@
+const RegisterController = require('../controllers/register');
+const controllerRegister = new RegisterController;
+
 // validationMiddleware.js
 
 // Función de validación para verificar campos no vacíos
@@ -23,6 +26,9 @@ const checkPasswordsMatch = (password, confirmPassword) => {
   }
   return null;
 };
+const checkUserExists =  (username) => {
+  return controllerRegister.doesUserExist(username) ? 'Usuario ya registrado' : '';
+}
 
 // Middleware para manejar los errores de validación
 const handleValidation = (validations, req, res, next) => {
@@ -46,5 +52,6 @@ module.exports = {
   checkNotEmpty,
   checkMinLength,
   checkPasswordsMatch,
+  checkUserExists,
   handleValidation,
 };
