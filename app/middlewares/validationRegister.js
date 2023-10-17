@@ -1,11 +1,9 @@
-const RegisterController = require('../controllers/register');
-const controllerRegister = new RegisterController;
-
 // validationMiddleware.js
 
 // Función de validación para verificar campos no vacíos
 const checkNotEmpty = (value, field) => {
   if (!value || value.trim().length === 0) {
+    // trim() elimina los espacios en blanco.
     return `${field} es requerido.`;
   }
   return null;
@@ -14,7 +12,15 @@ const checkNotEmpty = (value, field) => {
 // Función de validación para verificar la longitud mínima
 const checkMinLength = (value, minLength) => {
   if (!value || value.length < minLength) {
-    return `Debe tener al menos ${minLength} caracteres.`;
+    return `La contraseña debe tener al menos ${minLength} caracteres.`;
+  }
+  return null;
+};
+
+// Función de validación para verificar la longitud máxima de un
+const checkMaxLength = (value, maxLength, field) => {
+  if (value.length > maxLength) {
+    return `El campo ${field} no debe ser superior a ${maxLength}`;
   }
   return null;
 };
@@ -26,10 +32,6 @@ const checkPasswordsMatch = (password, confirmPassword) => {
   }
   return null;
 };
-const checkUserExists =  (username) => {
-  return controllerRegister.doesUserExist(username) ? 'Usuario ya registrado' : '';
-}
-
 // Middleware para manejar los errores de validación
 const handleValidation = (validations, req, res, next) => {
   const errors = [];
@@ -51,7 +53,7 @@ const handleValidation = (validations, req, res, next) => {
 module.exports = {
   checkNotEmpty,
   checkMinLength,
+  checkMaxLength,
   checkPasswordsMatch,
-  checkUserExists,
   handleValidation,
 };

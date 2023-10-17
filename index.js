@@ -5,6 +5,8 @@ const express = require("express");
 const layout = require("express-ejs-layouts");
 const session = require("express-session");
 const flash = require("connect-flash");
+const passport = require('passport')
+const initialize = require("./app/controllers/passport-config");
 const helmet = require("helmet");
 const contentSecurityPolicy = require("helmet-csp");
 const morgan = require("morgan");
@@ -14,6 +16,8 @@ const router = require("./app/routes/router");
 const authRouter = require("./app/routes/auth");
 
 const app = express();
+
+// Passport config
 
 // Configuración de Express
 const PORT = process.env.PORT || 3000;
@@ -41,6 +45,9 @@ app.use(morgan("combined"));
 // Middleware estándar y configuración de sesión
 app.use(express.urlencoded({ extended: true }));
 app.use(cookie(process.env.COOKIE_SECRET));
+
+
+
 app.use(flash());
 app.use(
   session({
@@ -54,6 +61,10 @@ app.use(
     },
   })
 );
+
+initialize(passport);
+app.use(passport.initialize());
+app.use(passport.session());
 
 // Configuración de las vistas
 app.set("view engine", "ejs");
