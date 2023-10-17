@@ -8,8 +8,8 @@ const {
   checkNotEmpty,
   checkMinLength,
   checkPasswordsMatch,
-} = require("../middlewares/validationMiddleware"); // Asegúrate de usar la ruta correcta al archivo 'validationMiddleware.js'
-const { checkUserExists } = require("../middlewares/validationMiddleware");
+  checkUserExists,
+} = require("../middlewares/validationRegister"); // Asegúrate de usar la ruta correcta al archivo 'validationMiddleware.js'
 
 // Manejo de registro
 router.post(
