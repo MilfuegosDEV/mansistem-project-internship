@@ -102,7 +102,7 @@ router.post("/register", async (req, res) => {
           "success",
           "Te has registrado exitosamente"
         );
-        res.redirect("/login"); // o donde sea que desees redirigir al usuario
+        res.redirect("/register");
       }
     } catch (error) {
       console.error(error);
