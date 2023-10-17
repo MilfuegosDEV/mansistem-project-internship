@@ -1,14 +1,16 @@
-const authController = require("../controllers/register");
-const registerController = new authController();
+const AuthController = require("../controllers/register");
+const registerController = new AuthController();
 const express = require("express");
 const router = express.Router();
+// Models
+const ModelProvince = require("../models/province");
+const ModeluserRoles = require("../models/usersRoles");
 
-const modelProvince = require("../models/PROVINCE");
-const PROVINCE = new modelProvince();
+const provinceModel = new ModelProvince();
+const userRolesModel = new ModeluserRoles(); 
 
-const bcrypt = require("bcryptjs");
-// Register handle.
-router.post("/register", async (req, res, next) => {
+// Manejo de registro
+router.post("/register", async (req, res) => {
   const {
     name,
     lastname,
@@ -21,7 +23,6 @@ router.post("/register", async (req, res, next) => {
   } = req.body;
 
   let errors = [];
-  let success = [];
 
   if (
     !name ||
@@ -33,55 +34,79 @@ router.post("/register", async (req, res, next) => {
     !role ||
     !province
   ) {
-    errors.push("Todos los campos deben estar llenos.");
+    errors.push({ msg: "Por favor, rellene todos los campos" });
   }
 
   if (password !== password2) {
-    errors.push("Las contraseñas no coinciden.");
+    errors.push({ msg: "Las contraseñas no coinciden" });
   }
 
-  if (password.length < 6 || password2.length < 6) {
-    errors.push("La contraseña debe ser mayor a 6 caracteres.");
+  if (password.length < 6) {
+    errors.push({ msg: "La contraseña debe tener al menos 6 caracteres" });
   }
 
-  // Check for errors.
   if (errors.length > 0) {
+    // Si hay errores, renderizamos la página de registro con los errores
     req.flash("errors", errors);
-    if (errors.length > 0) {
-      req.flash("errors", errors);
-      return res.render("register", {
-        layout: false,
-        title: "Register",
-        message: req.flash(),
-        provinces: await PROVINCE.getAll(),
-      });
-    }
-  } else {
-    // validation passed
-    if (registerController.isUser(username)) {
-      // User exists
-      errors.push("Nombre de usuario en uso.");
-      req.flash("errors", errors);
-      res.render("register", {
-        layout: false,
-        title: "Register",
-        message: req.flash(),
-        provinces: await PROVINCE.getAll(),
-      });
-    }
-    const newUserResponse = registerController.addUser(
+    res.render("register", {
+      layout: false,
+      title: "Register",
+      message: req.flash(),
       name,
       lastname,
       username,
       email,
-      bcrypt.hash(password, 12),
+      password,
+      password2,
       role,
-      province
-    );
-    if (newUserResponse.length > 0) {
-      success.push("Usuario registado");
-      req.flash("success", success);
-      res.send({ user: newUserResponse, flash: req.flash() });
+      province,
+      provinces: await provinceModel.getAll(),
+      userRoles: await userRolesModel.getAll(),
+    });
+  } else {
+    try {
+      // Verificar si el usuario ya existe
+      if (await registerController.doesUserExist(username)) {
+        errors.push({ msg: "El nombre de usuario ya está en uso" });
+        req.flash("errors", errors);
+        res.render("register", {
+          layout: false,
+          title: "Register",
+          message: req.flash(),
+          name,
+          lastname,
+          username,
+          email,
+          password,
+          password2,
+          role,
+          province,
+          provinces: await provinceModel.getAll(),
+          userRoles: await userRolesModel.getAll(),
+        });
+      } else {
+        // Si no hay errores y el usuario no existe, procedemos a crear el nuevo usuario
+
+        await registerController.addUser(
+          name,
+          lastname,
+          username,
+          email,
+          password,
+          role,
+          province
+        );
+
+        // Aquí, podrías querer enviar un mensaje de éxito o redirigir al usuario a la página de inicio de sesión
+        req.flash(
+          "success",
+          "Te has registrado exitosamente"
+        );
+        res.redirect("/login"); // o donde sea que desees redirigir al usuario
+      }
+    } catch (error) {
+      console.error(error);
+      res.status(500).send("Error del servidor");
     }
   }
 });

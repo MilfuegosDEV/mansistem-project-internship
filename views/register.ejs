@@ -132,10 +132,11 @@
                         <div class="col-6 mb-2 mb-md-3">
                           <div class="form-floating">
                             <select class="form-select" id="roles" name="role">
-                              <option value="1">Admin</option>
-                              <option value="2">Técnico</option>
-                              <option value="3">Soporte</option>
-                              <option value="4" selected>Usuario</option>
+                              <% userRoles.forEach(role => { %>
+                                <option value="<%= role.id %>">
+                                  <%= role.name %>
+                                </option>
+                                <% }); %>
                             </select>
                             <label for="roles" class="form-label"
                               >Roles (elige uno):</label
