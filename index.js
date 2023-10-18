@@ -82,12 +82,12 @@ app.use("/static", express.static(path.join(__dirname, "static")));
 // Middleware para manejo de errores
 app.use((err, req, res, next) => {
   console.error(err.stack);
-  res.status(500).send("¡Algo salió mal!");
+  res.status(500).render("errors/500", { title: "ERROR 500", layout: false });
 });
 
 // Middleware para manejo de 404 - Página no encontrada
 app.use((req, res, next) => {
-  res.status(404).send("404 - Página no encontrada");
+  res.status(404).render("errors/404", { title: "ERROR 404", layout: false });
 });
 
 // Iniciar el servidor
