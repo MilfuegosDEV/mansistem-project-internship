@@ -14,7 +14,7 @@ const {
   checkMinLength,
   checkPasswordsMatch,
   checkMaxLength,
-} = require("../middlewares/validationRegister"); // Middleware de validaciones.
+} = require("../middlewares/validation"); // Middleware de validaciones.
 
 // Manejo de registro
 router.post(
