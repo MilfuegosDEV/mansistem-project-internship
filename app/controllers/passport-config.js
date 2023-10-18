@@ -12,9 +12,7 @@ function initialize(passport) {
         try {
           const foundUser = await userModel.findOne(username);
           if (!foundUser) {
-            return done(null, false, {
-              message: "El usuario no está registrado.",
-            });
+            return done(null, false, "El usuario no está registrado.");
           }
 
           const passwordMatch = await bcrypt.compare(
@@ -24,9 +22,7 @@ function initialize(passport) {
           if (passwordMatch) {
             return done(null, foundUser[0]);
           } else {
-            return done(null, false, {
-              message: "La contraseña es incorrecta.",
-            });
+            return done(null, false, "La contraseña es incorrecta.");
           }
         } catch (err) {
           console.error(err);
