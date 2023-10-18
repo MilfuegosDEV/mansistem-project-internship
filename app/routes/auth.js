@@ -92,13 +92,18 @@ router.post(
         return next(err);
       }
       if (!user) {
-        // Redirige al usuario de nuevo a la página de inicio de sesión con el mensaje de error
+        // Redirigir al usuario de nuevo a la página de inicio de sesión con el mensaje de error
         req.flash("errors", info);
         return res.status(400).redirect("/login");
       } else {
         // La autenticación fue exitosa, el usuario está en req.user
-
-        res.render("index", { title: "Home", active: "home", user: req.user });
+        req.login(user, (err) => {
+          if (err) {
+            // Manejar errores de inicio de sesión
+            return next(err);
+          }
+          return res.redirect("/");
+        });
       }
     })(req, res, next);
   }

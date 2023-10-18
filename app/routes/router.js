@@ -31,14 +31,16 @@ router.get("/register", forwardAuthenticated, async (req, res, next) => {
 });
 
 router.get("/logout", (req, res) => {
-  try {
-    req.logout();
+  req.logout((err) => {
+    if (err) {
+      console.error(err);
+      // Manejar errores, por ejemplo, redirigir al usuario a una página de error
+      return res.redirect("/error");
+    }
+    // La sesión se ha cerrado con éxito
     req.flash("success", "Sesión cerrada correctamente");
-  } catch (err) {
-    console.error(err);
-    req.flash("error", "Error al cerrar la sesión");
-  }
-  res.redirect("/login"); // Redirige al usuario a la página de inicio de sesión
+    res.redirect("/login"); // Redirigir al usuario a la página de inicio de sesión
+  });
 });
 
 module.exports = router;
