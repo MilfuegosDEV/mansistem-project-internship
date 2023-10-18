@@ -5,7 +5,7 @@ const express = require("express");
 const layout = require("express-ejs-layouts");
 const session = require("express-session");
 const flash = require("connect-flash");
-const passport = require('passport')
+const passport = require("passport");
 const initialize = require("./app/controllers/passport-config");
 const helmet = require("helmet");
 const contentSecurityPolicy = require("helmet-csp");
@@ -46,8 +46,6 @@ app.use(morgan("combined"));
 app.use(express.urlencoded({ extended: true }));
 app.use(cookie(process.env.COOKIE_SECRET));
 
-
-
 app.use(flash());
 app.use(
   session({
@@ -57,7 +55,7 @@ app.use(
     cookie: {
       httpOnly: true,
       secure: process.env.NODE_ENV === "production", // habilitado en producción
-      maxAge: 60000,
+      maxAge: 1 * 3_600_000, // cantidad de horas * lo equivalente a una hora en milisegundos.
     },
   })
 );
