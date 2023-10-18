@@ -8,7 +8,6 @@ const {
 const userRolesModel = require("../models/userRolModel");
 const provincesModel = require("../models/provinceModel");
 
-
 router.get("/", ensureAuthenticated, (req, res, next) => {
   res.render("index", { title: "Home", active: "home", user: req.user });
 });
@@ -32,13 +31,14 @@ router.get("/register", forwardAuthenticated, async (req, res, next) => {
 });
 
 router.get("/logout", (req, res) => {
-  req.logout(function (err) {
-    req.flash("success", "Sesion cerrada correctamente");
-    if (err) {
-      console.error(err);
-    }
-    res.redirect("/login"); // Redirect the user to the login page (or any other page as needed)
-  });
+  try {
+    req.logout();
+    req.flash("success", "Sesión cerrada correctamente");
+  } catch (err) {
+    console.error(err);
+    req.flash("error", "Error al cerrar la sesión");
+  }
+  res.redirect("/login"); // Redirige al usuario a la página de inicio de sesión
 });
 
 module.exports = router;
