@@ -10,7 +10,7 @@ class Role {
    * Recupera todos los roles de usuario de la base de datos.
    * @returns {Promise<Array>} Una promesa que se resuelve con un arreglo de roles de usuario.
    */
-  async getAll() {
+  static async getAll() {
     try {
       const userRoles = await db.query("SELECT * FROM userRoles");
       return userRoles;

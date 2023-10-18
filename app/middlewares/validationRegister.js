@@ -20,7 +20,7 @@ const checkMinLength = (value, minLength) => {
 // Función de validación para verificar la longitud máxima de un
 const checkMaxLength = (value, maxLength, field) => {
   if (value.length > maxLength) {
-    return `El campo ${field} no debe ser superior a ${maxLength}`;
+    return `El campo de ${field} no debe ser superior a ${maxLength}`;
   }
   return null;
 };

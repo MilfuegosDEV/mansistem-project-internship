@@ -3,7 +3,6 @@ const LocalStrategy = require("passport-local").Strategy;
 const bcrypt = require("bcryptjs");
 
 const userModel = require("../models/userModel");
-const user = new userModel();
 
 function initialize(passport) {
   passport.use(
@@ -11,7 +10,7 @@ function initialize(passport) {
       { usernameField: "username", passwordField: "password" },
       async (username, password, done) => {
         try {
-          const foundUser = await user.findOne(username);
+          const foundUser = await userModel.findOne(username);
           if (!foundUser) {
             return done(null, false, {
               message: "El usuario no está registrado.",
@@ -41,7 +40,7 @@ function initialize(passport) {
   });
 
   passport.deserializeUser((id, done) => {
-    user
+    userModel
       .findById(id)
       .then((user) => {
         return done(null, user[0]);

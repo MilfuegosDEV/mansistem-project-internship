@@ -8,8 +8,6 @@ const {
 const userRolesModel = require("../models/userRolModel");
 const provincesModel = require("../models/provinceModel");
 
-const userRoles = new userRolesModel();
-const provinces = new provincesModel();
 
 router.get("/", ensureAuthenticated, (req, res, next) => {
   res.render("index", { title: "Home", active: "home", user: req.user });
@@ -27,8 +25,8 @@ router.get("/register", forwardAuthenticated, async (req, res, next) => {
   res.render("register", {
     title: "Register",
     layout: false,
-    userRoles: await userRoles.getAll(),
-    provinces: await provinces.getAll(),
+    userRoles: await userRolesModel.getAll(),
+    provinces: await provincesModel.getAll(),
     message: req.flash(),
   });
 });

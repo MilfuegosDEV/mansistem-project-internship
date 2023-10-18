@@ -9,9 +9,8 @@ class Province {
    * Recupera todas las provincias de la base de datos.
    * @returns {Promise<Array>} Una promesa que se resuelve con un arreglo de provincias.
    */
-  async getAll() {
+  static async getAll() {
     try {
-      // Directamente usando db.query con async/await gracias a la promisificación
       const provinces = await db.query("SELECT * FROM provinces");
       return provinces;
     } catch (error) {

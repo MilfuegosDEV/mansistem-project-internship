@@ -1,17 +1,12 @@
-const AuthController = require("../controllers/register");
-const registerController = new AuthController();
+const registerController = require("../controllers/register");
 const express = require("express");
 const router = express.Router();
 
-
-
 const passport = require("passport");
 
+const userModel = require("../models/userModel");
 const userRolesModel = require("../models/userRolModel");
 const provincesModel = require("../models/provinceModel");
-
-const userRoles = new userRolesModel();
-const provinces = new provincesModel();
 
 const {
   handleValidation,
@@ -46,13 +41,13 @@ router.post(
      * Verifica que el usuario no exista, en el caso de verdadero indica el error y el estado 400.
      * De lo contrario registra el usuario a la base de datos.
      */
-    if ((await registerController.doesUserExist(req.body.username)) === true) {
+    if (((await userModel.findOne(req.body.username)).length) > 0) {
       req.flash("errors", "El usuario ya existe.");
       res.status(400).render("register", {
         title: "Register",
         layout: false,
-        userRoles: await userRoles.getAll(),
-        provinces: await provinces.getAll(),
+        userRoles: await userRolesModel.getAll(),
+        provinces: await provincesModel.getAll(),
         message: req.flash(),
       });
     } else {
@@ -70,8 +65,8 @@ router.post(
       res.render("register", {
         title: "Register",
         layout: false,
-        userRoles: await userRoles.getAll(),
-        provinces: await provinces.getAll(),
+        userRoles: await userRolesModel.getAll(),
+        provinces: await provincesModel.getAll(),
         message: req.flash(),
       });
     }
