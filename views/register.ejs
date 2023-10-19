@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
   <head>
     <meta charset="utf-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
@@ -7,8 +7,8 @@
       name="viewport"
       content="width=device-width, initial-scale=1, shrink-to-fit=no"
     />
-    <meta name="description" content="" />
-    <meta name="author" content="" />
+    <meta name="description" content="ManSistem HELPDESK" />
+    <meta name="author" content="MilfuegosDEV" />
     <title>ManSistem - <%= title %></title>
     <link href="/static/css/styles.css" rel="stylesheet" />
     <script
@@ -32,7 +32,10 @@
           <div class="container">
             <div class="row justify-content-center vh-100 align-content-center">
               <div class="col-lg-6">
-                <div class="card shadow-lg border-0 rounded-lg">
+                <div
+                  class="card shadow-lg border-0 rounded-lg"
+                  style="opacity: 0.95"
+                >
                   <div class="card-header">
                     <h3 class="text-center font-weight-light my-2">
                       Crear Cuenta
@@ -133,10 +136,10 @@
                           <div class="form-floating">
                             <select class="form-select" id="roles" name="role">
                               <% userRoles.forEach(role => { %>
-                                <option value="<%= role.id %>">
-                                  <%= role.name %>
-                                </option>
-                                <% }); %>
+                              <option value="<%= role.id %>">
+                                <%= role.name %>
+                              </option>
+                              <% }); %>
                             </select>
                             <label for="roles" class="form-label"
                               >Roles (elige uno):</label

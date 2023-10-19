@@ -5,15 +5,19 @@ const express = require("express");
 const layout = require("express-ejs-layouts");
 const session = require("express-session");
 const flash = require("connect-flash");
+const passport = require("passport");
+const initialize = require("./app/controllers/passport-config");
 const helmet = require("helmet");
 const contentSecurityPolicy = require("helmet-csp");
 const morgan = require("morgan");
 const cookie = require("cookie-parser");
 
-const router = require("./routes/router");
-const authRouter = require("./routes/auth");
+const router = require("./app/routes/router");
+const authRouter = require("./app/routes/auth");
 
 const app = express();
+
+// Passport config
 
 // Configuración de Express
 const PORT = process.env.PORT || 3000;
@@ -41,6 +45,7 @@ app.use(morgan("combined"));
 // Middleware estándar y configuración de sesión
 app.use(express.urlencoded({ extended: true }));
 app.use(cookie(process.env.COOKIE_SECRET));
+
 app.use(flash());
 app.use(
   session({
@@ -50,10 +55,14 @@ app.use(
     cookie: {
       httpOnly: true,
       secure: process.env.NODE_ENV === "production", // habilitado en producción
-      maxAge: 60000,
+      maxAge: 1 * 3_600_000, // cantidad de horas * lo equivalente a una hora en milisegundos.
     },
   })
 );
+
+initialize(passport);
+app.use(passport.initialize());
+app.use(passport.session());
 
 // Configuración de las vistas
 app.set("view engine", "ejs");
@@ -73,12 +82,12 @@ app.use("/static", express.static(path.join(__dirname, "static")));
 // Middleware para manejo de errores
 app.use((err, req, res, next) => {
   console.error(err.stack);
-  res.status(500).send("¡Algo salió mal!");
+  res.status(500).render("errors/500", { title: "ERROR 500", layout: false });
 });
 
 // Middleware para manejo de 404 - Página no encontrada
 app.use((req, res, next) => {
-  res.status(404).send("404 - Página no encontrada");
+  res.status(404).render("errors/404", { title: "ERROR 404", layout: false });
 });
 
 // Iniciar el servidor
