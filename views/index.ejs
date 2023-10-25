@@ -95,7 +95,6 @@
           <th>Email</th>
           <th>Permisos</th>
           <th>Provincia</th>
-          <th></th>
         </tr>
       </thead>
       <tbody></tbody>
@@ -119,6 +118,10 @@
   type="text/css"
   href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.3.0/css/bootstrap.min.css"
 />
+<link
+  rel="stylesheet"
+  href="https://cdn.datatables.net/select/1.7.0/css/select.bootstrap5.min.css"
+/>
 
 <%- contentFor('scripts') %>
 <!--Datatables-->
@@ -126,13 +129,81 @@
 <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
 <script src="https://cdn.datatables.net/responsive/2.2.9/js/dataTables.responsive.min.js"></script>
 <script src="https://cdn.datatables.net/1.13.6/js/dataTables.bootstrap5.min.js"></script>
+<script src="https://cdn.datatables.net/buttons/2.4.2/js/dataTables.buttons.min.js"></script>
+<script src="https://cdn.datatables.net/select/1.7.0/js/dataTables.select.min.js"></script>
 <script nonce="<%= cspNonce %>">
   $(document).ready(function () {
-    $("#usersTable").DataTable({
+    const table = $("#usersTable").DataTable({
       responsive: true,
+      select: true,
+      data: [
+        [1, "John", "Doe", "john@example.com", "Admin", "New York"],
+        [2, "Jane", "Smith", "jane@example.com", "User", "California"],
+        [3, "Bob", "Johnson", "bob@example.com", "Editor", "Texas"],
+        [4, "Alice", "Brown", "alice@example.com", "User", "Florida"],
+        [5, "Eve", "Davis", "eve@example.com", "Admin", "Arizona"],
+        [6, "Charlie", "Wilson", "charlie@example.com", "Editor", "Ohio"],
+        [7, "Grace", "Lee", "grace@example.com", "User", "Michigan"],
+        [8, "Tom", "White", "tom@example.com", "Admin", "Colorado"],
+        [9, "Olivia", "Miller", "olivia@example.com", "Editor", "Oregon"],
+        [10, "Liam", "Martinez", "liam@example.com", "User", "Washington"],
+        [11, "Ava", "Garcia", "ava@example.com", "User", "Georgia"],
+        [12, "Noah", "Rodriguez", "noah@example.com", "Admin", "Illinois"],
+        [13, "Mia", "Hernandez", "mia@example.com", "Editor", "Wisconsin"],
+        [14, "Lucas", "Lopez", "lucas@example.com", "User", "Indiana"],
+        [15, "Sophia", "Williams", "sophia@example.com", "Admin", "Tennessee"],
+        [16, "Benjamin", "Adams", "benjamin@example.com", "Editor", "Arizona"],
+        [17, "Emma", "Scott", "emma@example.com", "User", "Nevada"],
+        [18, "Alexander", "King", "alexander@example.com", "User", "Kansas"],
+        [19, "Oliver", "Stewart", "oliver@example.com", "Admin", "New Jersey"],
+        [20, "Lily", "Phillips", "lily@example.com", "Editor", "Kentucky"],
+        [21, "James", "Davis", "james@example.com", "User", "North Carolina"],
+        [22, "Ella", "Harris", "ella@example.com", "Admin", "New Mexico"],
+        [23, "William", "Brown", "william@example.com", "Editor", "Montana"],
+        [24, "Harper", "Evans", "harper@example.com", "User", "Mississippi"],
+        [25, "Daniel", "Gonzalez", "daniel@example.com", "Admin", "Alabama"],
+      ],
+
+      columns: [
+        { title: "ID" },
+        { title: "Nombre" },
+        { title: "Apellidos" },
+        { title: "Email" },
+        { title: "Permisos" },
+        { title: "Provincia" },
+      ],
+      oLanguage: { sSearch: "" },
       language: {
         url: "https://cdn.datatables.net/plug-ins/1.13.6/i18n/es-ES.json",
+        searchPlaceholder: "Buscar...",
       },
+      dom: '<"d-sm-flex justify-content-sm-between"lf><"my-1 d-flex justify-content-center" B>rt<"d-flex justify-content-center" i><"d-flex justify-content-center"p>',
+      buttons: [
+        {
+          text: '<i class="fas fa-plus"></i> Crear',
+          action: function (e, dt, node, config) {
+            // Lógica para agregar un elemento
+            alert("Lógica para agregar un elemento aquí");
+          },
+          className: "btn btn-outline-success btn-sm",
+        },
+        {
+          text: '<i class="fas fa-pencil-alt"></i> Editar',
+          action: function (e, dt, node, config) {
+            // Lógica para editar un elemento seleccionado
+            alert("Lógica para editar un elemento aquí");
+          },
+          className: "btn btn-outline-warning btn-sm",
+        },
+        {
+          text: '<i class="fas fa-trash-alt"></i> Eliminar',
+          action: function (e, dt, node, config) {
+            // Lógica para eliminar elementos seleccionados
+            alert("Lógica para eliminar elementos aquí");
+          },
+          className: "btn btn-outline-danger btn-sm",
+        },
+      ],
     });
   });
 </script>
