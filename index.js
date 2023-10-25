@@ -7,6 +7,7 @@ const session = require("express-session");
 const flash = require("connect-flash");
 const passport = require("passport");
 const initialize = require("./app/controllers/passport-config");
+const crypto = require("crypto");
 const helmet = require("helmet");
 const contentSecurityPolicy = require("helmet-csp");
 const morgan = require("morgan");
@@ -21,6 +22,11 @@ const app = express();
 
 // Configuración de Express
 const PORT = process.env.PORT || 3000;
+// create a nonce
+app.use((req, res, next) => {
+  res.locals.cspNonce = crypto.randomBytes(16).toString("hex");
+  next();
+});
 
 // Mejoras de seguridad con Helmet
 app.use(helmet());
@@ -28,11 +34,19 @@ app.use(
   contentSecurityPolicy({
     useDefaults: true,
     directives: {
+      defaultSrc: ["'self'"],
+      connectSrc: [
+        "'self'",
+        "htps://cdn.datatables.net",
+        "https://cdn.datatables.net/plug-ins/1.13.6/i18n/es-ES.json",
+      ],
       scriptSrc: [
         "'self'",
         "https://use.fontawesome.com",
         "https://cdn.jsdelivr.net",
         "https://cdnjs.cloudflare.com",
+        "https://cdn.datatables.net",
+        (req, res) => `'nonce-${res.locals.cspNonce}'`,
       ],
       // ... otras directivas ...
     },
