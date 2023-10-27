@@ -6,6 +6,22 @@ const db = require("../../config/db-config");
 
 db.query = util.promisify(db.query);
 
+router.get("/userRolesCount", async (req, res, next) => {
+  try {
+    const QUERY = `
+      SELECT uR.name AS roleName, COUNT(user.id) AS userCount
+      FROM users AS user
+      INNER JOIN userRoles AS uR ON user.role_id = uR.id
+      GROUP BY uR.name`;
+
+    const rolesCount = await db.query(QUERY);
+    res.json(rolesCount);
+  } catch (err) {
+    console.error("Error al obtener la cantidad de usuarios por rol:", err);
+    next(err);
+  }
+});
+
 router.get("/test", async (req, res) => {
   const QUERY = `
     SELECT user.id, 
