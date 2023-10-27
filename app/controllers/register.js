@@ -16,10 +16,10 @@ class RegisterController {
       const query =
         "INSERT INTO users (name, lastname, username, email, password, role_id, province_id) VALUES (?, ?, ?, ?, ?, ?, ?)";
       const result = await db.query(query, [
-        name,
-        lastname,
-        username,
-        email,
+        name.toUpperCase(),
+        lastname.toUpperCase(),
+        username.toLowerCase(),
+        email.toLowerCase(),
         hashedPassword,
         role,
         province,

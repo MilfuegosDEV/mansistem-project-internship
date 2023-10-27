@@ -11,10 +11,12 @@ const crypto = require("crypto");
 const helmet = require("helmet");
 const contentSecurityPolicy = require("helmet-csp");
 const morgan = require("morgan");
+const rfs = require("rotating-file-stream");
 const cookie = require("cookie-parser");
 
 const router = require("./app/routes/router");
 const authRouter = require("./app/routes/auth");
+const api = require("./app/api/router");
 
 const app = express();
 
@@ -37,7 +39,7 @@ app.use(
       defaultSrc: ["'self'"],
       connectSrc: [
         "'self'",
-        "htps://cdn.datatables.net",
+        "https://cdn.datatables.net",
         "https://cdn.datatables.net/plug-ins/1.13.6/i18n/es-ES.json",
       ],
       scriptSrc: [
@@ -54,8 +56,15 @@ app.use(
 );
 
 // Logging de solicitudes HTTP con Morgan
-app.use(morgan("combined"));
 
+// Configuración para rotating-file-stream
+const accessLogStream = rfs.createStream("access.log", {
+  interval: "1d", // rotar diariamente
+  path: path.join(__dirname, "log"), // directorio para los logs
+});
+
+// Configuración de morgan para usar rotating-file-stream
+app.use(morgan("combined", { stream: accessLogStream }));
 // Middleware estándar y configuración de sesión
 app.use(express.urlencoded({ extended: true }));
 app.use(cookie(process.env.COOKIE_SECRET));
@@ -90,18 +99,34 @@ app.use(layout);
 app.use("/", router);
 app.use("/", authRouter);
 
+// API
+app.use("/api", api);
+
 // Carpeta estática
 app.use("/static", express.static(path.join(__dirname, "static")));
 
 // Middleware para manejo de errores
-app.use((err, req, res, next) => {
+app.use((err, req, res, _next) => {
+  if (err.status === 401) {
+    return res
+      .status(401)
+      .render("errors/401", { title: "Acceso No Autorizado", layout: false });
+  }
+  // Manejo de otros errores...
   console.error(err.stack);
-  res.status(500).render("errors/500", { title: "ERROR 500", layout: false });
+  res
+    .status(500)
+    .render("errors/500", {
+      title: "Error Interno Del Servidor",
+      layout: false,
+    });
 });
 
 // Middleware para manejo de 404 - Página no encontrada
 app.use((req, res, next) => {
-  res.status(404).render("errors/404", { title: "ERROR 404", layout: false });
+  res
+    .status(404)
+    .render("errors/404", { title: "Página No Encontrada", layout: false });
 });
 
 // Iniciar el servidor

@@ -86,19 +86,10 @@
     Usuarios
   </div>
   <div class="card-body">
-    <table id="usersTable" class="display responsive table table-hover w-100">
-      <thead>
-        <tr>
-          <th>ID</th>
-          <th>Nombre</th>
-          <th>Apellidos</th>
-          <th>Email</th>
-          <th>Permisos</th>
-          <th>Provincia</th>
-        </tr>
-      </thead>
-      <tbody></tbody>
-    </table>
+    <table
+      id="usersDataTable"
+      class="display responsive table table-hover w-100 fs-6"
+    ></table>
   </div>
 </div>
 
@@ -133,44 +124,20 @@
 <script src="https://cdn.datatables.net/select/1.7.0/js/dataTables.select.min.js"></script>
 <script nonce="<%= cspNonce %>">
   $(document).ready(function () {
-    const table = $("#usersTable").DataTable({
+    const table = $("#usersDataTable").DataTable({
       responsive: true,
       select: true,
-      data: [
-        [1, "John", "Doe", "john@example.com", "Admin", "New York"],
-        [2, "Jane", "Smith", "jane@example.com", "User", "California"],
-        [3, "Bob", "Johnson", "bob@example.com", "Editor", "Texas"],
-        [4, "Alice", "Brown", "alice@example.com", "User", "Florida"],
-        [5, "Eve", "Davis", "eve@example.com", "Admin", "Arizona"],
-        [6, "Charlie", "Wilson", "charlie@example.com", "Editor", "Ohio"],
-        [7, "Grace", "Lee", "grace@example.com", "User", "Michigan"],
-        [8, "Tom", "White", "tom@example.com", "Admin", "Colorado"],
-        [9, "Olivia", "Miller", "olivia@example.com", "Editor", "Oregon"],
-        [10, "Liam", "Martinez", "liam@example.com", "User", "Washington"],
-        [11, "Ava", "Garcia", "ava@example.com", "User", "Georgia"],
-        [12, "Noah", "Rodriguez", "noah@example.com", "Admin", "Illinois"],
-        [13, "Mia", "Hernandez", "mia@example.com", "Editor", "Wisconsin"],
-        [14, "Lucas", "Lopez", "lucas@example.com", "User", "Indiana"],
-        [15, "Sophia", "Williams", "sophia@example.com", "Admin", "Tennessee"],
-        [16, "Benjamin", "Adams", "benjamin@example.com", "Editor", "Arizona"],
-        [17, "Emma", "Scott", "emma@example.com", "User", "Nevada"],
-        [18, "Alexander", "King", "alexander@example.com", "User", "Kansas"],
-        [19, "Oliver", "Stewart", "oliver@example.com", "Admin", "New Jersey"],
-        [20, "Lily", "Phillips", "lily@example.com", "Editor", "Kentucky"],
-        [21, "James", "Davis", "james@example.com", "User", "North Carolina"],
-        [22, "Ella", "Harris", "ella@example.com", "Admin", "New Mexico"],
-        [23, "William", "Brown", "william@example.com", "Editor", "Montana"],
-        [24, "Harper", "Evans", "harper@example.com", "User", "Mississippi"],
-        [25, "Daniel", "Gonzalez", "daniel@example.com", "Admin", "Alabama"],
-      ],
-
+      processing: true,
+      serverSide: true,
+      ajax: "/api/users", // Ruta de la API en tu servidor Express.js
       columns: [
-        { title: "ID" },
-        { title: "Nombre" },
-        { title: "Apellidos" },
-        { title: "Email" },
-        { title: "Permisos" },
-        { title: "Provincia" },
+        { title: "ID", data: "id"},
+        { title: "NOMBRE", data: "first_name" },
+        { title: "APELLIDOS", data: "last_name" },
+        { title: "CORREO", data: "email" },
+        { title: "USUARIO", data: "username" },
+        { title: "ROL", data: "roleName" },
+        { title: "PROVINCIA", data: "provinceName" },
       ],
       oLanguage: { sSearch: "" },
       language: {
