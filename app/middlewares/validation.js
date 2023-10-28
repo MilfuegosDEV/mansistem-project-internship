@@ -4,7 +4,7 @@
 const checkNotEmpty = (value, field) => {
   if (!value || value.trim().length === 0) {
     // trim() elimina los espacios en blanco.
-    return `${field} es requerido.`;
+    return `El campo ${field} es requerido.`;
   }
   return null;
 };
@@ -33,6 +33,7 @@ const checkPasswordsMatch = (password, confirmPassword) => {
   return null;
 };
 // Middleware para manejar los errores de validación
+// Middleware para manejar los errores de validación
 const handleValidation = (validations, req, res) => {
   const errors = [];
   validations.forEach((validation) => {
@@ -44,7 +45,9 @@ const handleValidation = (validations, req, res) => {
 
   if (errors.length) {
     res.status(400).json({ error: errors });
+    return true; // Indica que hubo errores
   }
+  return false; // Indica que no hubo errores
 };
 
 module.exports = {

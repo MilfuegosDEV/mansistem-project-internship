@@ -16,6 +16,11 @@ class User {
     return usersInfo;
   }
 
+  /**
+   * Busca a un usuario por medio de su username
+   * @returns {Promise<Array>} Una promesa que se resuelve con un arreglo de la información de un
+   * usuario si el usuario no se encuentra, entonces retorna un arreglo vacío.
+   */
   static async findOne(username) {
     try {
       const query = "SELECT * FROM users WHERE username = ?";

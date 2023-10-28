@@ -189,14 +189,44 @@
 <script nonce="<%= cspNonce %>">
   document.addEventListener("DOMContentLoaded", () => {
     const form = document.getElementById("registerForm");
-    const messageBox = document.createElement("div");
-    messageBox.id = "messageBox";
-    form.parentNode.insertBefore(messageBox, form.nextSibling);
+    const messageBox = document.getElementById("messageBox");
+
+    const validateForm = () => {
+      const errors = [];
+      const data = Object.fromEntries(new FormData(form).entries());
+
+      if (!data.name.trim()) errors.push("El campo nombre es requerido.");
+      if (!data.lastname.trim()) errors.push("El campo apellido es requerido.");
+      if (!data.username.trim())
+        errors.push("El campo nombre de usuario es requerido.");
+      if (!data.email.trim())
+        errors.push("El campo correo electrónico es requerido.");
+      if (data.password.length < 6)
+        errors.push("La contraseña debe tener al menos 6 caracteres.");
+      if (data.password !== data.password2)
+        errors.push("Las contraseñas no coinciden.");
+
+      return errors;
+    };
+
+    const displayErrors = (errors) => {
+      messageBox.innerHTML = errors
+        .map(
+          (error) =>
+            `<div class="alert alert-danger mb-1 py-1"><strong>¡Error!</strong> ${error}</div>`
+        )
+        .join("");
+    };
 
     form.addEventListener("submit", async (event) => {
       event.preventDefault();
-      const formData = new FormData(form);
-      const data = Object.fromEntries(formData.entries());
+      const errors = validateForm();
+      if (errors.length > 0) {
+        displayErrors(errors);
+        return;
+      }
+
+      const data = Object.fromEntries(new FormData(form).entries());
       messageBox.innerHTML = "";
 
       try {
@@ -209,17 +239,16 @@
         });
 
         const result = await response.json();
-        console.log(result);
 
         if (!response.ok) {
-          messageBox.innerHTML = `<div class="alert alert-danger"><strong>Error:</strong> ${result.error}</div>`;
+          displayErrors([result.error]);
         } else {
-          messageBox.innerHTML = `<div class="alert alert-success"><strong>Hecho: </strong> ${result.success}</div>`;
+          messageBox.innerHTML = `<div class="alert alert-success mb-1 py-1"><strong>¡Hecho!</strong> ${result.success}</div>`;
           recargarTabla();
         }
       } catch (error) {
         console.error(error);
-        messageBox.innerHTML = `<div class="alert alert-danger">Ocurrió un error al enviar el formulario</div>`;
+        displayErrors(["Ocurrió un error al enviar el formulario"]);
       }
     });
   });

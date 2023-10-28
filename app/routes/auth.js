@@ -29,23 +29,27 @@ router.post("/register", async (req, res, next) => {
   ];
 
   // Manejar las validaciones
-  handleValidation(validations, req, res);
+  if (handleValidation(validations, req, res)) {
+    return; // Termina la ejecución si hay errores de validación
+  }
 
   try {
-    if ((await userModel.findOne(req.body.username)).length > 0) {
+    const existingUser = await userModel.findOne(req.body.username);
+    if (existingUser.length > 0) {
       res.status(400).json({ error: "El usuario ya existe" });
-    } else {
-      await registerController.addUser(
-        req.body.name,
-        req.body.lastname,
-        req.body.username,
-        req.body.email,
-        req.body.password,
-        req.body.role,
-        req.body.province
-      );
-      res.status(200).json({ success: "Usuario registrado" });
+      return; // Termina la ejecución si el usuario ya existe
     }
+
+    await registerController.addUser(
+      req.body.name,
+      req.body.lastname,
+      req.body.username,
+      req.body.email,
+      req.body.password,
+      req.body.role,
+      req.body.province
+    );
+    res.status(200).json({ success: "Usuario registrado" });
   } catch (err) {
     console.error(err);
     next(err);
@@ -61,7 +65,9 @@ router.post("/login", async (req, res, next) => {
   ];
 
   // Manejar las validaciones
-  handleValidation(validations, req, res);
+  if (handleValidation(validations, req, res)) {
+    return; // Termina la ejecución si hay errores de validación
+  }
 
   passport.authenticate("local", (err, user, info) => {
     if (err) {
