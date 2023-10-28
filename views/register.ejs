@@ -53,119 +53,9 @@
                         />
                       </div>
                     </div>
-                    <%- include('./partials/messages') %>
                   </div>
                   <div class="card-body">
-                    <form method="post" action="/register">
-                      <div class="row">
-                        <div class="col-6 mb-2 mb-md-3">
-                          <div class="form-floating">
-                            <input
-                              class="form-control"
-                              id="inputFirstName"
-                              type="text"
-                              placeholder="Nombre"
-                              name="name"
-                            />
-                            <label for="inputFirstName">Nombre</label>
-                          </div>
-                        </div>
-                        <div class="col-6">
-                          <div class="form-floating">
-                            <input
-                              class="form-control"
-                              id="inputLastName"
-                              type="text"
-                              placeholder="Apellidos"
-                              name="lastname"
-                            />
-                            <label for="inputLastName">Apellidos</label>
-                          </div>
-                        </div>
-                      </div>
-                      <div class="form-floating mb-2 mb-md-3">
-                        <input
-                          class="form-control"
-                          id="inputUsername"
-                          type="text"
-                          placeholder="Usuario"
-                          name="username"
-                        />
-                        <label for="inputUser">Usuario</label>
-                      </div>
-                      <div class="form-floating mb-2 mb-md-3">
-                        <input
-                          class="form-control"
-                          id="inputEmail"
-                          type="email"
-                          placeholder="Correo"
-                          name="email"
-                        />
-                        <label for="inputEmail">Correo</label>
-                      </div>
-                      <div class="row mb-2 mb-md-3">
-                        <div class="col-6">
-                          <div class="form-floating">
-                            <input
-                              class="form-control"
-                              id="inputPassword"
-                              type="password"
-                              placeholder="Create a password"
-                              name="password"
-                            />
-                            <label for="inputPassword">Contraseña</label>
-                          </div>
-                        </div>
-                        <div class="col-6">
-                          <div class="form-floating">
-                            <input
-                              class="form-control"
-                              id="inputPasswordConfirm"
-                              type="password"
-                              placeholder="Confirmar Contraseña"
-                              name="password2"
-                            />
-                            <label for="inputPasswordConfirm"
-                              >Confirmar Contraseña</label
-                            >
-                          </div>
-                        </div>
-                      </div>
-                      <div class="row">
-                        <div class="col-6 mb-2 mb-md-3">
-                          <div class="form-floating">
-                            <select class="form-select" id="roles" name="role">
-                              <% userRoles.forEach(role => { %>
-                              <option value="<%= role.id %>">
-                                <%= role.name %>
-                              </option>
-                              <% }); %>
-                            </select>
-                            <label for="roles" class="form-label"
-                              >Roles (elige uno):</label
-                            >
-                          </div>
-                        </div>
-                        <div class="col-6 mb-2 mb-md-3">
-                          <div class="form-floating">
-                            <select
-                              class="form-select"
-                              id="provinces"
-                              name="province"
-                            >
-                              <% provinces.forEach(province => { %>
-                              <option value="<%= province.id %>">
-                                <%= province.name %>
-                              </option>
-                              <% }); %>
-                            </select>
-                            <label for="provinces" class="form-label"
-                              >Provincias (elige una):</label
-                            >
-                          </div>
-                        </div>
-                      </div>
-
+                    
                       <div class="mt-4 mb-0">
                         <div class="d-grid">
                           <button class="btn btn-primary btn-block">
@@ -192,3 +82,40 @@
     <script src="/static/js/scripts.js"></script>
   </body>
 </html>
+<script nonce="<%= cspNonce %>">
+  document.addEventListener("DOMContentLoaded", () => {
+    const form = document.getElementById("registerForm");
+    const messageBox = document.createElement("div");
+    messageBox.id = "messageBox";
+    form.parentNode.insertBefore(messageBox, form.nextSibling);
+
+    form.addEventListener("submit", async (event) => {
+      event.preventDefault();
+      const formData = new FormData(form);
+      const data = Object.fromEntries(formData.entries());
+      messageBox.innerHTML = "";
+
+      try {
+        const response = await fetch("/register", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(data),
+        });
+
+        const result = await response.json();
+        console.log(result);
+
+        if (!response.ok) {
+          messageBox.innerHTML = `<div class="alert alert-danger">${result.error}</div>`;
+        } else {
+          messageBox.innerHTML = `<div class="alert alert-success">${result.success}</div>`;
+        }
+      } catch (error) {
+        console.error(error);
+        messageBox.innerHTML = `<div class="alert alert-danger">Ocurrió un error al enviar el formulario</div>`;
+      }
+    });
+  });
+</script>

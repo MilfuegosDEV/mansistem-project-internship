@@ -64,7 +64,12 @@
         Tipos de Usurios
       </div>
       <div class="card-body">
-        <canvas id="usersRoleChart" width="100%" height="40" class="chartjs-render-monitor"></canvas>
+        <canvas
+          id="usersRoleChart"
+          width="100%"
+          height="40"
+          class="chartjs-render-monitor"
+        ></canvas>
       </div>
     </div>
   </div>
@@ -92,8 +97,7 @@
     ></table>
   </div>
 </div>
-
-<%- contentFor('styles') %>
+<%- include('partials/formularios/newUserForm') %> <%- contentFor('styles') %>
 <!--Datatables-->
 <link
   rel="stylesheet"
@@ -155,7 +159,7 @@
           text: '<i class="fas fa-plus"></i> Crear',
           action: function (e, dt, node, config) {
             // Lógica para agregar un elemento
-            alert("Lógica para agregar un elemento aquí");
+            $("#crearModal").modal("show");
           },
           className: "btn btn-outline-success btn-sm",
         },
@@ -176,6 +180,47 @@
           className: "btn btn-outline-danger btn-sm",
         },
       ],
+    });
+  });
+  function recargarTabla() {
+    $("#usersDataTable").DataTable().ajax.reload();
+  }
+</script>
+<script nonce="<%= cspNonce %>">
+  document.addEventListener("DOMContentLoaded", () => {
+    const form = document.getElementById("registerForm");
+    const messageBox = document.createElement("div");
+    messageBox.id = "messageBox";
+    form.parentNode.insertBefore(messageBox, form.nextSibling);
+
+    form.addEventListener("submit", async (event) => {
+      event.preventDefault();
+      const formData = new FormData(form);
+      const data = Object.fromEntries(formData.entries());
+      messageBox.innerHTML = "";
+
+      try {
+        const response = await fetch("/register", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(data),
+        });
+
+        const result = await response.json();
+        console.log(result);
+
+        if (!response.ok) {
+          messageBox.innerHTML = `<div class="alert alert-danger"><strong>Error:</strong> ${result.error}</div>`;
+        } else {
+          messageBox.innerHTML = `<div class="alert alert-success"><strong>Hecho: </strong> ${result.success}</div>`;
+          recargarTabla();
+        }
+      } catch (error) {
+        console.error(error);
+        messageBox.innerHTML = `<div class="alert alert-danger">Ocurrió un error al enviar el formulario</div>`;
+      }
     });
   });
 </script>

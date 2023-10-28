@@ -8,24 +8,20 @@ const {
 const userRolesModel = require("../models/userRolModel");
 const provincesModel = require("../models/provinceModel");
 
-router.get("/", ensureAuthenticated, (req, res, next) => {
-  res.render("index", { title: "Home", active: "home", user: req.user });
+router.get("/", ensureAuthenticated, async (req, res, next) => {
+  res.render("index", {
+    title: "Home",
+    active: "home",
+    user: req.user,
+    userRoles: await userRolesModel.getAll(),
+    provinces: await provincesModel.getAll(),
+  });
 });
 
 router.get("/login", forwardAuthenticated, async (req, res, next) => {
   res.render("login", {
     layout: false,
     title: "Login",
-    message: req.flash(),
-  });
-});
-
-router.get("/register", forwardAuthenticated, async (req, res, next) => {
-  res.render("register", {
-    title: "Register",
-    layout: false,
-    userRoles: await userRolesModel.getAll(),
-    provinces: await provincesModel.getAll(),
     message: req.flash(),
   });
 });

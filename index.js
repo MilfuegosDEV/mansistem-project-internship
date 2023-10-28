@@ -31,7 +31,7 @@ app.use((req, res, next) => {
 });
 
 // Mejoras de seguridad con Helmet
-app.use(helmet());
+app.use(helmet({ permissionsPolicy: false }));
 app.use(
   contentSecurityPolicy({
     useDefaults: true,
@@ -70,6 +70,7 @@ app.use(express.urlencoded({ extended: true }));
 app.use(cookie(process.env.COOKIE_SECRET));
 
 app.use(flash());
+app.use(express.json());
 app.use(
   session({
     secret: process.env.SESSION_SECRET, // clave secreta segura desde variables de entorno
@@ -114,12 +115,10 @@ app.use((err, req, res, _next) => {
   }
   // Manejo de otros errores...
   console.error(err.stack);
-  res
-    .status(500)
-    .render("errors/500", {
-      title: "Error Interno Del Servidor",
-      layout: false,
-    });
+  res.status(500).render("errors/500", {
+    title: "Error Interno Del Servidor",
+    layout: false,
+  });
 });
 
 // Middleware para manejo de 404 - Página no encontrada

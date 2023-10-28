@@ -33,7 +33,7 @@ const checkPasswordsMatch = (password, confirmPassword) => {
   return null;
 };
 // Middleware para manejar los errores de validación
-const handleValidation = (validations, req, res, next, route) => {
+const handleValidation = (validations, req, res) => {
   const errors = [];
   validations.forEach((validation) => {
     const result = validation(req);
@@ -43,10 +43,7 @@ const handleValidation = (validations, req, res, next, route) => {
   });
 
   if (errors.length) {
-    req.flash("errors", errors);
-    res.status(400).redirect(route);
-  } else {
-    next();
+    res.status(400).json({ error: errors });
   }
 };
 
