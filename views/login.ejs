@@ -32,7 +32,10 @@
           <div class="container">
             <div class="row justify-content-center vh-100 align-content-center">
               <div class="col-lg-6">
-                <div class="card shadow-lg border-0 rounded-lg" style="opacity: .95;">
+                <div
+                  class="card shadow-lg border-0 rounded-lg"
+                  style="opacity: 0.95"
+                >
                   <div class="card-header">
                     <h3 class="text-center font-weight-light my-2">
                       Iniciar Sesion
@@ -50,10 +53,13 @@
                         />
                       </div>
                     </div>
-                    <%- include('./partials/messages') %>
+
+                    <div id="messageBox">
+                      <%- include('./partials/messages') %>
+                    </div>
                   </div>
                   <div class="card-body">
-                    <form method="post" action="/login">
+                    <form method="post" id="loginForm">
                       <div class="form-floating mb-2 mb-md-3">
                         <input
                           class="form-control"
@@ -103,5 +109,70 @@
       crossorigin="anonymous"
     ></script>
     <script src="/static/js/scripts.js"></script>
+    <script nonce="<%= cspNonce %>">
+      document.addEventListener("DOMContentLoaded", () => {
+        const form = document.getElementById("loginForm");
+        const messageBox = document.getElementById("messageBox");
+
+        const data = Object.fromEntries(new FormData(form).entries());
+        const validateForm = () => {
+          const errors = [];
+          const data = Object.fromEntries(new FormData(form).entries());
+
+          if (!data.username.trim())
+            errors.push("El campo nombre de usuario es requerido.");
+          if (!data.password.trim())
+            errors.push("El campo contraseña de usuario es requerido.");
+
+          return errors;
+        };
+
+        const displayErrors = (errors) => {
+          messageBox.innerHTML = errors
+            .map(
+              (error) =>
+                `<div class="alert alert-danger mb-1 py-1"><strong>¡Error!</strong> ${error}</div>`
+            )
+            .join("");
+        };
+
+        form.addEventListener("submit", async (event) => {
+          event.preventDefault();
+          const errors = validateForm();
+          if (errors.length > 0) {
+            displayErrors(errors);
+            return;
+          }
+
+          const data = Object.fromEntries(new FormData(form).entries());
+          messageBox.innerHTML = "";
+
+          try {
+            const response = await fetch("/login", {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify(data),
+            });
+
+            const result = await response.json();
+
+            if (response.ok) {
+              if (result.success) {
+                window.location.href = result.redirectUrl;
+              } else {
+                displayErrors(["Inicio de sesión fallido"]);
+              }
+            } else {
+              displayErrors([result.error]);
+            }
+          } catch (error) {
+            console.error(error);
+            displayErrors(["Ocurrió un error al enviar el formulario"]);
+          }
+        });
+      });
+    </script>
   </body>
 </html>

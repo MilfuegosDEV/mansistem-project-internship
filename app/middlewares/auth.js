@@ -3,8 +3,7 @@ const ensureAuthenticated = (req, res, next) => {
     return next();
   }
   req.flash("errors", "Debes iniciar sesion antes de ver este recurso.");
-  res.redirect("/login");
-
+  res.status(401).redirect("/login");
 };
 
 const forwardAuthenticated = (req, res, next) => {
