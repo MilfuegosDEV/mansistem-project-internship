@@ -16,7 +16,7 @@ const cookie = require("cookie-parser");
 
 const router = require("./app/routes/router");
 const authRouter = require("./app/routes/auth");
-const api = require("./app/api/router");
+const api = require("./app/api/endpoints");
 
 const app = express();
 

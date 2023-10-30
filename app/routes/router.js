@@ -10,7 +10,7 @@ const provincesModel = require("../models/provinceModel");
 
 router.get("/", ensureAuthenticated, async (req, res, next) => {
   res.render("index", {
-    title: "Home",
+    title: "Inicio",
     active: "home",
     user: req.user,
     userRoles: await userRolesModel.getAll(),
@@ -21,7 +21,7 @@ router.get("/", ensureAuthenticated, async (req, res, next) => {
 router.get("/login", forwardAuthenticated, async (req, res, next) => {
   res.render("login", {
     layout: false,
-    title: "Login",
+    title: "Iniciar Sesion",
     message: req.flash(),
   });
 });
