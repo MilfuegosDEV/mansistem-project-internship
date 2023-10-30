@@ -22,19 +22,6 @@ router.get("/userRolesCount", async (req, res, next) => {
   }
 });
 
-router.get("/test", async (req, res) => {
-  const QUERY = `
-    SELECT user.id, 
-      user.name AS first_name, 
-      user.lastname AS last_name, 
-      user.email, 
-      uR.name AS roleName, 
-      province.name AS provinceName
-    FROM users AS user
-    INNER JOIN userRoles AS uR ON user.role_id = uR.id
-    INNER JOIN provinces AS province ON user.province_id = province.id`;
-  res.json(await db.query(QUERY));
-});
 router.get("/users", async (req, res, next) => {
   try {
     const draw = parseInt(req.query.draw) || 0;
