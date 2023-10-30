@@ -23,6 +23,7 @@
                   placeholder="Nombre"
                   name="name"
                   autocomplete="false"
+                  required
                 />
                 <label for="inputFirstName">Nombre</label>
               </div>
@@ -36,6 +37,7 @@
                   placeholder="Apellidos"
                   name="lastname"
                   autocomplete="false"
+                  required
                 />
                 <label for="inputLastName">Apellidos</label>
               </div>
@@ -49,6 +51,7 @@
               placeholder="Usuario"
               name="username"
               autocomplete="false"
+              required
             />
             <label for="inputUser">Usuario</label>
           </div>
@@ -60,6 +63,7 @@
               placeholder="Correo"
               name="email"
               autocomplete="false"
+              required
             />
             <label for="inputEmail">Correo</label>
           </div>
@@ -73,6 +77,7 @@
                   placeholder="Create a password"
                   name="password"
                   autocomplete="false"
+                  required
                 />
                 <label for="inputPassword">Contraseña</label>
               </div>
@@ -86,6 +91,7 @@
                   placeholder="Confirmar Contraseña"
                   name="password2"
                   autocomplete="false"
+                  required
                 />
                 <label for="inputPasswordConfirm">Confirmar Contraseña</label>
               </div>
@@ -99,6 +105,7 @@
                   id="roles"
                   name="role"
                   autocomplete="false"
+                  required
                 >
                   <% userRoles.forEach(role => { %>
                   <option value="<%= role.id %>"><%= role.name %></option>
@@ -114,6 +121,7 @@
                   id="provinces"
                   name="province"
                   autocomplete="false"
+                  required
                 >
                   <% provinces.forEach(province => { %>
                   <option value="<%= province.id %>">
