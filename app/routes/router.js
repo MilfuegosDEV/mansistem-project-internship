@@ -7,6 +7,7 @@ const {
 
 const userRolesModel = require("../models/userRolModel");
 const provincesModel = require("../models/provinceModel");
+const flashMessages = require("../utils/flash-messages");
 
 router.get("/", ensureAuthenticated, async (req, res, next) => {
   res.render("index", {
@@ -18,11 +19,11 @@ router.get("/", ensureAuthenticated, async (req, res, next) => {
   });
 });
 
-router.get("/login", forwardAuthenticated, async (req, res, next) => {
+router.get("/login", forwardAuthenticated, async (_req, res, _next) => {
   res.render("login", {
     layout: false,
     title: "Iniciar Sesion",
-    message: req.flash(),
+    message: flashMessages.getMessages(),
   });
 });
 
@@ -31,10 +32,10 @@ router.get("/logout", (req, res) => {
     if (err) {
       console.error(err);
       // Manejar errores, por ejemplo, redirigir al usuario a una página de error
-      return res.redirect("/error");
+      next(err);
     }
     // La sesión se ha cerrado con éxito
-    req.flash("success", "Sesión cerrada correctamente");
+    flashMessages.addMessage("success", "Sesión cerrada correctamente");
     res.redirect("/login"); // Redirigir al usuario a la página de inicio de sesión
   });
 });

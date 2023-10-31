@@ -1,8 +1,10 @@
+const flashMessages = require("../utils/flash-messages");
+
 const ensureAuthenticated = (req, res, next) => {
   if (req.isAuthenticated()) {
     return next();
   }
-  req.flash("errors", "Debes iniciar sesion antes de ver este recurso.");
+  flashMessages.addMessage("errors", "Debes iniciar sesion antes de ver este recurso.");
   res.status(401).redirect("/login");
 };
 

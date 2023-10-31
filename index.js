@@ -4,7 +4,6 @@ const path = require("path");
 const express = require("express");
 const layout = require("express-ejs-layouts");
 const session = require("express-session");
-const flash = require("connect-flash");
 const passport = require("passport");
 const initialize = require("./app/controllers/passport-config");
 const crypto = require("crypto");
@@ -13,10 +12,12 @@ const contentSecurityPolicy = require("helmet-csp");
 const morgan = require("morgan");
 const rfs = require("rotating-file-stream");
 const cookie = require("cookie-parser");
+const db = require("./config/db-config");
 
 const router = require("./app/routes/router");
 const authRouter = require("./app/routes/auth");
 const api = require("./app/api/endpoints");
+const MySQLStore = require("express-mysql-session")(session);
 
 const app = express();
 
@@ -25,7 +26,7 @@ const app = express();
 // Configuración de Express
 const PORT = process.env.PORT || 3000;
 // create a nonce
-app.use((req, res, next) => {
+app.use((_req, res, next) => {
   res.locals.cspNonce = crypto.randomBytes(16).toString("hex");
   next();
 });
@@ -48,7 +49,7 @@ app.use(
         "https://cdn.jsdelivr.net",
         "https://cdnjs.cloudflare.com",
         "https://cdn.datatables.net",
-        (req, res) => `'nonce-${res.locals.cspNonce}'`,
+        (_req, res) => `'nonce-${res.locals.cspNonce}'`,
       ],
       // ... otras directivas ...
     },
@@ -69,8 +70,10 @@ app.use(morgan("combined", { stream: accessLogStream }));
 app.use(express.urlencoded({ extended: true }));
 app.use(cookie(process.env.COOKIE_SECRET));
 
-app.use(flash());
 app.use(express.json());
+
+const sessionStore = new MySQLStore({}, db);
+
 app.use(
   session({
     secret: process.env.SESSION_SECRET, // clave secreta segura desde variables de entorno
@@ -81,8 +84,10 @@ app.use(
       secure: process.env.NODE_ENV === "production", // habilitado en producción
       maxAge: 1 * 3_600_000, // cantidad de horas * lo equivalente a una hora en milisegundos.
     },
+    store: sessionStore, // sirve para mantener la sesion en el caso de que falle el programa
   })
 );
+
 
 initialize(passport);
 app.use(passport.initialize());
@@ -107,7 +112,7 @@ app.use("/api", api);
 app.use("/static", express.static(path.join(__dirname, "static")));
 
 // Middleware para manejo de errores
-app.use((err, req, res, _next) => {
+app.use((err, _req, res, _next) => {
   if (err.status === 401) {
     return res
       .status(401)
@@ -122,7 +127,7 @@ app.use((err, req, res, _next) => {
 });
 
 // Middleware para manejo de 404 - Página no encontrada
-app.use((req, res, next) => {
+app.use((_req, res, _next) => {
   res
     .status(404)
     .render("errors/404", { title: "Página No Encontrada", layout: false });
