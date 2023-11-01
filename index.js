@@ -1,31 +1,44 @@
 // Importaciones necesarias
 require("dotenv").config();
+const db = require("./config/db-config");
 const path = require("path");
+const { createServer } = require("http");
+
 const express = require("express");
 const layout = require("express-ejs-layouts");
+
+const cookie = require("cookie-parser");
 const session = require("express-session");
+const MySQLStore = require("express-mysql-session")(session);
+const socketConfig = require("./config/socket-config");
+
 const passport = require("passport");
 const initialize = require("./app/controllers/passport-config");
+
 const crypto = require("crypto");
 const helmet = require("helmet");
 const contentSecurityPolicy = require("helmet-csp");
 const morgan = require("morgan");
 const rfs = require("rotating-file-stream");
-const cookie = require("cookie-parser");
-const db = require("./config/db-config");
 
 const router = require("./app/routes/router");
 const authRouter = require("./app/routes/auth");
 const api = require("./app/api/endpoints");
-const MySQLStore = require("express-mysql-session")(session);
+
+const { errors, pageNotFound } = require("./app/middlewares/errors");
 
 const app = express();
 
-// Passport config
-
 // Configuración de Express
 const PORT = process.env.PORT || 3000;
-// create a nonce
+
+/**
+ * Permite insertar scripts dentro de la página debido a la politica de seguridad
+ * configurada con helmet. Si se requiere insertar un script, se debe hacer de la siguiente manera:
+ * <script nonce="<%= cspNonce%>
+ *  Tú código acá...
+ * </script>"
+ */
 app.use((_req, res, next) => {
   res.locals.cspNonce = crypto.randomBytes(16).toString("hex");
   next();
@@ -56,39 +69,41 @@ app.use(
   })
 );
 
-// Logging de solicitudes HTTP con Morgan
+/**
+ * Este bloque de codigo permite guardar los logs de la página dentro de un archivo.
+ * para una posible auditoría del sistema. Este archivo se genera cada día. Además,
+ * es recomendable revisar este archivo en el caso de que el servidor fallé para ver que
+ * es lo que lo hace fallar.
+ */
 
-// Configuración para rotating-file-stream
 const accessLogStream = rfs.createStream("access.log", {
   interval: "1d", // rotar diariamente
   path: path.join(__dirname, "log"), // directorio para los logs
 });
-
 // Configuración de morgan para usar rotating-file-stream
 app.use(morgan("combined", { stream: accessLogStream }));
-// Middleware estándar y configuración de sesión
+
 app.use(express.urlencoded({ extended: true }));
 app.use(cookie(process.env.COOKIE_SECRET));
-
 app.use(express.json());
 
+// Crea una tabla dentro de la base de datos que guarde las sesiones.
 const sessionStore = new MySQLStore({}, db);
+const sessionMiddleware = session({
+  secret: process.env.SESSION_SECRET, // clave secreta segura desde variables de entorno
+  saveUninitialized: true,
+  resave: true,
+  cookie: {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === "production", // habilitado en producción
+    maxAge: 1 * 3_600_000, // cantidad de horas * lo equivalente a una hora en milisegundos.
+  },
+  store: sessionStore,
+});
 
-app.use(
-  session({
-    secret: process.env.SESSION_SECRET, // clave secreta segura desde variables de entorno
-    saveUninitialized: true,
-    resave: true,
-    cookie: {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === "production", // habilitado en producción
-      maxAge: 1 * 3_600_000, // cantidad de horas * lo equivalente a una hora en milisegundos.
-    },
-    store: sessionStore, // sirve para mantener la sesion en el caso de que falle el programa
-  })
-);
+app.use(sessionMiddleware);
 
-
+// Para el login.
 initialize(passport);
 app.use(passport.initialize());
 app.use(passport.session());
@@ -112,28 +127,18 @@ app.use("/api", api);
 app.use("/static", express.static(path.join(__dirname, "static")));
 
 // Middleware para manejo de errores
-app.use((err, _req, res, _next) => {
-  if (err.status === 401) {
-    return res
-      .status(401)
-      .render("errors/401", { title: "Acceso No Autorizado", layout: false });
-  }
-  // Manejo de otros errores...
-  console.error(err.stack);
-  res.status(500).render("errors/500", {
-    title: "Error Interno Del Servidor",
-    layout: false,
-  });
-});
+app.use(errors); // manejo de errores del tipo 500 y 401
+app.use(pageNotFound); // manejo de errores 404
 
-// Middleware para manejo de 404 - Página no encontrada
-app.use((_req, res, _next) => {
-  res
-    .status(404)
-    .render("errors/404", { title: "Página No Encontrada", layout: false });
+// Socket config.
+const server = createServer(app);
+
+const io = socketConfig(server);
+io.use((socket, next) => {
+  sessionMiddleware(socket.request, {}, next);
 });
 
 // Iniciar el servidor
-app.listen(PORT, () => {
+server.listen(PORT, () => {
   console.log(`Servidor ejecutándose en http://localhost:${PORT}`);
 });
