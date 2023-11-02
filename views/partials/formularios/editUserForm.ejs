@@ -1,99 +1,104 @@
 <div
   class="modal fade"
-  id="crearModal"
+  id="editarModal"
   tabindex="-1"
-  aria-labelledby="crearModalLabel"
+  aria-labelledby="editarModalLabel"
   aria-hidden="true"
 >
   <div class="modal-dialog modal-lg modal-dialog-centered">
     <div class="modal-content">
       <div class="modal-header d-block">
-        <h5 class="modal-title mb-2" id="crearModalLabel">Nuevo Usuario</h5>
+        <h5 class="modal-title mb-2" id="editarModalLabel">Editar Usuario</h5>
         <div id="messageBox"></div>
       </div>
       <div class="modal-body">
-        <form method="post" id="registerForm">
+        <form method="post" id="editForm">
           <div class="row">
             <div class="col-6 mb-2 mb-md-3">
               <div class="form-floating">
                 <input
                   class="form-control"
-                  id="inputFirstName"
+                  id="editInputFirstName"
                   type="text"
                   placeholder="Nombre"
                   name="name"
                   autocomplete="false"
+                  disabled
                   required
                 />
-                <label for="inputFirstName">Nombre</label>
+                <label for="editInputFirstName">Nombre</label>
               </div>
             </div>
             <div class="col-6">
               <div class="form-floating">
                 <input
                   class="form-control"
-                  id="inputLastName"
+                  id="editInputLastName"
                   type="text"
                   placeholder="Apellidos"
                   name="lastname"
                   autocomplete="false"
+                  disabled
                   required
                 />
-                <label for="inputLastName">Apellidos</label>
+                <label for="editInputLastName">Apellidos</label>
               </div>
             </div>
           </div>
           <div class="form-floating mb-2 mb-md-3">
             <input
               class="form-control"
-              id="inputUsername"
+              id="editInputUsername"
               type="text"
               placeholder="Usuario"
               name="username"
               autocomplete="false"
+              disabled
               required
             />
-            <label for="inputUsername">Usuario</label>
+            <label for="editInputUsername">Usuario</label>
           </div>
           <div class="form-floating mb-2 mb-md-3">
             <input
               class="form-control"
-              id="inputEmail"
+              id="editInputEmail"
               type="email"
               placeholder="Correo"
               name="email"
               autocomplete="false"
               required
             />
-            <label for="inputEmail">Correo</label>
+            <label for="editInputEmail">Correo</label>
           </div>
           <div class="row mb-2 mb-md-3">
             <div class="col-6">
               <div class="form-floating">
                 <input
                   class="form-control"
-                  id="inputPassword"
+                  id="editInputPassword"
                   type="password"
                   placeholder="Create a password"
                   name="password"
                   autocomplete="false"
                   required
                 />
-                <label for="inputPassword">Contraseña</label>
+                <label for="editInputPassword">Editar contraseña</label>
               </div>
             </div>
             <div class="col-6">
               <div class="form-floating">
                 <input
                   class="form-control"
-                  id="inputPasswordConfirm"
+                  id="editInputPasswordConfirm"
                   type="password"
                   placeholder="Confirmar Contraseña"
                   name="password2"
                   autocomplete="false"
                   required
                 />
-                <label for="inputPasswordConfirm">Confirmar Contraseña</label>
+                <label for="editInputPasswordConfirm"
+                  >Confirmar Contraseña</label
+                >
               </div>
             </div>
           </div>
@@ -102,8 +107,8 @@
               <div class="form-floating">
                 <select
                   class="form-select"
-                  id="roles"
                   name="role"
+                  id="editRoles"
                   autocomplete="false"
                   required
                 >
@@ -111,15 +116,17 @@
                   <option value="<%= role.id %>"><%= role.name %></option>
                   <% }); %>
                 </select>
-                <label for="roles" class="form-label">Roles (elige uno):</label>
+                <label for="editRoles" class="form-label"
+                  >Roles (elige uno):</label
+                >
               </div>
             </div>
             <div class="col-6 mb-2 mb-md-3">
               <div class="form-floating">
                 <select
                   class="form-select"
-                  id="provinces"
                   name="province"
+                  id="editProvinces"
                   autocomplete="false"
                   required
                 >
@@ -129,7 +136,7 @@
                   </option>
                   <% }); %>
                 </select>
-                <label for="provinces" class="form-label"
+                <label for="editProvinces" class="form-label"
                   >Provincias (elige una):</label
                 >
               </div>
@@ -149,10 +156,10 @@
         </button>
         <button
           type="submit"
-          class="btn btn-outline-success btn-sm"
-          form="registerForm"
+          class="btn btn-outline-warning btn-sm"
+          form="editForm"
         >
-          Registrar
+          Editar
         </button>
       </div>
     </div>

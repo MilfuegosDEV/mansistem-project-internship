@@ -97,7 +97,8 @@
     ></table>
   </div>
 </div>
-<%- include('partials/formularios/newUserForm') %> <%- contentFor('styles') %>
+<%- include('partials/formularios/newUserForm') %> <%-
+include('partials/formularios/editUserForm') %> <%- contentFor('styles') %>
 <!--Datatables-->
 <link
   rel="stylesheet"
@@ -131,6 +132,36 @@
   crossorigin="anonymous"
 ></script>
 <script src="/static/js/usersRoleChart.js"></script>
+
+<script nonce="<%=cspNonce%>">
+  function showEditModal(form, data) {
+    const selectedRole = $("#editRoles option")
+      .filter(function () {
+        return $(this).text().trim() === data.roleName;
+      })
+      .val();
+
+    const selectedProvince = $("#editProvinces option")
+      .filter(function () {
+        return $(this).text().trim() === data.provinceName;
+      })
+      .val();
+
+    $("#editInputFirstName").val(data.first_name);
+    $("#editInputLastName").val(data.last_name);
+    $("#editInputUsername").val(data.username);
+    $("#editInputEmail").val(data.email);
+    $("#editRoles").val(selectedRole);
+    $("#editProvinces").val(selectedProvince);
+
+    $("#editarModal").modal("show");
+  }
+
+  function recargarTabla() {
+    $("#usersDataTable").DataTable().ajax.reload();
+  }
+</script>
+
 <script nonce="<%= cspNonce %>">
   $(document).ready(function () {
     const table = $("#usersDataTable").DataTable({
@@ -168,8 +199,14 @@
         {
           text: '<i class="fas fa-pencil-alt"></i> Editar',
           action: function (e, dt, node, config) {
-            // Lógica para editar un elemento seleccionado
-            alert("Lógica para editar un elemento aquí");
+            // Obtener la fila seleccionada
+            const data = table.row({ selected: true }).data();
+            const editForm = $("#editForm");
+            if (data) {
+              showEditModal(editForm, data);
+            } else {
+              alert("tienes que seleccionar una fila para continuar");
+            }
           },
           className: "btn btn-outline-warning btn-sm",
         },
@@ -184,9 +221,6 @@
       ],
     });
   });
-  function recargarTabla() {
-    $("#usersDataTable").DataTable().ajax.reload();
-  }
 </script>
 <script nonce="<%= cspNonce %>">
   document.addEventListener("DOMContentLoaded", () => {
@@ -207,8 +241,11 @@
         errors.push("Los campos de contraseña están vacios.");
         return errors;
       }
+
       if (data.password !== data.password2)
         errors.push("Las contraseñas no coinciden.");
+      if (/\s/.test(data.password))
+        errors.push("La contraseña no puede tener espacios en blanco");
       if (data.password.length < 6)
         errors.push("La contraseña debe tener al menos 6 caracteres.");
       return errors;
