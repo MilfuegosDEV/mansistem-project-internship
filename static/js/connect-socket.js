@@ -1,4 +1,4 @@
-// const socket = io();
+const socket = io();
 
 // document.addEventListener("mousemove", () => {
 //   socket.emit("activity");
