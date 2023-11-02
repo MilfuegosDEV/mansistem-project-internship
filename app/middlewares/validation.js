@@ -9,6 +9,12 @@ const checkNotEmpty = (value, field) => {
   return null;
 };
 
+const checkForBlank = (value, field) => {
+  if (/\s/.test(value))
+    return `El campo ${field} no puede tener espcios en blanco.`;
+  return null;
+};
+
 // Función de validación para verificar la longitud mínima
 const checkMinLength = (value, minLength) => {
   if (!value || value.length < minLength) {
@@ -53,5 +59,6 @@ module.exports = {
   checkMinLength,
   checkMaxLength,
   checkPasswordsMatch,
+  checkForBlank,
   handleValidation,
 };

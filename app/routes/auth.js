@@ -12,6 +12,7 @@ const {
   checkMinLength,
   checkPasswordsMatch,
   checkMaxLength,
+  checkForBlank,
 } = require("../middlewares/validation"); // Middleware de validaciones.
 
 // Manejo de registro
@@ -23,6 +24,7 @@ router.post("/register", async (req, res, next) => {
     (req) => checkNotEmpty(req.body.email, "email"),
     (req) => checkMinLength(req.body.password, 6),
     (req) => checkPasswordsMatch(req.body.password, req.body.password2),
+    (req) => checkForBlank(req.body.password, "contraseña"),
     (req) => checkMaxLength(req.body.name, 60, "nombre"),
     (req) => checkMaxLength(req.body.lastname, 60, "apellido"),
     (req) => checkMaxLength(req.body.username, 20, "usuario"),
