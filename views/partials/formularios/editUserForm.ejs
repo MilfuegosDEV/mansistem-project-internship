@@ -1,3 +1,4 @@
+<!-- Editar usuario -->
 <div
   class="modal fade"
   id="editarModal"
@@ -9,7 +10,7 @@
     <div class="modal-content">
       <div class="modal-header d-block">
         <h5 class="modal-title mb-2" id="editarModalLabel">Editar Usuario</h5>
-        <div id="messageBox"></div>
+        <div id="editMessageBox"></div>
       </div>
       <div class="modal-body">
         <form method="post" id="editForm">
@@ -30,6 +31,7 @@
               </div>
             </div>
             <div class="col-6">
+              <input type="text" name="userId" id="userId" class="d-none" />
               <div class="form-floating">
                 <input
                   class="form-control"
@@ -149,17 +151,13 @@
       <div class="modal-footer">
         <button
           type="button"
-          class="btn btn-outline-danger btn-sm"
+          class="btn btn-outline-danger"
           data-bs-dismiss="modal"
         >
           Cerrar
         </button>
-        <button
-          type="submit"
-          class="btn btn-outline-warning btn-sm"
-          form="editForm"
-        >
-          Editar
+        <button type="submit" class="btn btn-outline-success" form="editForm">
+          Continuar
         </button>
       </div>
     </div>

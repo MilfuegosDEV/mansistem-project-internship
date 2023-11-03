@@ -97,7 +97,8 @@
     ></table>
   </div>
 </div>
-<%- include('partials/formularios/newUserForm') %> <%-
+<%- include("partials/errorRowModal")%> <%-
+include('partials/formularios/newUserForm') %> <%-
 include('partials/formularios/editUserForm') %> <%- contentFor('styles') %>
 <!--Datatables-->
 <link
@@ -127,12 +128,8 @@ include('partials/formularios/editUserForm') %> <%- contentFor('styles') %>
 <script src="https://cdn.datatables.net/1.13.6/js/dataTables.bootstrap5.min.js"></script>
 <script src="https://cdn.datatables.net/buttons/2.4.2/js/dataTables.buttons.min.js"></script>
 <script src="https://cdn.datatables.net/select/1.7.0/js/dataTables.select.min.js"></script>
-<script
-  src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.8.0/Chart.min.js"
-  crossorigin="anonymous"
-></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.8.0/Chart.min.js"></script>
 <script src="/static/js/usersRoleChart.js"></script>
-
 <script nonce="<%=cspNonce%>">
   function showEditModal(form, data) {
     const selectedRole = $("#editRoles option")
@@ -146,7 +143,7 @@ include('partials/formularios/editUserForm') %> <%- contentFor('styles') %>
         return $(this).text().trim() === data.provinceName;
       })
       .val();
-
+    $("#userId").val(data.id);
     $("#editInputFirstName").val(data.first_name);
     $("#editInputLastName").val(data.last_name);
     $("#editInputUsername").val(data.username);
@@ -161,7 +158,6 @@ include('partials/formularios/editUserForm') %> <%- contentFor('styles') %>
     $("#usersDataTable").DataTable().ajax.reload();
   }
 </script>
-
 <script nonce="<%= cspNonce %>">
   $(document).ready(function () {
     const table = $("#usersDataTable").DataTable({
@@ -205,7 +201,7 @@ include('partials/formularios/editUserForm') %> <%- contentFor('styles') %>
             if (data) {
               showEditModal(editForm, data);
             } else {
-              alert("tienes que seleccionar una fila para continuar");
+              $("#rowErrorModal").modal("show");
             }
           },
           className: "btn btn-outline-warning btn-sm",
@@ -224,75 +220,95 @@ include('partials/formularios/editUserForm') %> <%- contentFor('styles') %>
 </script>
 <script nonce="<%= cspNonce %>">
   document.addEventListener("DOMContentLoaded", () => {
-    const form = document.getElementById("registerForm");
-    const messageBox = document.getElementById("messageBox");
+    const registerForm = document.getElementById("registerForm");
+    const editForm = document.getElementById("editForm");
 
-    const validateForm = () => {
-      const errors = [];
-      const data = Object.fromEntries(new FormData(form).entries());
+    const setupForm = (form, messageBox, url) => {
+      const validateForm = () => {
+        const errors = [];
+        const data = Object.fromEntries(new FormData(form).entries());
 
-      if (!data.name.trim() && !data.lastname.trim())
-        errors.push("Los campos nombre y apellidos son requeridos.");
-      if (!data.username.trim())
-        errors.push("El campo nombre de usuario es requerido.");
-      if (!data.email.trim())
-        errors.push("El campo correo electrónico es requerido.");
-      if (!data.password.trim() || !data.password2.trim()) {
-        errors.push("Los campos de contraseña están vacios.");
-        return errors;
-      }
-
-      if (data.password !== data.password2)
-        errors.push("Las contraseñas no coinciden.");
-      if (/\s/.test(data.password))
-        errors.push("La contraseña no puede tener espacios en blanco");
-      if (data.password.length < 6)
-        errors.push("La contraseña debe tener al menos 6 caracteres.");
-      return errors;
-    };
-
-    const displayErrors = (errors) => {
-      messageBox.innerHTML = errors
-        .map(
-          (error) =>
-            `<div class="alert alert-danger mb-1 py-1"><strong>¡Error!</strong> ${error}</div>`
-        )
-        .join("");
-    };
-
-    form.addEventListener("submit", async (event) => {
-      event.preventDefault();
-      const errors = validateForm();
-      if (errors.length > 0) {
-        displayErrors(errors);
-        return;
-      }
-
-      const data = Object.fromEntries(new FormData(form).entries());
-      messageBox.innerHTML = "";
-
-      try {
-        const response = await fetch("/register", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(data),
-        });
-
-        const result = await response.json();
-
-        if (!response.ok) {
-          displayErrors([result.error]);
-        } else {
-          messageBox.innerHTML = `<div class="alert alert-success mb-1 py-1"><strong>¡Hecho!</strong> ${result.success}</div>`;
-          form.reset();
-          recargarTabla();
+        // Check for empty fields
+        for (const key in data) {
+          if (!data[key].trim()) {
+            errors.push(`El campo ${key} es requerido.`);
+          }
         }
-      } catch (error) {
-        console.error(error);
-        displayErrors(["Ocurrió un error al enviar el formulario"]);
-      }
-    });
+
+        if (form === registerForm) {
+          if (data.password !== data.password2) {
+            errors.push("Las contraseñas no coinciden.");
+          }
+          if (/\s/.test(data.password)) {
+            errors.push("La contraseña no puede tener espacios en blanco");
+          }
+          if (data.password.length < 6) {
+            errors.push("La contraseña debe tener al menos 6 caracteres.");
+          }
+        } else if (form === editForm && data.password.trim()) {
+          if (data.password !== data.password2) {
+            errors.push("Las contraseñas no coinciden.");
+          }
+          if (/\s/.test(data.password)) {
+            errors.push("La contraseña no puede tener espacios en blanco");
+          }
+          if (data.password.length < 6) {
+            errors.push("La contraseña debe tener al menos 6 caracteres.");
+          }
+        }
+
+        return errors;
+      };
+
+      const displayErrors = (errors) => {
+        messageBox.innerHTML = errors
+          .map(
+            (error) =>
+              `<div class="alert alert-danger mb-1 py-1"><strong>¡Error!</strong> ${error}</div>`
+          )
+          .join("");
+      };
+
+      form.addEventListener("submit", async (event) => {
+        event.preventDefault();
+        const errors = validateForm();
+        if (errors.length > 0) {
+          displayErrors(errors);
+          return;
+        }
+
+        const data = Object.fromEntries(new FormData(form).entries());
+        messageBox.innerHTML = "";
+
+        try {
+          const response = await fetch(url, {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify(data),
+          });
+
+          const result = await response.json();
+
+          if (!response.ok) {
+            displayErrors([result.error]);
+          } else {
+            messageBox.innerHTML = `<div class="alert alert-success mb-1 py-1"><strong>¡Hecho!</strong> ${result.success}</div>`;
+            form.reset();
+            recargarTabla();
+          }
+        } catch (error) {
+          console.error(error);
+          displayErrors(["Ocurrió un error al enviar el formulario"]);
+        }
+      });
+    };
+
+    const registerMessageBox = document.getElementById("messageBox");
+    setupForm(registerForm, registerMessageBox, "/addUser");
+
+    const editMessageBox = document.getElementById("editMessageBox");
+    setupForm(editForm, editMessageBox, "/editUser");
   });
 </script>
