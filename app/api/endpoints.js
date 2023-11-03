@@ -40,6 +40,7 @@ router.get("/users", async (req, res, next) => {
       "user.username",
       "uR.name",
       "province.name",
+      "user.isEnabled",
     ];
 
     const orderByColumn = columns[columnIndex] || "user.id";
@@ -51,7 +52,8 @@ router.get("/users", async (req, res, next) => {
         user.email, 
         user.username,
         uR.name AS roleName, 
-        province.name AS provinceName
+        province.name AS provinceName,
+        user.isEnabled
       FROM users AS user
       INNER JOIN userRoles AS uR 
         ON user.role_id = uR.id
@@ -63,7 +65,8 @@ router.get("/users", async (req, res, next) => {
         user.email LIKE ? OR 
         user.username LIKE ? OR 
         uR.name LIKE ? OR 
-        province.name LIKE ?
+        province.name LIKE ? OR
+        user.isEnabled LIKE ?
       ORDER BY ${orderByColumn} ${orderDirection}
       LIMIT ? OFFSET ?`;
 
@@ -81,7 +84,8 @@ router.get("/users", async (req, res, next) => {
         user.email LIKE ? OR 
         user.username LIKE ? OR 
         uR.name LIKE ? OR 
-        province.name LIKE ?`;
+        province.name LIKE ? OR
+        user.isEnabled LIKE ?`;
 
     const total = (await db.query(totalQuery))[0].total;
     const totalFiltered = (
@@ -92,10 +96,12 @@ router.get("/users", async (req, res, next) => {
         `%${search}%`,
         `%${search}%`,
         `%${search}%`,
+        `%${search}%`,
       ])
     )[0].total;
 
     const users = await db.query(QUERY, [
+      `%${search}%`,
       `%${search}%`,
       `%${search}%`,
       `%${search}%`,
