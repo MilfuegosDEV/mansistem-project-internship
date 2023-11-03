@@ -67,6 +67,7 @@ router.post("/login", async (req, res, next) => {
   const validations = [
     (req) => checkNotEmpty(req.body.username, "nombre de usuario"),
     (req) => checkNotEmpty(req.body.password, "contraseña"),
+    (req) => checkForBlank(req.body.password, "contraseña")
   ];
 
   // Manejar las validaciones
