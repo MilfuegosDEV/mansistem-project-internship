@@ -12,7 +12,7 @@ class Role {
    */
   static async getAll() {
     try {
-      const userRoles = await db.query("SELECT * FROM userRoles");
+      const userRoles = await db.query("SELECT * FROM USER_ROL");
       return userRoles;
     } catch (error) {
       console.error(error);

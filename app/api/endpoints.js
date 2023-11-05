@@ -10,8 +10,8 @@ router.get("/userRolesCount", async (req, res, next) => {
   try {
     const QUERY = `
       SELECT uR.name AS roleName, COUNT(user.id) AS userCount
-      FROM users AS user
-      INNER JOIN userRoles AS uR ON user.role_id = uR.id
+      FROM USER AS user
+      INNER JOIN USER_ROL AS uR ON user.role_id = uR.id
       GROUP BY uR.name`;
 
     const rolesCount = await db.query(QUERY);
@@ -33,59 +33,60 @@ router.get("/users", async (req, res, next) => {
     const orderDirection = order[0]?.dir || "asc";
 
     const columns = [
-      "user.id",
-      "user.name",
-      "user.lastname",
-      "user.email",
-      "user.username",
-      "uR.name",
-      "province.name",
-      "user.isEnabled",
+      "USER.id",
+      "USER.name",
+      "USER.last_name",
+      "USER.email",
+      "USER.username",
+      "USER_ROL.name",
+      "PROVINCE.name",
+      "USER.status",
     ];
 
-    const orderByColumn = columns[columnIndex] || "user.id";
+    const orderByColumn = columns[columnIndex] || "USER.id";
 
     const QUERY = `
-      SELECT user.id, 
-        user.name AS first_name, 
-        user.lastname AS last_name, 
-        user.email, 
-        user.username,
-        uR.name AS roleName, 
-        province.name AS provinceName,
-        user.isEnabled
-      FROM users AS user
-      INNER JOIN userRoles AS uR 
-        ON user.role_id = uR.id
-      INNER JOIN provinces AS province 
-        ON user.province_id = province.id
+      SELECT 
+        USER.id, 
+        USER.name, 
+        USER.last_name, 
+        USER.email, 
+        USER.username,
+        USER_ROL.name AS rol_name, 
+        PROVINCE.name AS province_name,
+        USER.status
+      FROM USER
+      INNER JOIN USER_ROL
+        ON USER.role_id = USER_ROL.id
+      INNER JOIN PROVINCE
+      ON USER.province_id = PROVINCE.id
       WHERE 
-        user.name LIKE ? OR 
-        user.lastname LIKE ? OR 
-        user.email LIKE ? OR 
-        user.username LIKE ? OR 
-        uR.name LIKE ? OR 
-        province.name LIKE ? OR
-        user.isEnabled LIKE ?
+        USER.name LIKE ? OR 
+        USER.last_name LIKE ? OR 
+        USER.email LIKE ? OR 
+        USER.username LIKE ? OR 
+        USER_ROL.name LIKE ? OR 
+        PROVINCE.name LIKE ? OR
+        USER.status LIKE ?
       ORDER BY ${orderByColumn} ${orderDirection}
       LIMIT ? OFFSET ?`;
 
-    const totalQuery = "SELECT COUNT(*) AS total FROM users";
+    const totalQuery = "SELECT COUNT(*) AS total FROM USER";
     const totalFilteredQuery = `
       SELECT COUNT(*) AS total 
-      FROM users AS user
-      INNER JOIN userRoles AS uR 
-        ON user.role_id = uR.id
-      INNER JOIN provinces AS province 
-        ON user.province_id = province.id
+      FROM USER
+      INNER JOIN USER_ROL
+        ON USER.role_id = USER_ROL.id
+      INNER JOIN PROVINCE
+        ON USER.province_id = PROVINCE.id
       WHERE 
-        user.name LIKE ? OR 
-        user.lastname LIKE ? OR 
-        user.email LIKE ? OR 
-        user.username LIKE ? OR 
-        uR.name LIKE ? OR 
-        province.name LIKE ? OR
-        user.isEnabled LIKE ?`;
+        USER.name LIKE ? OR 
+        USER.last_name LIKE ? OR 
+        USER.email LIKE ? OR 
+        USER.username LIKE ? OR 
+        USER_ROL.name LIKE ? OR 
+        PROVINCE.name LIKE ? OR
+        USER.status LIKE ?`;
 
     const total = (await db.query(totalQuery))[0].total;
     const totalFiltered = (

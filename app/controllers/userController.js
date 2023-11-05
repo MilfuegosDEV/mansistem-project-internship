@@ -21,8 +21,8 @@ class userController {
       const hashedPassword = await bcrypt.hash(password, 10); // El '10' es el número de rondas de salting, considera configurarlo externamente
 
       const query = `
-        INSERT INTO users 
-          (name, lastname, username, email, password, role_id, province_id) 
+        INSERT INTO USER 
+          (name, last_name, username, email, password, role_id, province_id) 
         VALUES 
           (?, ?, ?, ?, ?, ?, ?)`;
       const result = await db.query(query, [
@@ -45,7 +45,7 @@ class userController {
     try {
       const hashedPassword = await bcrypt.hash(password, 10);
       const query = `
-        UPDATE users 
+        UPDATE USER 
           SET email=?,password=?, role_id=?, province_id = ?
         WHERE id=?;`;
       const result = await db.query(query, [

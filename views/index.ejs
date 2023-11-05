@@ -134,13 +134,13 @@ include('partials/formularios/editUserForm') %> <%- contentFor('styles') %>
   function showEditModal(form, data) {
     const selectedRole = $("#editRoles option")
       .filter(function () {
-        return $(this).text().trim() === data.roleName;
+        return $(this).text().trim() === data.rol_name;
       })
       .val();
 
     const selectedProvince = $("#editProvinces option")
       .filter(function () {
-        return $(this).text().trim() === data.provinceName;
+        return $(this).text().trim() === data.province_name;
       })
       .val();
     $("#userId").val(data.id);
@@ -171,12 +171,13 @@ include('partials/formularios/editUserForm') %> <%- contentFor('styles') %>
       ajax: "/api/users", // Ruta de la API en tu servidor Express.js
       columns: [
         { title: "ID", data: "id" },
-        { title: "NOMBRE", data: "first_name" },
+        { title: "NOMBRE", data: "name" },
         { title: "APELLIDOS", data: "last_name" },
         { title: "CORREO", data: "email" },
         { title: "USUARIO", data: "username" },
-        { title: "ROL", data: "roleName" },
-        { title: "PROVINCIA", data: "provinceName" },
+        { title: "ROL", data: "rol_name" },
+        { title: "PROVINCIA", data: "province_name" },
+        { title: "ESTADO", data: "status" },
       ],
       oLanguage: { sSearch: "" },
       language: {
@@ -234,27 +235,15 @@ include('partials/formularios/editUserForm') %> <%- contentFor('styles') %>
             errors.push(`El campo ${key} es requerido.`);
           }
         }
-
-        if (form === registerForm) {
-          if (data.password !== data.password2) {
-            errors.push("Las contraseñas no coinciden.");
-          }
-          if (/\s/.test(data.password)) {
-            errors.push("La contraseña no puede tener espacios en blanco");
-          }
-          if (data.password.length < 6) {
-            errors.push("La contraseña debe tener al menos 6 caracteres.");
-          }
-        } else if (form === editForm && data.password.trim()) {
-          if (data.password !== data.password2) {
-            errors.push("Las contraseñas no coinciden.");
-          }
-          if (/\s/.test(data.password)) {
-            errors.push("La contraseña no puede tener espacios en blanco");
-          }
-          if (data.password.length < 6) {
-            errors.push("La contraseña debe tener al menos 6 caracteres.");
-          }
+        // Validate password.
+        if (data.password !== data.password2) {
+          errors.push("Las contraseñas no coinciden.");
+        }
+        if (/\s/.test(data.password)) {
+          errors.push("La contraseña no puede tener espacios en blanco");
+        }
+        if (data.password.length < 6) {
+          errors.push("La contraseña debe tener al menos 6 caracteres.");
         }
 
         return errors;

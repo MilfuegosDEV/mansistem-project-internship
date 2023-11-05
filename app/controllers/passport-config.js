@@ -16,15 +16,19 @@ function initialize(passport) {
             return done(null, false, "El usuario no está registrado.");
           }
           // Compara el hash de la contraseña con la contraseña ingresada.
-          const passwordMatch = await bcrypt.compare(
-            password.trim(),
-            foundUser[0].password.trim()
-          );
-          if (passwordMatch) {
-            // Si las contraseñas coinciden
-            return done(null, foundUser[0]); // devuelve el usuario 
+
+          if (foundUser[0].status === "HABILITADO") {
+            const passwordMatch = await bcrypt.compare(
+              password.trim(),
+              foundUser[0].password.trim()
+            );
+            if (passwordMatch) {
+              return done(null, foundUser[0]); // devuelve el usuario
+            } else {
+              return done(null, false, "La contraseña es incorrecta."); // Sino indica que no es la contraseña
+            }
           } else {
-            return done(null, false, "La contraseña es incorrecta."); // Sino indica que no es la contraseña
+            return done(null, false, "El usuario ha sido deshabilitado.");
           }
         } catch (err) {
           console.error(err);

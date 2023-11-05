@@ -11,7 +11,7 @@ class Province {
    */
   static async getAll() {
     try {
-      const provinces = await db.query("SELECT * FROM provinces");
+      const provinces = await db.query("SELECT * FROM PROVINCE");
       return provinces;
     } catch (error) {
       console.error(error);
