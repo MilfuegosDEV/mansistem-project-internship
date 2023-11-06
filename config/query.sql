@@ -17,9 +17,9 @@ CREATE TABLE USER_ROL (
     name VARCHAR(20) UNIQUE NOT NULL
 );
 
-CREATE TABLE IF NOT EXISTS USER_STATUS (
+CREATE TABLE IF NOT EXISTS STATUS (
 	id INT PRIMARY KEY,
-    info CHAR(12) NOT NULL
+    info CHAR(12) UNIQUE NOT NULL
 ) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
 INSERT INTO USER_ROL (name) VALUES 
@@ -28,7 +28,7 @@ INSERT INTO USER_ROL (name) VALUES
     ('Soporte');
 
 
-INSERT INTO USER_STATUS(id, info) VALUES 
+INSERT INTO STATUS(id, info) VALUES 
 	(1,'HABILITADO'),
     (0,'INHABILITADO');
     
@@ -44,7 +44,6 @@ INSERT INTO PROVINCE (name) VALUES
     ('Limón');
     
 
-
 -- Creamos la tabla 'users'
 CREATE TABLE IF NOT EXISTS USER (
     id INT AUTO_INCREMENT PRIMARY KEY,
@@ -55,8 +54,20 @@ CREATE TABLE IF NOT EXISTS USER (
     password VARCHAR(255) NOT NULL, -- espacio aumentado por si se utiliza hash de contraseña
     role_id INT NOT NULL,
     province_id INT NOT NULL,
-    user_status_id INT DEFAULT 1 NOT NULL,
+    status_id INT DEFAULT 1 NOT NULL,
     FOREIGN KEY (province_id) REFERENCES PROVINCE(id),
 	FOREIGN KEY (role_id) REFERENCES USER_ROL(id),
-    FOREIGN KEY (user_status_id) REFERENCES USER_STATUS(id)
+    FOREIGN KEY (status_id) REFERENCES STATUS(id)
+) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+CREATE TABLE IF NOT EXISTS CLIENT (
+	id INT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(60) NOT NULL,
+    address TEXT NOT NULL,
+    phone VARCHAR(70) NOT NULL,
+    email VARCHAR(100) NOT NULL UNIQUE,
+    province_id INT NOT NULL,
+    status_id INT DEFAULT 1 NOT NULL,
+	FOREIGN KEY (province_id) REFERENCES PROVINCE(id),
+	FOREIGN KEY (status_id) REFERENCES STATUS(id)
 ) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
