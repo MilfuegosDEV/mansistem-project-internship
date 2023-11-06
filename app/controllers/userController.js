@@ -41,19 +41,19 @@ class userController {
       throw new Error("Error al agregar el usuario.");
     }
   }
-  static async editUser(id, email, password, role, province, user_status_id) {
+  static async editUser(id, email, password, role, province, status_id) {
     try {
       const hashedPassword = await bcrypt.hash(password, 10);
       const query = `
         UPDATE USER 
-          SET email=?,password=?, role_id=?, province_id = ?, user_status_id=?
+          SET email=?,password=?, role_id=?, province_id = ?, status_id=?
         WHERE id=?;`;
       const result = await db.query(query, [
         email.toLowerCase(),
         hashedPassword,
         role,
         province,
-        user_status_id,
+        status_id,
         id,
       ]);
       return result;

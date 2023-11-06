@@ -153,8 +153,8 @@
                 autocomplete="false"
                 required
               >
-              <% userStatus.forEach(status => { %>
-                <option value="<%= status.id %>"><%= status.info %></option>
+              <% status.forEach(value => { %>
+                <option value="<%= value.id %>"><%= value.info %></option>
                 <% }); %>
               </select>
               <label for="editProvinces" class="form-label"

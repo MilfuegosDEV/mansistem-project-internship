@@ -7,7 +7,7 @@ const {
 
 const userRolesModel = require("../models/userRolModel");
 const provincesModel = require("../models/provinceModel");
-const userStatusModel = require("../models/userStatusModel");
+const statusModel = require("../models/statusModel");
 const flashMessages = require("../utils/flash-messages");
 
 router.get("/", ensureAuthenticated, async (req, res, _next) => {
@@ -16,9 +16,18 @@ router.get("/", ensureAuthenticated, async (req, res, _next) => {
     active: "home",
     user: req.user,
     userRoles: await userRolesModel.getAll(),
-    userStatus: await userStatusModel.getAll(),
+    status: await statusModel.getAll(),
     provinces: await provincesModel.getAll(),
-    
+  });
+});
+
+router.get("/clients", ensureAuthenticated, async (req, res, _next) => {
+  res.render("clients", {
+    title: "CLIENTS",
+    active: "CLIENTS",
+    user: req.user,
+    status: await statusModel.getAll(),
+    provinces: await provincesModel.getAll(),
   });
 });
 

@@ -388,6 +388,9 @@ textarea {
   font-family: inherit;
   font-size: inherit;
   line-height: inherit;
+  resize: none;
+  overflow: hidden;
+
 }
 
 button,
@@ -11693,3 +11696,4 @@ body {
 .form-floating > label::after {
   background-color: rgba(0, 0, 0, 0) !important;
 }
+

@@ -17,7 +17,7 @@ function initialize(passport) {
           }
           // Compara el hash de la contraseña con la contraseña ingresada.
 
-          if (foundUser[0].user_status_id) {
+          if (foundUser[0].status_id) {
             const passwordMatch = await bcrypt.compare(
               password.trim(),
               foundUser[0].password.trim()

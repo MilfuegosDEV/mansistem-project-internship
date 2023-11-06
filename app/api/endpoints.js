@@ -73,19 +73,19 @@ function createLikeClauses(searchValue, columns, columnFilter) {
   }
 }
 
-// Define the columns with their respective data mappings
-const columns = [
-  { title: "USER.id", data: "id" },
-  { title: "USER.name", data: "nombre" },
-  { title: "USER.last_name", data: "apellidos" },
-  { title: "USER.email", data: "correo" },
-  { title: "USER.username", data: "usuario" },
-  { title: "USER_ROL.name", data: "rol" },
-  { title: "PROVINCE.name", data: "provincia" },
-  { title: "USER_STATUS.info", data: "estado" },
-];
+router.get("/users", async (req, res, _next) => {
+  // Define the columns with their respective data mappings
+  const columns = [
+    { title: "USER.id", data: "id" },
+    { title: "USER.name", data: "nombre" },
+    { title: "USER.last_name", data: "apellidos" },
+    { title: "USER.email", data: "correo" },
+    { title: "USER.username", data: "usuario" },
+    { title: "USER_ROL.name", data: "rol" },
+    { title: "PROVINCE.name", data: "provincia" },
+    { title: "STATUS.info", data: "estado" },
+  ];
 
-router.get("/users", async (req, res, next) => {
   try {
     const {
       draw,
@@ -104,7 +104,7 @@ router.get("/users", async (req, res, next) => {
       FROM USER
       INNER JOIN USER_ROL ON USER.role_id = USER_ROL.id
       INNER JOIN PROVINCE ON USER.province_id = PROVINCE.id
-      INNER JOIN USER_STATUS ON USER.user_status_id = USER_STATUS.id
+      INNER JOIN STATUS ON USER.status_id = STATUS.id
       WHERE ${likeClauses}`;
 
     const totalQuery = "SELECT COUNT(*) AS total FROM USER";
@@ -118,7 +118,7 @@ router.get("/users", async (req, res, next) => {
         USER.username,
         USER_ROL.name AS rol_name, 
         PROVINCE.name AS province_name,
-        USER_STATUS.info AS status
+        STATUS.info AS status
       ${baseQuery}
       ORDER BY ${orderByColumn} ${orderDirection}
       LIMIT ? OFFSET ?`;
@@ -135,6 +135,68 @@ router.get("/users", async (req, res, next) => {
     });
   } catch (err) {
     console.error("Error fetching users:", err);
+    res.status(500).send("Server error occurred while fetching users.");
+  }
+});
+
+router.get("/clients", async (req, res, _next) => {
+  const columns = [
+    { title: "CLIENT.id", data: "id" },
+    { title: "CLIENT.name", data: "cliente" },
+    { title: "CLIENT.address", data: "dirección" },
+    { title: "CLIENT.phone", data: "teléfono" },
+    { title: "CLIENT.email", data: "correo" },
+    { title: "PROVINCE.name", data: "provincia" },
+    { title: "STATUS.info", data: "estado" },
+  ];
+  
+  try {
+    const {
+      draw,
+      start,
+      length,
+      searchValue,
+      columnIndex,
+      orderDirection,
+      columnFilter,
+    } = parseQueryParams(req.query);
+
+    const orderByColumn = columns[columnIndex]?.title || "USER.id";
+    const likeClauses = createLikeClauses(searchValue, columns, columnFilter);
+
+    const baseQuery = `
+      FROM CLIENT
+      INNER JOIN PROVINCE ON CLIENT.province_id = PROVINCE.id
+      INNER JOIN STATUS ON CLIENT.status_id = STATUS.id
+      WHERE ${likeClauses}`;
+
+    const totalQuery = "SELECT COUNT(*) AS total FROM CLIENT";
+    const totalFilteredQuery = `SELECT COUNT(*) AS total ${baseQuery}`;
+    const clientsQuery = `
+      SELECT 
+        CLIENT.id, 
+        CLIENT.name, 
+        CLIENT.address, 
+        CLIENT.phone, 
+        CLIENT.email,
+        PROVINCE.name AS province_name,
+        STATUS.info AS status
+      ${baseQuery}
+      ORDER BY ${orderByColumn} ${orderDirection}
+      LIMIT ? OFFSET ?`;
+
+    const [totalResult] = await db.query(totalQuery);
+    const [totalFilteredResult] = await db.query(totalFilteredQuery);
+    const clients = await db.query(clientsQuery, [length, start]);
+
+    res.json({
+      draw,
+      recordsTotal: totalResult.total,
+      recordsFiltered: totalFilteredResult.total,
+      data: clients,
+    });
+  } catch (err) {
+    console.error("Error fetching clients:", err);
     res.status(500).send("Server error occurred while fetching users.");
   }
 });

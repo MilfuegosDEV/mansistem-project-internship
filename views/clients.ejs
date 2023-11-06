@@ -97,9 +97,10 @@
     ></table>
   </div>
 </div>
-<%- include("partials/errorRowModal")%> <%-
-include('partials/formularios/users/newUserForm') %> <%-
-include('partials/formularios/users/editUserForm') %> <%- contentFor('styles') %>
+<%- include('partials/errorRowModal.ejs') %> <%-
+include('partials/formularios/clients/newClientForm') %> <%-
+include('partials/formularios/clients/editClientForm') %> <%-
+contentFor('styles') %>
 <!--Datatables-->
 <link
   rel="stylesheet"
@@ -188,12 +189,11 @@ include('partials/formularios/users/editUserForm') %> <%- contentFor('styles') %
       })
       .val();
 
-    $("#userId").val(data.id);
-    $("#editInputFirstName").val(data.name);
-    $("#editInputLastName").val(data.last_name);
-    $("#editInputUsername").val(data.username);
+    $("#clientId").val(data.id);
+    $("#editInputName").val(data.name);
+    $("#editInputPhone").val(data.phone);
     $("#editInputEmail").val(data.email);
-    $("#editRoles").val(selectedRole);
+    $("#editInputAddress").val(data.address);
     $("#editProvinces").val(selectedProvince);
     $("#editStatus").val(selectedStatus);
     $("#editarModal").modal("show");
@@ -213,19 +213,19 @@ include('partials/formularios/users/editUserForm') %> <%- contentFor('styles') %
       },
       processing: true,
       serverSide: true,
-      ajax: "/api/users", // Ruta de la API en tu servidor Express.js
+      ajax: "/api/clients", // Ruta de la API en tu servidor Express.js
       columns: [
         { title: "ID", data: "id" },
         { title: "NOMBRE", data: "name" },
-        { title: "APELLIDOS", data: "last_name" },
+        { title: "DIRECCIÓN", data: "address" },
+        { title: "TELÉFONO", data: "phone" },
         { title: "CORREO", data: "email" },
-        { title: "USUARIO", data: "username" },
-        { title: "ROL", data: "rol_name" },
         { title: "PROVINCIA", data: "province_name" },
         {
           title: "ESTADO",
           data: "status",
           render: function (data) {
+            console.log(data);
             if (data === "HABILITADO") {
               return `
               <div title="HABILITADO" class="btn btn-success  w-100"></div>`;
@@ -284,17 +284,6 @@ include('partials/formularios/users/editUserForm') %> <%- contentFor('styles') %
             errors.push(`El campo ${key} es requerido.`);
           }
         }
-        // Validate password.
-        if (data.password !== data.password2) {
-          errors.push("Las contraseñas no coinciden.");
-        }
-        if (/\s/.test(data.password)) {
-          errors.push("La contraseña no puede tener espacios en blanco");
-        }
-        if (data.password.length < 6) {
-          errors.push("La contraseña debe tener al menos 6 caracteres.");
-        }
-
         return errors;
       };
 
@@ -344,9 +333,8 @@ include('partials/formularios/users/editUserForm') %> <%- contentFor('styles') %
     };
 
     const registerMessageBox = document.getElementById("messageBox");
-    setupForm(registerForm, registerMessageBox, "/addUser");
-
+    setupForm(registerForm, registerMessageBox, "/addClient");
     const editMessageBox = document.getElementById("editMessageBox");
-    setupForm(editForm, editMessageBox, "/editUser");
+    setupForm(editForm, editMessageBox, "/editClient");
   });
 </script>

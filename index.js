@@ -24,6 +24,7 @@ const rfs = require("rotating-file-stream");
 const router = require("./app/routes/router");
 const authRouter = require("./app/routes/auth");
 const usersRouter = require("./app/routes/users");
+const clientsRouter = require("./app/routes/clients");
 const api = require("./app/api/endpoints");
 
 const { errors, pageNotFound } = require("./app/middlewares/errors");
@@ -121,6 +122,7 @@ app.use(layout);
 app.use("/", router);
 app.use("/", authRouter);
 app.use("/", usersRouter);
+app.use("/", clientsRouter);
 
 // API
 app.use("/api", api);
