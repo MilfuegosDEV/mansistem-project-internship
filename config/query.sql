@@ -17,10 +17,21 @@ CREATE TABLE USER_ROL (
     name VARCHAR(20) UNIQUE NOT NULL
 );
 
+CREATE TABLE IF NOT EXISTS USER_STATUS (
+	id INT PRIMARY KEY,
+    info CHAR(12) NOT NULL
+) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
 INSERT INTO USER_ROL (name) VALUES 
 	('Admin'),
     ('Técnico'),
     ('Soporte');
+
+
+INSERT INTO USER_STATUS(id, info) VALUES 
+	(1,'HABILITADO'),
+    (0,'INHABILITADO');
+    
 
 -- Insertamos datos en la tabla 'provinces'
 INSERT INTO PROVINCE (name) VALUES 
@@ -44,7 +55,8 @@ CREATE TABLE IF NOT EXISTS USER (
     password VARCHAR(255) NOT NULL, -- espacio aumentado por si se utiliza hash de contraseña
     role_id INT NOT NULL,
     province_id INT NOT NULL,
-    status ENUM ('HABILITADO','DESHABILITADO') DEFAULT 'HABILITADO' NOT NULL,
+    user_status_id INT DEFAULT 1 NOT NULL,
     FOREIGN KEY (province_id) REFERENCES PROVINCE(id),
-	FOREIGN KEY (role_id) REFERENCES USER_ROL(id)
+	FOREIGN KEY (role_id) REFERENCES USER_ROL(id),
+    FOREIGN KEY (user_status_id) REFERENCES USER_STATUS(id)
 ) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;

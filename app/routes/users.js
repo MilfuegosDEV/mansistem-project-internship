@@ -87,7 +87,8 @@ router.post("/editUser", async (req, res, next) => {
       req.body.email,
       req.body.password.trim(),
       req.body.role,
-      req.body.province
+      req.body.province,
+      req.body.status
     );
     res.status(200).json({ success: "Usuario editado" });
     return;

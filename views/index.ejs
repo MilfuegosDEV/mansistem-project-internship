@@ -129,7 +129,45 @@ include('partials/formularios/editUserForm') %> <%- contentFor('styles') %>
 <script src="https://cdn.datatables.net/buttons/2.4.2/js/dataTables.buttons.min.js"></script>
 <script src="https://cdn.datatables.net/select/1.7.0/js/dataTables.select.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.8.0/Chart.min.js"></script>
-<script src="/static/js/usersRoleChart.js"></script>
+<script nonce="<%=cspNonce%>">
+  Chart.defaults.global.defaultFontFamily =
+    '-apple-system,system-ui,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif';
+  Chart.defaults.global.defaultFontColor = "#292b2c";
+
+  async function fetchRolesCount() {
+    try {
+      const response = await fetch("/api/userRolesCount");
+      const data = await response.json();
+      return data;
+    } catch (error) {
+      console.error("Error fetching roles count:", error);
+      return [];
+    }
+  }
+  async function createRolesChart() {
+    const rolesCount = await fetchRolesCount();
+    const labels = rolesCount.map((role) => role.roleName);
+    const data = rolesCount.map((role) => role.userCount);
+
+    const backgroundColors = ["#007bff", "#dc3545", "#ffc107", "#28a745"]; // Colores de fondo
+
+    const ctx = document.getElementById("usersRoleChart").getContext("2d");
+    const myPieChart = new Chart(ctx, {
+      type: "pie",
+      data: {
+        labels: labels,
+        datasets: [
+          {
+            data: data,
+            backgroundColor: backgroundColors.slice(0, data.length),
+          },
+        ],
+      },
+    });
+  }
+
+  createRolesChart();
+</script>
 <script nonce="<%=cspNonce%>">
   function showEditModal(form, data) {
     const selectedRole = $("#editRoles option")
@@ -143,14 +181,21 @@ include('partials/formularios/editUserForm') %> <%- contentFor('styles') %>
         return $(this).text().trim() === data.province_name;
       })
       .val();
+
+    const selectedStatus = $("#editStatus option")
+      .filter(function () {
+        return $(this).text().trim() === data.status;
+      })
+      .val();
+
     $("#userId").val(data.id);
-    $("#editInputFirstName").val(data.first_name);
+    $("#editInputFirstName").val(data.name);
     $("#editInputLastName").val(data.last_name);
     $("#editInputUsername").val(data.username);
     $("#editInputEmail").val(data.email);
     $("#editRoles").val(selectedRole);
     $("#editProvinces").val(selectedProvince);
-
+    $("#editStatus").val(selectedStatus);
     $("#editarModal").modal("show");
   }
 
@@ -177,7 +222,19 @@ include('partials/formularios/editUserForm') %> <%- contentFor('styles') %>
         { title: "USUARIO", data: "username" },
         { title: "ROL", data: "rol_name" },
         { title: "PROVINCIA", data: "province_name" },
-        { title: "ESTADO", data: "status" },
+        {
+          title: "ESTADO",
+          data: "status",
+          render: function (data) {
+            if (data === "HABILITADO") {
+              return `
+              <div title="HABILITADO" class="btn btn-success  w-100"></div>`;
+            } else {
+              return `
+              <div title="INHABILITADO" class="btn btn-danger w-100"></div>`;
+            }
+          },
+        },
       ],
       oLanguage: { sSearch: "" },
       language: {
@@ -191,7 +248,7 @@ include('partials/formularios/editUserForm') %> <%- contentFor('styles') %>
           action: function (e, dt, node, config) {
             $("#crearModal").modal("show");
           },
-          className: "btn btn-outline-success btn-sm",
+          className: "btn btn-success btn-sm",
         },
         {
           text: '<i class="fas fa-pencil-alt"></i> Editar',
@@ -205,15 +262,7 @@ include('partials/formularios/editUserForm') %> <%- contentFor('styles') %>
               $("#rowErrorModal").modal("show");
             }
           },
-          className: "btn btn-outline-warning btn-sm",
-        },
-        {
-          text: '<i class="fas fa-trash-alt"></i> Eliminar',
-          action: function (e, dt, node, config) {
-            // Lógica para eliminar elementos seleccionados
-            alert("Lógica para eliminar elementos aquí");
-          },
-          className: "btn btn-outline-danger btn-sm",
+          className: "btn btn-warning btn-sm",
         },
       ],
     });

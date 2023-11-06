@@ -7,22 +7,25 @@ const {
 
 const userRolesModel = require("../models/userRolModel");
 const provincesModel = require("../models/provinceModel");
+const userStatusModel = require("../models/userStatusModel");
 const flashMessages = require("../utils/flash-messages");
 
-router.get("/", ensureAuthenticated, async (req, res, next) => {
+router.get("/", ensureAuthenticated, async (req, res, _next) => {
   res.render("index", {
-    title: "Inicio",
+    title: "HOME",
     active: "home",
     user: req.user,
     userRoles: await userRolesModel.getAll(),
+    userStatus: await userStatusModel.getAll(),
     provinces: await provincesModel.getAll(),
+    
   });
 });
 
 router.get("/login", forwardAuthenticated, async (_req, res, _next) => {
   res.render("login", {
     layout: false,
-    title: "Iniciar Sesion",
+    title: "INICIAR SESION",
     message: flashMessages.getMessages(),
   });
 });

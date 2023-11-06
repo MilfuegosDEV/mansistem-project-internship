@@ -17,7 +17,7 @@ function initialize(passport) {
           }
           // Compara el hash de la contraseña con la contraseña ingresada.
 
-          if (foundUser[0].status === "HABILITADO") {
+          if (foundUser[0].user_status_id) {
             const passwordMatch = await bcrypt.compare(
               password.trim(),
               foundUser[0].password.trim()
@@ -28,7 +28,7 @@ function initialize(passport) {
               return done(null, false, "La contraseña es incorrecta."); // Sino indica que no es la contraseña
             }
           } else {
-            return done(null, false, "El usuario ha sido deshabilitado.");
+            return done(null, false, "El usuario ha sido inhabilitado.");
           }
         } catch (err) {
           console.error(err);

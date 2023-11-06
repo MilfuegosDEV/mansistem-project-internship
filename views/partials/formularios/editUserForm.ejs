@@ -144,6 +144,24 @@
               </div>
             </div>
           </div>
+          <div class="col-12 mb-2 mb-md-3">
+            <div class="form-floating">
+              <select
+                class="form-select"
+                name="status"
+                id="editStatus"
+                autocomplete="false"
+                required
+              >
+              <% userStatus.forEach(status => { %>
+                <option value="<%= status.id %>"><%= status.info %></option>
+                <% }); %>
+              </select>
+              <label for="editProvinces" class="form-label"
+                >Estado: (elige uno):</label
+              >
+            </div>
+          </div>
 
           <!-- Agrega más campos según sea necesario -->
         </form>
@@ -151,12 +169,12 @@
       <div class="modal-footer">
         <button
           type="button"
-          class="btn btn-outline-danger"
+          class="btn btn-danger"
           data-bs-dismiss="modal"
         >
           Cerrar
         </button>
-        <button type="submit" class="btn btn-outline-success" form="editForm">
+        <button type="submit" class="btn btn-success" form="editForm">
           Continuar
         </button>
       </div>
