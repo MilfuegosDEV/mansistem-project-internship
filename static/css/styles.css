@@ -11697,3 +11697,11 @@ body {
   background-color: rgba(0, 0, 0, 0) !important;
 }
 
+table td {
+  word-break: break-word;
+  vertical-align: top;
+  white-space: normal !important;
+}
+.selected-row {
+  background-color: #FFFF00; /* Cambia el color de fondo a amarillo */
+}

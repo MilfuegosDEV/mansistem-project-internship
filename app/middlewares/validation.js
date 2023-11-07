@@ -38,6 +38,16 @@ const checkPasswordsMatch = (password, confirmPassword) => {
   }
   return null;
 };
+
+// Función de validación para verificar si una cadena es solamente números
+const checkPhoneNumber = (value, field) => {
+  const regex = /^[0-9]*$/;
+  if (!regex.test(value)) {
+    return `El campo ${field} solamente acepta números`;
+  }
+  return null;
+};
+
 // Middleware para manejar los errores de validación
 const handleValidation = (validations, req, _res) => {
   const errors = [];
@@ -61,4 +71,5 @@ module.exports = {
   checkPasswordsMatch,
   checkForBlank,
   handleValidation,
+  checkPhoneNumber
 };

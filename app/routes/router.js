@@ -12,7 +12,7 @@ const flashMessages = require("../utils/flash-messages");
 
 router.get("/", ensureAuthenticated, async (req, res, _next) => {
   res.render("index", {
-    title: "HOME",
+    title: "INICIO",
     active: "home",
     user: req.user,
     userRoles: await userRolesModel.getAll(),
@@ -21,10 +21,11 @@ router.get("/", ensureAuthenticated, async (req, res, _next) => {
   });
 });
 
+// ADMISTRAR LOS CLIENTES
 router.get("/clients", ensureAuthenticated, async (req, res, _next) => {
   res.render("clients", {
-    title: "CLIENTS",
-    active: "CLIENTS",
+    title: "CLIENTES",
+    active: "clients",
     user: req.user,
     status: await statusModel.getAll(),
     provinces: await provincesModel.getAll(),

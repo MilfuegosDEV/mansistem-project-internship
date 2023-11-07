@@ -18,6 +18,16 @@ class CLIENT {
       throw new Error("Error al recuperar los clientes.");
     }
   }
+  static async findByName(name) {
+    try {
+      const query = "SELECT * FROM CLIENT WHERE name = ?";
+      const results = await db.query(query, name);
+      return results;
+    } catch (error) {
+      console.error(error);
+      throw new Error("Error al recuperar el cliente.");
+    }
+  }
   static async findByEmail(email) {
     try {
       const query = "SELECT * FROM CLIENT WHERE email = ?";

@@ -146,34 +146,15 @@
 
               <!--Negocios-->
               <a
-                class="nav-link collapsed"
-                href="#"
-                data-bs-toggle="collapse"
-                data-bs-target="#collapseNegocios"
-                aria-expanded="false"
-                aria-controls="collapseLayouts"
+                class="nav-link <%= active === 'clients' ? 'active' : '' %>"
+                href="/clients"
               >
                 <div class="sb-nav-link-icon">
-                  <i class="fa-solid fa-briefcase"></i>
+                  <i class="fa-solid fa-building-user"></i>
                 </div>
-                CLIENTES
-                <div class="sb-sidenav-collapse-arrow">
-                  <i class="fas fa-angle-down"></i>
-                </div>
+                Clientes
               </a>
-              <div
-                class="collapse"
-                id="collapseNegocios"
-                aria-labelledby="headingOne"
-                data-bs-parent="#sidenavAccordion"
-              >
-                <nav class="sb-sidenav-menu-nested nav">
-                  <a class="nav-link" href="/clients">Todos</a>
-                  <a class="nav-link" href="layout-sidenav-light.html"
-                    >Agregar</a
-                  >
-                </nav>
-              </div>
+              
               <!--Fin Negocios-->
               <!--Inventario-->
               <a
@@ -253,7 +234,9 @@
           </div>
           <div class="sb-sidenav-footer">
             <div class="small">Bienvenido:</div>
-            <%= user.name.concat(" ", user.last_name) %>
+            <%= user.name %>
+            <br />
+            <%= user.last_name %>
           </div>
         </nav>
       </div>

@@ -99,7 +99,8 @@
 </div>
 <%- include("partials/errorRowModal")%> <%-
 include('partials/formularios/users/newUserForm') %> <%-
-include('partials/formularios/users/editUserForm') %> <%- contentFor('styles') %>
+include('partials/formularios/users/editUserForm') %> <%- contentFor('styles')
+%>
 <!--Datatables-->
 <link
   rel="stylesheet"
@@ -228,12 +229,13 @@ include('partials/formularios/users/editUserForm') %> <%- contentFor('styles') %
           render: function (data) {
             if (data === "HABILITADO") {
               return `
-              <div title="HABILITADO" class="btn btn-success  w-100"></div>`;
+              <button title="INHABILITADO" class="btn btn-success btn-sm w-100" style="pointer-events:none">Habilitado</button>`;
             } else {
               return `
-              <div title="INHABILITADO" class="btn btn-danger w-100"></div>`;
+              <button title="INHABILITADO" class="btn btn-danger btn-sm w-100 nowrap" style="pointer-events:none">Inhabilitado</button>`;
             }
           },
+          width: "11%",
         },
       ],
       oLanguage: { sSearch: "" },
