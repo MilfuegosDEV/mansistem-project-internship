@@ -14,19 +14,23 @@
       </div>
       <div class="modal-body">
         <form method="post" id="registerForm">
-          <div class="form-floating mb-2 mb-md-3">
-            <input
-              class="form-control"
-              id="inputName"
-              type="text"
-              placeholder="Nombre"
-              name="name"
-              autocomplete="false"
-              required
-            />
-            <label for="inputName">Nombre</label>
+          <div class="row">
+            <div class="col-12 mb-2 mb-md-3">
+              <div class="form-floating">
+                <input
+                  class="form-control"
+                  id="inputName"
+                  type="text"
+                  placeholder="Nombre"
+                  name="name"
+                  autocomplete="false"
+                  required
+                />
+                <label for="inputName">Nombre</label>
+              </div>
+            </div>
           </div>
-					<div class="row">
+          <div class="row">
             <div class="col-6 mb-2 mb-md-3">
               <div class="form-floating">
                 <input
@@ -56,22 +60,6 @@
               </div>
             </div>
           </div>
-          <div class="row mb-2 mb-md-3">
-            <div class="col-12">
-              <div class="form-floating">
-                <textarea
-                  class="form-control"
-                  id="inputAddress"
-                  type="text"
-                  placeholder="Dirección"
-                  name="address"
-                  autocomplete="false"
-                  required
-                ></textarea>
-                <label for="inputAddress">Dirección</label>
-              </div>
-            </div>
-          </div>
           <div class="row">
             <div class="col-12 mb-2 mb-md-3">
               <div class="form-floating">
@@ -94,8 +82,23 @@
               </div>
             </div>
           </div>
-
-          <!-- Agrega más campos según sea necesario -->
+          <div class="row">
+            <div class="col-12">
+              <div class="form-floating">
+                <textarea
+                  class="form-control charCount auto-resize"
+                  id="inputAddress"
+                  type="text"
+                  placeholder="Dirección"
+                  name="address"
+                  required
+                  maxlength="255"
+                ></textarea>
+                <p><span class="charCountDisplay">0</span> / 255 caracteres</p>
+                <label for="inputAddress">Dirección</label>
+              </div>
+            </div>
+          </div>
         </form>
       </div>
       <div class="modal-footer">

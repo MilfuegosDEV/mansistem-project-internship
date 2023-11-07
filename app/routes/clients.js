@@ -1,4 +1,4 @@
-const userModel = require("../models/userModel");
+const clientModel = require("../models/clientModel");
 const clientController = require("../controllers/clientController");
 
 const { Router } = require("express");
@@ -9,9 +9,26 @@ const {
   checkNotEmpty,
   checkMaxLength,
   checkForBlank,
+  checkMinLength,
 } = require("../middlewares/validation"); // Middleware de validaciones.
 
 router.post("/addClient", async (req, res, next) => {
+  const foundUserByEmail = await clientModel.findByEmail(req.body.email);
+  if (foundUserByEmail.length > 0) {
+    res.status(400).json({
+      error: `El correo está en uso por el cliente: ${foundUserByEmail[0].name}`,
+    });
+    return; // Termina la ejecución si el usuario ya existe
+  }
+
+  const foundUserByPhoneNumber = await clientModel.findByPhoneNumber(req.body.phone);
+  if (foundUserByPhoneNumber.length > 0) {
+    res.status(400).json({
+      error: `El número de teléfono está en uso por el cliente: ${foundUserByPhoneNumber[0].name}`,
+    });
+    return;
+  }
+
   const validations = [
     (req) => checkNotEmpty(req.body.name, "nombre"),
     (req) => checkNotEmpty(req.body.email, "correo"),
@@ -19,7 +36,8 @@ router.post("/addClient", async (req, res, next) => {
     (req) => checkNotEmpty(req.body.address, "dirección"),
     (req) => checkForBlank(req.body.email, "correo"),
     (req) => checkMaxLength(req.body.name, 60, "nombre"),
-    (req) => checkMaxLength(req.body.phone, 70, "télefono"),
+    (req) => checkMinLength(req.body.phone ,8,"télefono"),
+    (req) => checkMaxLength(req.body.phone, 8, "télefono"),
     (req) => checkMaxLength(req.body.email, 100, "correo"),
   ];
 
@@ -48,6 +66,29 @@ router.post("/addClient", async (req, res, next) => {
 });
 
 router.post("/editClient", async (req, res, next) => {
+  const foundUserByEmail = await clientModel.findByEmail(req.body.email);
+  if (foundUserByEmail.length > 0) {
+    if (foundUserByEmail[0].id != req.body.clientId) {
+      console.log(foundUserByEmail[0].id !== req.body.clientId);
+      res.status(400).json({
+        error: `El correo está en uso por el cliente: ${foundUserByEmail[0].name}`,
+      });
+      return;
+    }
+  }
+
+  const foundUserByPhoneNumber = await clientModel.findByPhoneNumber(
+    req.body.phone
+  );
+  if (foundUserByPhoneNumber.length > 0) {
+    if (foundUserByPhoneNumber[0].id != req.body.clientId) {
+      res.status(400).json({
+        error: `El número de teléfono está en uso por el cliente: ${foundUserByPhoneNumber[0].name}`,
+      });
+      return;
+    }
+  }
+
   const validations = [
     (req) => checkNotEmpty(req.body.name, "nombre"),
     (req) => checkNotEmpty(req.body.email, "correo"),
@@ -55,7 +96,8 @@ router.post("/editClient", async (req, res, next) => {
     (req) => checkNotEmpty(req.body.address, "dirección"),
     (req) => checkForBlank(req.body.email, "correo"),
     (req) => checkMaxLength(req.body.name, 60, "nombre"),
-    (req) => checkMaxLength(req.body.phone, 70, "télefono"),
+    (req) => checkMinLength(req.body.phone,8,"télefono"),
+    (req) => checkMaxLength(req.body.phone, 8, "télefono"),
     (req) => checkMaxLength(req.body.email, 100, "correo"),
   ];
 

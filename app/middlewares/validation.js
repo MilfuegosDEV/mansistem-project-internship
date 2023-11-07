@@ -16,9 +16,9 @@ const checkForBlank = (value, field) => {
 };
 
 // Función de validación para verificar la longitud mínima
-const checkMinLength = (value, minLength) => {
+const checkMinLength = (value, minLength, field) => {
   if (!value || value.length < minLength) {
-    return `La contraseña debe tener al menos ${minLength} caracteres.`;
+    return `El campo ${field} debe tener al menos ${minLength} caracteres.`;
   }
   return null;
 };

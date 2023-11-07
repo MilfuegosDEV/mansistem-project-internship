@@ -131,6 +131,31 @@ contentFor('styles') %>
 <script src="https://cdn.datatables.net/select/1.7.0/js/dataTables.select.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.8.0/Chart.min.js"></script>
 <script nonce="<%=cspNonce%>">
+  $(document).ready(function () {
+    // Initialize the auto-resize textareas
+    $(".auto-resize").on("input", function () {
+      console.log("hole");
+      this.style.height = "auto";
+      this.style.height = this.scrollHeight + "px";
+    });
+
+    // Update the character count for all textareas with the class "charCount"
+    $(".charCount").on("input", function () {
+      var $textarea = $(this);
+      var $charCountDisplay = $textarea.next().find(".charCountDisplay");
+      var text = $textarea.val();
+      var maxLength = $textarea.attr("maxlength");
+
+      if (text.length > maxLength) {
+        $textarea.val(text.substring(0, maxLength));
+        $charCountDisplay.text(maxLength);
+      } else {
+        $charCountDisplay.text(text.length);
+      }
+    });
+  });
+</script>
+<script nonce="<%=cspNonce%>">
   Chart.defaults.global.defaultFontFamily =
     '-apple-system,system-ui,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif';
   Chart.defaults.global.defaultFontColor = "#292b2c";
@@ -193,7 +218,7 @@ contentFor('styles') %>
     $("#editInputName").val(data.name);
     $("#editInputPhone").val(data.phone);
     $("#editInputEmail").val(data.email);
-    $("#editInputAddress").val(data.address);
+    $("#editInputAddress").val(data.address).trigger("input");
     $("#editProvinces").val(selectedProvince);
     $("#editStatus").val(selectedStatus);
     $("#editarModal").modal("show");
@@ -217,7 +242,7 @@ contentFor('styles') %>
       columns: [
         { title: "ID", data: "id" },
         { title: "NOMBRE", data: "name" },
-        { title: "DIRECCIÓN", data: "address" },
+        { title: "DIRECCIÓN", data: "address", width: "35%" }, // Ajusta el ancho de la columna de dirección al 30% del contenedor
         { title: "TELÉFONO", data: "phone" },
         { title: "CORREO", data: "email" },
         { title: "PROVINCIA", data: "province_name" },
@@ -225,7 +250,6 @@ contentFor('styles') %>
           title: "ESTADO",
           data: "status",
           render: function (data) {
-            console.log(data);
             if (data === "HABILITADO") {
               return `
               <div title="HABILITADO" class="btn btn-success  w-100"></div>`;
@@ -274,6 +298,7 @@ contentFor('styles') %>
     const editForm = document.getElementById("editForm");
 
     const setupForm = (form, messageBox, url) => {
+      messageBox.innerHTML = "";
       const validateForm = () => {
         const errors = [];
         const data = Object.fromEntries(new FormData(form).entries());
