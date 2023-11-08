@@ -5,6 +5,7 @@ const {
   forwardAuthenticated,
 } = require("../middlewares/auth");
 
+const userModel = require("../models/userModel");
 const userRolesModel = require("../models/userRolModel");
 const provincesModel = require("../models/provinceModel");
 const statusModel = require("../models/statusModel");
@@ -29,6 +30,15 @@ router.get("/clients", ensureAuthenticated, async (req, res, _next) => {
     user: req.user,
     status: await statusModel.getAll(),
     provinces: await provincesModel.getAll(),
+  });
+});
+
+router.get("/tickets", ensureAuthenticated, async (req, res, _next) => {
+  res.render("tickets", {
+    title: "CASOS",
+    active: "tickets",
+    user: req.user,
+    enabledUsers: await userModel.getEnabledUsers(),
   });
 });
 

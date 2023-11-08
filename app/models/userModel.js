@@ -34,6 +34,26 @@ class User {
       throw new Error("Error al recuperar el usuario.");
     }
   }
+  /**
+   * Obtiene el id, el nombre y el apellido de los usuarios habilitados
+   * @returns {Promise<Array>} Una promesa que se resuelve con un arreglo que incluye la el id, nombre y apellidos de los todos los usuarios habilitados.
+   */
+  static async getEnabledUsers() {
+    try {
+      const query = `
+        SELECT 
+          id, name, last_name 
+        FROM USER
+        WHERE 
+          status_id = ?
+      `;
+      const results = await db.query(query, 1);
+      return results;
+    } catch (error) {
+      console.error(error);
+      throw new Error("ERROR AL RECUPERAR LOS USUARIOS");
+    }
+  }
 }
 
 module.exports = User;
