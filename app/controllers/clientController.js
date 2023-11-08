@@ -12,8 +12,8 @@ class clientController {
         VALUES 
           (?, ?, ?, ? ,?);`;
       const result = await db.query(query, [
-        name.toUpperCase(),
-        address.toUpperCase(),
+        name.toUpperCase().trim(),
+        address.toUpperCase().trim(),
         phone.toLowerCase(),
         email.toLowerCase().trim(),
         province_id,
@@ -42,8 +42,8 @@ class clientController {
         `;
 
       const result = await db.query(query, [
-        name.toUpperCase(),
-        address.toUpperCase(),
+        name.toUpperCase().trim(),
+        address.toUpperCase().trim(),
         phone.toLowerCase(),
         email.toLowerCase().trim(),
         province_id,

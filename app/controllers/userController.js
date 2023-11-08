@@ -26,10 +26,10 @@ class userController {
         VALUES 
           (?, ?, ?, ?, ?, ?, ?)`;
       const result = await db.query(query, [
-        name.toUpperCase(),
-        lastname.toUpperCase(),
-        username.toLowerCase(),
-        email.toLowerCase(),
+        name.toUpperCase().trim(),
+        lastname.toUpperCase().trim(),
+        username.toLowerCase().trim(),
+        email.toLowerCase().trim(),
         hashedPassword,
         role,
         province,
@@ -49,7 +49,7 @@ class userController {
           SET email=?,password=?, role_id=?, province_id = ?, status_id=?
         WHERE id=?;`;
       const result = await db.query(query, [
-        email.toLowerCase(),
+        email.toLowerCase().trim(),
         hashedPassword,
         role,
         province,
