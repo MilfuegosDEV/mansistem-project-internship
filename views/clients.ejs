@@ -50,7 +50,7 @@ contentFor('styles') %>
 <script nonce="<%=cspNonce%>">
   $(document).ready(function () {
     // Initialize the auto-resize textareas
-    $(".auto-resize").on("input", function () {
+    $(".auto-resize").on("input click touchstart ", function () {
       this.style.height = "auto";
       this.style.height = this.scrollHeight + "px";
     });
@@ -115,7 +115,7 @@ contentFor('styles') %>
         { title: "NOMBRE", data: "name" },
         { title: "TELÉFONO", data: "phone" },
         { title: "CORREO", data: "email" },
-        { title: "DIRECCIÓN", data: "address", width: "35%" }, // Ajusta el ancho de la columna de dirección al 30% del contenedor
+        { title: "DIRECCIÓN", data: "address", width: "30%" }, // Ajusta el ancho de la columna de dirección al 30% del contenedor
         { title: "PROVINCIA", data: "province_name" },
         {
           title: "ESTADO",
@@ -169,7 +169,7 @@ contentFor('styles') %>
     const registerForm = document.getElementById("registerForm");
     const editForm = document.getElementById("editForm");
 
-    const setupForm = (form, messageBox, url) => {
+    const setupForm = (modal, form, messageBox, url) => {
       messageBox.innerHTML = "";
       const validateForm = () => {
         const errors = [];
@@ -222,10 +222,11 @@ contentFor('styles') %>
             displayErrors([result.error]);
           } else {
             messageBox.innerHTML = `<div class="alert alert-success mb-1 py-1"><strong>¡Hecho!</strong> ${result.success}</div>`;
-            form.reset();
             recargarTabla();
             setTimeout(() => {
               messageBox.innerHTML = "";
+              form.reset();
+              $(`#${modal}`).modal("hide");
             }, 1000);
           }
         } catch (error) {
@@ -234,10 +235,11 @@ contentFor('styles') %>
         }
       });
     };
-
+    const crearModal = "crearModal";
     const registerMessageBox = document.getElementById("messageBox");
-    setupForm(registerForm, registerMessageBox, "/addClient");
+    setupForm(crearModal, registerForm, registerMessageBox, "/addClient");
+    const editarModal = "editarModal";
     const editMessageBox = document.getElementById("editMessageBox");
-    setupForm(editForm, editMessageBox, "/editClient");
+    setupForm(editarModal, editForm, editMessageBox, "/editClient");
   });
 </script>

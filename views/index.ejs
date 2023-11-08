@@ -275,7 +275,7 @@ include('partials/formularios/users/editUserForm') %> <%- contentFor('styles')
     const registerForm = document.getElementById("registerForm");
     const editForm = document.getElementById("editForm");
 
-    const setupForm = (form, messageBox, url) => {
+    const setupForm = (modal, form, messageBox, url) => {
       const validateForm = () => {
         const errors = [];
         const data = Object.fromEntries(new FormData(form).entries());
@@ -335,8 +335,12 @@ include('partials/formularios/users/editUserForm') %> <%- contentFor('styles')
             displayErrors([result.error]);
           } else {
             messageBox.innerHTML = `<div class="alert alert-success mb-1 py-1"><strong>¡Hecho!</strong> ${result.success}</div>`;
-            form.reset();
             recargarTabla();
+            setTimeout(() => {
+              messageBox.innerHTML = "";
+              form.reset();
+              $(`#${modal}`).modal("hide");
+            }, 1000);
           }
         } catch (error) {
           console.error(error);
@@ -344,11 +348,11 @@ include('partials/formularios/users/editUserForm') %> <%- contentFor('styles')
         }
       });
     };
-
+    const crearModal = "crearModal";
     const registerMessageBox = document.getElementById("messageBox");
-    setupForm(registerForm, registerMessageBox, "/addUser");
-
+    setupForm(crearModal, registerForm, registerMessageBox, "/addUser");
+    const editarModal = "editarModal";
     const editMessageBox = document.getElementById("editMessageBox");
-    setupForm(editForm, editMessageBox, "/editUser");
+    setupForm(editarModal, editForm, editMessageBox, "/editUser");
   });
 </script>
