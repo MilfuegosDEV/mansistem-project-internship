@@ -1,3 +1,6 @@
+/**
+ * Este módulo contiene funciones para poder crear y editar usuarios.
+ */
 const userModel = require("../models/userModel");
 const userController = require("../controllers/userController");
 
@@ -13,7 +16,7 @@ const {
   checkForBlank,
 } = require("../middlewares/validation"); // Middleware de validaciones.
 
-// Manejo de registro
+/**Permite añadir clientes. */
 router.post("/addUser", async (req, res, next) => {
   const validations = [
     (req) => checkNotEmpty(req.body.name, "nombre"),
@@ -62,6 +65,9 @@ router.post("/addUser", async (req, res, next) => {
   }
 });
 
+/**
+ * Permite editar la información del usuario.
+ */
 router.post("/editUser", async (req, res, next) => {
   const validations = [
     (req) => checkMinLength(req.body.password, 6),

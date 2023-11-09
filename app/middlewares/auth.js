@@ -1,4 +1,4 @@
-const flashMessages = require("../utils/flash-messages");
+const flashMessages = require("./flash-messages");
 
 const ensureAuthenticated = (req, res, next) => {
   if (req.isAuthenticated()) {

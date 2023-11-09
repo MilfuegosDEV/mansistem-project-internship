@@ -1,15 +1,16 @@
 const express = require("express");
 const router = express.Router();
-const {
-  ensureAuthenticated,
-  forwardAuthenticated,
-} = require("../middlewares/auth");
+const { ensureAuthenticated } = require("../middlewares/auth");
+
+// handlers
+const clientsHandler = require("./clientsHandler");
+const usersHandler = require("./usersHandler");
+const auth = require("./auth");
 
 const userModel = require("../models/userModel");
 const userRolesModel = require("../models/userRolModel");
 const provincesModel = require("../models/provinceModel");
 const statusModel = require("../models/statusModel");
-const flashMessages = require("../utils/flash-messages");
 
 router.get("/", ensureAuthenticated, async (req, res, _next) => {
   res.render("index", {
@@ -22,6 +23,9 @@ router.get("/", ensureAuthenticated, async (req, res, _next) => {
   });
 });
 
+// Para para procesar formulariso respecto a los usuarios
+router.use("/", usersHandler);
+
 // ADMISTRAR LOS CLIENTES
 router.get("/clients", ensureAuthenticated, async (req, res, _next) => {
   res.render("clients", {
@@ -33,6 +37,9 @@ router.get("/clients", ensureAuthenticated, async (req, res, _next) => {
   });
 });
 
+// Para procesar formularios respecto a los clientes.
+router.use("/", clientsHandler);
+
 router.get("/tickets", ensureAuthenticated, async (req, res, _next) => {
   res.render("tickets", {
     title: "CASOS",
@@ -42,25 +49,10 @@ router.get("/tickets", ensureAuthenticated, async (req, res, _next) => {
   });
 });
 
-router.get("/login", forwardAuthenticated, async (_req, res, _next) => {
-  res.render("login", {
-    layout: false,
-    title: "INICIAR SESION",
-    message: flashMessages.getMessages(),
-  });
-});
-
-router.get("/logout", (req, res) => {
-  req.logout((err) => {
-    if (err) {
-      console.error(err);
-      // Manejar errores, por ejemplo, redirigir al usuario a una página de error
-      next(err);
-    }
-    // La sesión se ha cerrado con éxito
-    flashMessages.addMessage("success", "Sesión cerrada correctamente");
-    res.redirect("/login"); // Redirigir al usuario a la página de inicio de sesión
-  });
-});
+/**
+ * Para procesar la autenticación del usuario
+ * esto incluye el login y el logout
+ */
+router.use("/", auth);
 
 module.exports = router;

@@ -1,5 +1,9 @@
 // flashMessages.js
 
+/**
+ * Emula la funcionalidad de express-flash
+ * @returns: un objeto que contiene un mensaje.
+ */
 const flashMessages = {
   messages: {},
   addMessage(type, ...message) {

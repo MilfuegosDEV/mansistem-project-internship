@@ -1,5 +1,16 @@
-const express = require("express");
-const router = express.Router();
+/**
+ * Este módulo contiene funciones que permiten el acceso al sitio.
+ */
+
+const flashMessages = require("../middlewares/flash-messages");
+const { Router } = require("express");
+
+const {
+  forwardAuthenticated,
+  ensureAuthenticated,
+} = require("../middlewares/auth");
+
+const router = Router();
 
 const {
   checkForBlank,
@@ -45,6 +56,27 @@ router.post("/login", async (req, res, next) => {
       });
     }
   })(req, res, next);
+});
+
+router.get("/login", forwardAuthenticated, async (_req, res, _next) => {
+  res.render("login", {
+    layout: false,
+    title: "INICIAR SESION",
+    message: flashMessages.getMessages(),
+  });
+});
+
+router.get("/logout", ensureAuthenticated, (req, res) => {
+  req.logout((err) => {
+    if (err) {
+      console.error(err);
+      // Manejar errores, por ejemplo, redirigir al usuario a una página de error
+      next(err);
+    }
+    // La sesión se ha cerrado con éxito
+    flashMessages.addMessage("success", "Sesión cerrada correctamente");
+    res.redirect("/login"); // Redirigir al usuario a la página de inicio de sesión
+  });
 });
 
 module.exports = router;

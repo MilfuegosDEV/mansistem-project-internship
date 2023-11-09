@@ -1,3 +1,7 @@
+/**
+ * Este módulo contiene funciones para poder crear y editar clientes. 
+ */
+
 const clientModel = require("../models/clientModel");
 const clientController = require("../controllers/clientController");
 
@@ -13,6 +17,9 @@ const {
   checkPhoneNumber,
 } = require("../middlewares/validation"); // Middleware de validaciones.
 
+/** 
+ * Permite añadir clientes
+ */
 router.post("/addClient", async (req, res, next) => {
   const foundUserByName = await clientModel.findByName(req.body.name);
   if (foundUserByName.length > 0) {
@@ -76,6 +83,9 @@ router.post("/addClient", async (req, res, next) => {
   }
 });
 
+/**
+ * Permite editar la información del cliente.
+ */
 router.post("/editClient", async (req, res, next) => {
   const foundUserByName = await clientModel.findByName(req.body.name);
   if (foundUserByName.length > 0) {
@@ -146,5 +156,6 @@ router.post("/editClient", async (req, res, next) => {
     next(err);
   }
 });
+
 
 module.exports = router;
