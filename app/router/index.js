@@ -17,10 +17,22 @@ router.get("/", ensureAuthenticated, async (req, res, _next) => {
     title: "INICIO",
     active: "home",
     user: req.user,
-    userRoles: await userRolesModel.getAll(),
-    status: await statusModel.getAll(),
-    provinces: await provincesModel.getAll(),
   });
+});
+
+router.get("/users", ensureAuthenticated, async (req, res, next) => {
+  if (req.user.role_id === 1) {
+    res.render("users", {
+      title: "USUARIOS",
+      active: "users",
+      user: req.user,
+      userRoles: await userRolesModel.getAll(),
+      status: await statusModel.getAll(),
+      provinces: await provincesModel.getAll(),
+    });
+    return;
+  }
+  next(401)
 });
 
 // Para para procesar formulariso respecto a los usuarios

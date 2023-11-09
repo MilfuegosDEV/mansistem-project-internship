@@ -8,7 +8,7 @@ const db = require("../config/db-config");
 
 db.query = util.promisify(db.query);
 
-router.get("/clients", async (req, res, _next) => {
+router.get("/clients", async (req, res, next) => {
   const columns = [
     { title: "CLIENT.id", data: "id" },
     { title: "CLIENT.name", data: "cliente" },
@@ -66,7 +66,7 @@ router.get("/clients", async (req, res, _next) => {
     });
   } catch (err) {
     console.error("Error fetching clients:", err);
-    res.status(500).send("Server error occurred while fetching users.");
+    next(500)
   }
 });
 

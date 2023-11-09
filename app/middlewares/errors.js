@@ -2,7 +2,7 @@ const path = require("path");
 const views = path.join(__dirname, "..", "..", "views");
 
 function errors(err, _req, res, _next) {
-  if (err.status === 401) {
+  if (err === 401) {
     res.status(401).sendFile(path.join(views, "errors/401.html"));
     return;
   }

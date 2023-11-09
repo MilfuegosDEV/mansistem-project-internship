@@ -27,7 +27,7 @@ router.get("/userRolesCount", async (req, res, next) => {
  * Retorna la información del usuario para insertarla dentro de
  * DataTables, utiliza serverside proccess para optimizar.
  */
-router.get("/users", async (req, res, _next) => {
+router.get("/users", async (req, res, next) => {
   // Define the columns with their respective data mappings
   const columns = [
     { title: "USER.id", data: "id" },
@@ -89,7 +89,7 @@ router.get("/users", async (req, res, _next) => {
     });
   } catch (err) {
     console.error("Error fetching users:", err);
-    res.status(500).send("Server error occurred while fetching users.");
+    next(500)
   }
 });
 

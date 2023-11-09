@@ -85,8 +85,6 @@
               </a>
               <div class="sb-sidenav-menu-heading">HELPDESK</div>
               <!--Casos-->
-
-              <!-- Fin Casos-->
               <a
                 class="nav-link <%= active === 'tickets' ? 'active' : '' %>"
                 href="/tickets"
@@ -96,8 +94,19 @@
                 </div>
                 Casos
               </a>
-
-              <!--Negocios-->
+              <!-- Fin Casos-->
+              <!-- Usuarios -->
+              <a
+                class="nav-link <%= active === 'users' ? 'active' : '' %>"
+                href="/users"
+              >
+                <div class="sb-nav-link-icon">
+                  <i class="fa-solid fa-users-gear"></i>
+                </div>
+                Usuarios
+              </a>
+              <!-- Fin Usuarios -->
+              <!-- Clientes -->
               <a
                 class="nav-link <%= active === 'clients' ? 'active' : '' %>"
                 href="/clients"
@@ -108,7 +117,7 @@
                 Clientes
               </a>
 
-              <!--Fin Negocios-->
+              <!--Fin Clientes-->
               <!--Inventario-->
               <a
                 class="nav-link collapsed"
