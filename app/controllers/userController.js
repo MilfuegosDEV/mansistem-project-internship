@@ -14,7 +14,8 @@ class userController {
     email,
     password,
     role,
-    province
+    province,
+    performed_by_user_id
   ) {
     try {
       // Hash de la contraseña antes de almacenarla
@@ -35,7 +36,13 @@ class userController {
         province,
       ]);
 
-      return result;
+      try {
+        this.#audit_new_user(performed_by_user_id);
+      } catch (err) {
+        console.error(error);
+      } finally {
+        return result;
+      }
     } catch (error) {
       console.error(error);
       throw new Error("Error al agregar el usuario.");
@@ -60,6 +67,25 @@ class userController {
     } catch (error) {
       console.error(error);
       throw error;
+    }
+  }
+
+
+  static async #audit_new_user(performed_by_user_id) {
+    try {
+      const [last] = await db.query(
+        "SELECT id FROM USER ORDER BY id DESC LIMIT 1;"
+      );
+
+      const results = await db.query(
+        `INSERT INTO USER_AUDIT (user_updated_id, action_performed, performed_by_user_id, field_changed) VALUES (?, ?, ?, ?);`,
+        [last.id, "INSERT", performed_by_user_id, "NUEVO USUARIO"]
+      );
+
+      return results;
+    } catch (err) {
+      console.error(err);
+      throw err;
     }
   }
 }

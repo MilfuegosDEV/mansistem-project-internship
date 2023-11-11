@@ -55,7 +55,8 @@ router.post("/addUser", async (req, res, next) => {
       req.body.email,
       req.body.password.trim(),
       req.body.role,
-      req.body.province
+      req.body.province,
+      req.user.id
     );
     res.status(200).json({ success: "Usuario registrado" });
     return;
