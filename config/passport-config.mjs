@@ -1,10 +1,7 @@
-const LocalStrategy = require("passport-local").Strategy;
+import { Strategy as LocalStrategy } from "passport-local";
+import bycriptjs from "bcryptjs";
 
-const bcrypt = require("bcryptjs");
-
-const userModel = require("../models/userModel");
-
-function initialize(passport) {
+export default function initialize(passport) {
   passport.use(
     new LocalStrategy(
       { usernameField: "username", passwordField: "password" },
@@ -12,18 +9,18 @@ function initialize(passport) {
         try {
           const foundUser = await userModel.findOne(username);
           // Si no encuentra algún usuario
-          if (!(foundUser.length > 0)) {
+          if (!foundUser) {
             return done(null, false, "El usuario no está registrado.");
           }
           // Compara el hash de la contraseña con la contraseña ingresada.
 
-          if (foundUser[0].status_id) {
-            const passwordMatch = await bcrypt.compare(
+          if (foundUser.status_id) {
+            const passwordMatch = await bcryptjs.compare(
               password.trim(),
-              foundUser[0].password.trim()
+              foundUser.password.trim()
             );
             if (passwordMatch) {
-              return done(null, foundUser[0]); // devuelve el usuario
+              return done(null, foundUser); // devuelve el usuario
             } else {
               return done(null, false, "La contraseña es incorrecta."); // Sino indica que no es la contraseña
             }
@@ -52,5 +49,3 @@ function initialize(passport) {
       });
   });
 }
-
-module.exports = initialize;

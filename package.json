@@ -1,15 +1,19 @@
 {
   "name": "mansistem",
-  "version": "1.0.0",
-  "description": "Man Sistem Help Desk",
-  "main": "index.js",
+  "version": "2.0.0",
+  "description": "administrador para el control de tiquetes de mantenimientos del tipo preventivo y correctivo",
+  "main": "index.mjs",
+  "scripts": {
+    "test": "test.mjs"
+  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/MilfuegosDEV/ManSistem.git"
   },
   "keywords": [
-    "Help",
-    "desk"
+    "mansistem",
+    "dashboard",
+    "admin"
   ],
   "author": "MilfuegosDEV",
   "license": "ISC",
@@ -17,25 +21,21 @@
     "url": "https://github.com/MilfuegosDEV/ManSistem/issues"
   },
   "homepage": "https://github.com/MilfuegosDEV/ManSistem#readme",
-  "devDependencies": {
-    "dotenv": "^16.3.1",
-    "nodemon": "^3.0.1"
-  },
   "dependencies": {
     "bcryptjs": "^2.4.3",
     "cookie-parser": "^1.4.6",
+    "dotenv": "^16.3.1",
     "ejs": "^3.1.9",
     "express": "^4.18.2",
     "express-ejs-layouts": "^2.5.1",
     "express-mysql-session": "^3.0.0",
     "express-session": "^1.17.3",
-    "helmet": "^7.0.0",
+    "helmet": "^7.1.0",
     "helmet-csp": "^3.4.0",
     "morgan": "^1.10.0",
-    "mysql2": "^3.6.2",
+    "mysql2": "^3.6.3",
     "passport": "^0.6.0",
     "passport-local": "^1.0.0",
-    "rotating-file-stream": "^3.1.1",
-    "socket.io": "^4.7.2"
+    "rotating-file-stream": "^3.1.1"
   }
 }

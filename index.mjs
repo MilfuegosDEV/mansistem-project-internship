@@ -1,36 +1,33 @@
-// Importaciones necesarias
-require("dotenv").config();
-const db = require("./config/db-config");
-const path = require("path");
-const { createServer } = require("http");
+import "dotenv/config";
+import db from "./db/index.mjs";
+import { createRequire } from "module";
+import { fileURLToPath } from "url";
+import path from "path";
 
-const express = require("express");
-const layout = require("express-ejs-layouts");
+import { randomBytes } from "crypto";
+import helmet from "helmet";
+import contentSecurityPolicy from "helmet-csp";
+import morgan from "morgan";
+import rfs from "rotating-file-stream";
 
-const cookie = require("cookie-parser");
-const session = require("express-session");
+import express from "express";
+import session from "express-session";
+import layout from "express-ejs-layouts";
+import cookieParser from "cookie-parser";
+const require = createRequire(import.meta.url);
+import passport from "passport";
+import initialize from "./config/passport-config.mjs";
 const MySQLStore = require("express-mysql-session")(session);
-const socketConfig = require("./config/socket-config");
 
-const passport = require("passport");
-const initialize = require("./app/controllers/passport-config");
-
-const crypto = require("crypto");
-const helmet = require("helmet");
-const contentSecurityPolicy = require("helmet-csp");
-const morgan = require("morgan");
-const rfs = require("rotating-file-stream");
-
-const router = require("./app/router");
-const api = require("./api");
-
-const { errors, pageNotFound } = require("./app/middlewares/errors");
+import http from "http";
+import { router } from "./app/router/index.mjs";
+import { errors, pageNotFound } from "./app/middlewares/errors.mjs";
 
 const app = express();
-
-// Configuración de Express
 const PORT = process.env.PORT || 3000;
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
+// Seguridad.
 /**
  * Permite insertar scripts dentro de la página debido a la politica de seguridad
  * configurada con helmet. Si se requiere insertar un script, se debe hacer de la siguiente manera:
@@ -39,7 +36,7 @@ const PORT = process.env.PORT || 3000;
  * </script>"
  */
 app.use((_req, res, next) => {
-  res.locals.cspNonce = crypto.randomBytes(16).toString("hex");
+  res.locals.cspNonce = randomBytes(16).toString("hex");
   next();
 });
 
@@ -74,16 +71,18 @@ app.use(
  * es recomendable revisar este archivo en el caso de que el servidor fallé para ver que
  * es lo que lo hace fallar.
  */
-
 const accessLogStream = rfs.createStream("access.log", {
   interval: "1d", // rotar diariamente
-  path: path.join(__dirname, "log"), // directorio para los logs
+  path: path.join(__dirname, ".log"), // directorio para los logs
 });
+
 // Configuración de morgan para usar rotating-file-stream
 app.use(morgan("combined", { stream: accessLogStream }));
 
+// Sessiones
 app.use(express.urlencoded({ extended: true }));
-app.use(cookie(process.env.COOKIE_SECRET));
+
+app.use(cookieParser(process.env.COOKIE_SECRET));
 app.use(express.json());
 
 // Crea una tabla dentro de la base de datos que guarde las sesiones.
@@ -107,36 +106,24 @@ initialize(passport);
 app.use(passport.initialize());
 app.use(passport.session());
 
-// Configuración de las vistas
+// Utlizando ejs como motor de vistas
 app.set("view engine", "ejs");
-app.set("views", path.join(__dirname, "views"));
+app.set("views", "app/views");
+app.use("/views", express.static(path.join(__dirname, "app", "views")));
 
-// Configuración del layout
-app.set("layout", "layouts/layout"); // Busca layouts/layout en lugar de layout.
+// para permitir usar un master page.
+app.set("layout", "layouts/layout");
 app.use(layout);
 
-// Rutas
+// Configuración de los archivos estáticos.
+app.use("/public", express.static(path.join(__dirname, "public")));
+
+app.use(errors);
+app.use(pageNotFound);
+//routes
 app.use("/", router);
 
-// API
-app.use("/api", api);
-
-// Carpeta estática
-app.use("/static", express.static(path.join(__dirname, "static")));
-
-// Middleware para manejo de errores
-app.use(errors); // manejo de errores del tipo 500 y 401
-app.use(pageNotFound); // manejo de errores 404
-
-// Socket config.
-const server = createServer(app);
-
-const io = socketConfig(server);
-io.use((socket, next) => {
-  sessionMiddleware(socket.request, {}, next);
-});
-
-// Iniciar el servidor
-server.listen(PORT, () => {
-  console.log(`Servidor ejecutándose en http://localhost:${PORT}`);
+const server = http.createServer(app);
+server.listen(PORT, function () {
+  console.log("Running into http://localhost:3000");
 });
