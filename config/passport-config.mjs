@@ -1,5 +1,6 @@
 import { Strategy as LocalStrategy } from "passport-local";
-import bycriptjs from "bcryptjs";
+import bcryptjs from "bcryptjs";
+import UserModel from "../app/models/UserModel.mjs";
 
 export default function initialize(passport) {
   passport.use(
@@ -7,13 +8,12 @@ export default function initialize(passport) {
       { usernameField: "username", passwordField: "password" },
       async (username, password, done) => {
         try {
-          const foundUser = await userModel.findOne(username);
+          const foundUser = await UserModel.findByUsername(username);
           // Si no encuentra algún usuario
           if (!foundUser) {
             return done(null, false, "El usuario no está registrado.");
           }
           // Compara el hash de la contraseña con la contraseña ingresada.
-
           if (foundUser.status_id) {
             const passwordMatch = await bcryptjs.compare(
               password.trim(),
@@ -39,8 +39,7 @@ export default function initialize(passport) {
   });
 
   passport.deserializeUser((id, done) => {
-    userModel
-      .findById(id)
+    UserModel.findById(id)
       .then((user) => {
         return done(null, user[0]);
       })

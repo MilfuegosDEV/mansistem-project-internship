@@ -1,15 +1,11 @@
-<% if (message && message.errors && message.errors.length) { %> 
-  <% message.errors.forEach(error => { %>
-    <div class="alert alert-danger mb-1 py-1">
-      <strong>¡Error!</strong> <%= error.msg ? error.msg : error %> 
-    </div>
-  <% }) %> 
-<% } %>
-
-<% if (message && message.success && message.success.length) { %> 
-  <% message.success.forEach(successMsg => { %>
-    <div class="alert alert-success mb-1 py-1">
-      <strong>¡Hecho!</strong> <%= successMsg %>
-    </div>
-  <% }) %> 
-<% } %>
+<% if (message && message.errors && message.errors.length) { %> <%
+message.errors.forEach(error => { %>
+<div class="alert alert-danger mb-1 py-1">
+  <strong>¡Error!</strong> <%= error.msg ? error.msg : error %>
+</div>
+<% }) %> <% } %> <% if (message && message.success && message.success.length) {
+%> <% message.success.forEach(successMsg => { %>
+<div class="alert alert-success mb-1 py-1">
+  <strong>¡Hecho!</strong> <%= successMsg %>
+</div>
+<% }) %> <% } %>

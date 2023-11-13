@@ -54,6 +54,7 @@ app.use(
       ],
       scriptSrc: [
         "'self'",
+        "https://code.jquery.com",
         "https://use.fontawesome.com",
         "https://cdn.jsdelivr.net",
         "https://cdnjs.cloudflare.com",
@@ -86,7 +87,7 @@ app.use(cookieParser(process.env.COOKIE_SECRET));
 app.use(express.json());
 
 // Crea una tabla dentro de la base de datos que guarde las sesiones.
-const sessionStore = new MySQLStore({}, db);
+// const sessionStore = new MySQLStore({}, db);
 const sessionMiddleware = session({
   secret: process.env.SESSION_SECRET, // clave secreta segura desde variables de entorno
   saveUninitialized: true,
@@ -96,7 +97,7 @@ const sessionMiddleware = session({
     secure: process.env.NODE_ENV === "production", // habilitado en producción
     maxAge: 1 * 3_600_000, // cantidad de horas * lo equivalente a una hora en milisegundos.
   },
-  store: sessionStore,
+  // store: sessionStore,
 });
 
 app.use(sessionMiddleware);
@@ -109,7 +110,7 @@ app.use(passport.session());
 // Utlizando ejs como motor de vistas
 app.set("view engine", "ejs");
 app.set("views", "app/views");
-app.use("/views", express.static(path.join(__dirname, "app", "views")));
+app.use("/views", express.static(path.join(__dirname, "views")));
 
 // para permitir usar un master page.
 app.set("layout", "layouts/layout");

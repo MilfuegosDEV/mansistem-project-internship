@@ -8,7 +8,7 @@ export const errors = (err, _req, res, _next) => {
   return;
 };
 
-export const pageNotFound = (_req, res, _next) => {
+export const pageNotFound = (_err, _req, res, _next) => {
   res.status(404).render("errors/404", { layout: false });
   return;
 };

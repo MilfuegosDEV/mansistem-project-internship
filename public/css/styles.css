@@ -390,7 +390,6 @@ textarea {
   line-height: inherit;
   resize: none;
   overflow: hidden;
-
 }
 
 button,
@@ -11703,5 +11702,13 @@ table td {
   white-space: normal !important;
 }
 .selected-row {
-  background-color: #FFFF00; /* Cambia el color de fondo a amarillo */
+  background-color: #ffff00; /* Cambia el color de fondo a amarillo */
+}
+
+.auth-bg {
+  background-image: url(/public/assets/images/bg.svg);
+  background-repeat: no-repeat;
+  background-position: center center;
+  background-size: cover;
+  background-attachment: fixed;
 }
