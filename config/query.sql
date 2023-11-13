@@ -60,6 +60,20 @@ CREATE TABLE IF NOT EXISTS USER (
     FOREIGN KEY (status_id) REFERENCES STATUS(id)
 ) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
+CREATE TABLE IF NOT EXISTS USER_AUDIT (
+	audit_id INT AUTO_INCREMENT PRIMARY KEY,
+    user_updated_id INT NOT NULL,
+    action_performed ENUM('INSERT','UPDATE'),
+    performed_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    performed_by_user_id INT NOT NULL,
+    field_changed VARCHAR(255),
+    old_value VARCHAR(255),
+    new_value VARCHAR(255),
+    
+    FOREIGN KEY (user_updated_id) REFERENCES USER(id),
+    FOREIGN KEY (performed_by_user_id) REFERENCES USER(id)
+);
+
 CREATE TABLE IF NOT EXISTS CLIENT (
 	id INT AUTO_INCREMENT PRIMARY KEY,
     name VARCHAR(60) UNIQUE NOT NULL,
