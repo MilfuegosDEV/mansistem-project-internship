@@ -86,7 +86,7 @@ app.use(cookieParser(process.env.COOKIE_SECRET));
 app.use(express.json());
 
 // Crea una tabla dentro de la base de datos que guarde las sesiones.
-// const sessionStore = new MySQLStore({}, db);
+const sessionStore = new MySQLStore({}, db);
 const sessionMiddleware = session({
   secret: process.env.SESSION_SECRET, // clave secreta segura desde variables de entorno
   saveUninitialized: true,
@@ -96,7 +96,7 @@ const sessionMiddleware = session({
     secure: process.env.NODE_ENV === "production", // habilitado en producción
     maxAge: 1 * 3_600_000, // cantidad de horas * lo equivalente a una hora en milisegundos.
   },
-  // store: sessionStore,
+  store: sessionStore,
 });
 
 app.use(sessionMiddleware);
@@ -123,15 +123,17 @@ app.use("/", router);
 
 app.use((err, _req, res, _next) => {
   if (err === 401) {
-    res.status(401).render("errors/401", { layout: false });
+    res
+      .status(401)
+      .sendFile(path.join(__dirname, "public", "pages", "401.html"));
     return;
   }
   console.log(err.stack);
-  res.status(500).render("errors/500", { layout: false });
+  res.status(500).sendFile(path.join(__dirname, "public", "pages", "500.html"));
   return;
 });
 app.use((_req, res, _next) => {
-  res.status(404).render("errors/404", { layout: false });
+  res.status(404).sendFile(path.join(__dirname, "public", "pages", "404.html"));
   return;
 });
 
