@@ -16,8 +16,9 @@ import layout from "express-ejs-layouts";
 import cookieParser from "cookie-parser";
 const require = createRequire(import.meta.url);
 import passport from "passport";
-import initialize from "./config/passport-config.mjs";
+import passport_config from "./config/passport-config.mjs";
 const MySQLStore = require("express-mysql-session")(session);
+import socket_config from "./config/socket-config.mjs";
 
 import http from "http";
 import { router } from "./app/router/index.mjs";
@@ -102,7 +103,7 @@ const sessionMiddleware = session({
 app.use(sessionMiddleware);
 
 // Para el login.
-initialize(passport);
+passport_config(passport);
 app.use(passport.initialize());
 app.use(passport.session());
 
@@ -121,6 +122,7 @@ app.use("/public", express.static(path.join(__dirname, "public")));
 //routes
 app.use("/", router);
 
+// Páginas de errores
 app.use((err, _req, res, _next) => {
   if (err === 401) {
     res
@@ -132,12 +134,20 @@ app.use((err, _req, res, _next) => {
   res.status(500).sendFile(path.join(__dirname, "public", "pages", "500.html"));
   return;
 });
+
 app.use((_req, res, _next) => {
   res.status(404).sendFile(path.join(__dirname, "public", "pages", "404.html"));
   return;
 });
 
+// Configuración de sockets
 const server = http.createServer(app);
+const io = socket_config(server);
+
+io.use((socket, next) => {
+  sessionMiddleware(socket.request, {}, next);
+});
+
 server.listen(PORT, function () {
   console.log("Running into http://localhost:3000");
 });
