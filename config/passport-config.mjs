@@ -11,7 +11,7 @@ export default function initialize(passport) {
           const foundUser = await UserModel.findByUsername(username);
           // Si no encuentra algún usuario
           if (!foundUser) {
-            return done(null, false, "El usuario no está registrado.");
+            return done(null, false, { msg: "El usuario no está registrado." });
           }
           // Compara el hash de la contraseña con la contraseña ingresada.
           if (foundUser.status_id) {
@@ -22,10 +22,12 @@ export default function initialize(passport) {
             if (passwordMatch) {
               return done(null, foundUser); // devuelve el usuario
             } else {
-              return done(null, false, "La contraseña es incorrecta."); // Sino indica que no es la contraseña
+              return done(null, false, { msg: "La contraseña es incorrecta." }); // Sino indica que no es la contraseña
             }
           } else {
-            return done(null, false, "El usuario ha sido inhabilitado.");
+            return done(null, false, {
+              msg: "El usuario ha sido inhabilitado.",
+            });
           }
         } catch (err) {
           console.error(err);
@@ -38,10 +40,10 @@ export default function initialize(passport) {
     return done(null, user.id);
   });
 
-  passport.deserializeUser((id, done) => {
-    UserModel.findById(id)
+  passport.deserializeUser(async (id, done) => {
+    await UserModel.findById(id)
       .then((user) => {
-        return done(null, user[0]);
+        return done(null, user);
       })
       .catch((err) => {
         return done(err);

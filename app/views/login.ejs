@@ -47,12 +47,12 @@
                         </div>
                       </div>
 
-                      <div id="messageBox">
+                      <div id="messages">
                         <%- include('./partials/messages') %>
                       </div>
                     </div>
                     <div class="card-body">
-                      <form method="post" id="loginForm">
+                      <form method="post" id="login">
                         <div class="form-floating mb-2 mb-md-3">
                           <input
                             class="form-control"
@@ -107,7 +107,7 @@
       crossorigin="anonymous"
     ></script>
     <script src="/public/js/scripts.js"></script>
-
+    
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
     <script nonce="<%=cspNonce%>">
@@ -135,7 +135,6 @@
               window.location.href = response.redirectUrl;
             },
             error: function (error) {
-              console.log(error);
               const result = error.responseJSON;
               displayErrors(messages, result.errors);
             },

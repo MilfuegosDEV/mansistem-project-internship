@@ -21,7 +21,6 @@ const MySQLStore = require("express-mysql-session")(session);
 
 import http from "http";
 import { router } from "./app/router/index.mjs";
-import { errors, pageNotFound } from "./app/middlewares/errors.mjs";
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -119,10 +118,22 @@ app.use(layout);
 // Configuración de los archivos estáticos.
 app.use("/public", express.static(path.join(__dirname, "public")));
 
-app.use(errors);
-app.use(pageNotFound);
 //routes
 app.use("/", router);
+
+app.use((err, _req, res, _next) => {
+  if (err === 401) {
+    res.status(401).render("errors/401", { layout: false });
+    return;
+  }
+  console.log(err.stack);
+  res.status(500).render("errors/500", { layout: false });
+  return;
+});
+app.use((_req, res, _next) => {
+  res.status(404).render("errors/404", { layout: false });
+  return;
+});
 
 const server = http.createServer(app);
 server.listen(PORT, function () {
