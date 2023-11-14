@@ -22,6 +22,7 @@ import socket_config from "./config/socket-config.mjs";
 
 import http from "http";
 import { router } from "./app/router/index.mjs";
+import api from "./api/index.mjs";
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -121,6 +122,9 @@ app.use("/public", express.static(path.join(__dirname, "public")));
 
 //routes
 app.use("/", router);
+
+// API
+app.use("/api", api);
 
 // Páginas de errores
 app.use((err, _req, res, _next) => {

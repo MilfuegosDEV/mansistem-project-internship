@@ -3,35 +3,6 @@
   <li class="breadcrumb-item"><a href="/">Dashboard</a></li>
   <li class="breadcrumb-item active">Usuarios</li>
 </ol>
-<div class="row">
-  <div class="col-xl-6">
-    <div class="card mb-4">
-      <div class="card-header">
-        <i class="fas fa-chart-pie me-1"></i>
-        Tipos de usuarios
-      </div>
-      <div class="card-body">
-        <canvas
-          id="usersRoleChart"
-          width="100%"
-          height="40"
-          class="chartjs-render-monitor"
-        ></canvas>
-      </div>
-    </div>
-  </div>
-  <div class="col-xl-6">
-    <div class="card mb-4">
-      <div class="card-header">
-        <i class="fas fa-chart-bar me-1"></i>
-        Bar Chart Example
-      </div>
-      <div class="card-body">
-        <canvas id="myBarChart" width="100%" height="40"></canvas>
-      </div>
-    </div>
-  </div>
-</div>
 <div class="card mb-4">
   <div class="card-header">
     <i class="fa-solid fa-users-gear"></i>
@@ -39,121 +10,22 @@
   </div>
   <div class="card-body">
     <table
-      id="usersDataTable"
+      id="DataTable"
       class="display responsive table table-hover w-100 fs-6"
     ></table>
   </div>
 </div>
-<%- include("partials/errorRowModal")%> <%-
-include('partials/formularios/users/newUserForm') %> <%-
-include('partials/formularios/users/editUserForm') %> <%- contentFor('styles')
-%>
+<%- contentFor('styles') %>
 <!--Datatables-->
-<link
-  rel="stylesheet"
-  type="text/css"
-  href="https://cdn.datatables.net/responsive/2.2.9/css/responsive.dataTables.min.css"
-/>
-<link
-  rel="stylesheet"
-  href="https://cdn.datatables.net/1.13.6/css/dataTables.bootstrap5.min.css"
-/>
-<link
-  rel="stylesheet"
-  type="text/css"
-  href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.3.0/css/bootstrap.min.css"
-/>
-<link
-  rel="stylesheet"
-  href="https://cdn.datatables.net/select/1.7.0/css/select.bootstrap5.min.css"
-/>
-
 <%- contentFor('scripts') %>
 <!--Datatables-->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
 <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
-<script src="https://cdn.datatables.net/responsive/2.2.9/js/dataTables.responsive.min.js"></script>
 <script src="https://cdn.datatables.net/1.13.6/js/dataTables.bootstrap5.min.js"></script>
-<script src="https://cdn.datatables.net/buttons/2.4.2/js/dataTables.buttons.min.js"></script>
 <script src="https://cdn.datatables.net/select/1.7.0/js/dataTables.select.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.8.0/Chart.min.js"></script>
+
 <script nonce="<%=cspNonce%>">
-  Chart.defaults.global.defaultFontFamily =
-    '-apple-system,system-ui,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif';
-  Chart.defaults.global.defaultFontColor = "#292b2c";
-
-  async function fetchRolesCount() {
-    try {
-      const response = await fetch("/api/userRolesCount");
-      const data = await response.json();
-      return data;
-    } catch (error) {
-      console.error("Error fetching roles count:", error);
-      return [];
-    }
-  }
-  async function createRolesChart() {
-    const rolesCount = await fetchRolesCount();
-    const labels = rolesCount.map((role) => role.roleName);
-    const data = rolesCount.map((role) => role.userCount);
-
-    const backgroundColors = ["#007bff", "#dc3545", "#ffc107", "#28a745"]; // Colores de fondo
-
-    const ctx = document.getElementById("usersRoleChart").getContext("2d");
-    const myPieChart = new Chart(ctx, {
-      type: "pie",
-      data: {
-        labels: labels,
-        datasets: [
-          {
-            data: data,
-            backgroundColor: backgroundColors.slice(0, data.length),
-          },
-        ],
-      },
-    });
-  }
-
-  createRolesChart();
-</script>
-<script nonce="<%=cspNonce%>">
-  function showEditModal(form, data) {
-    const selectedRole = $("#editRoles option")
-      .filter(function () {
-        return $(this).text().trim() === data.rol_name;
-      })
-      .val();
-
-    const selectedProvince = $("#editProvinces option")
-      .filter(function () {
-        return $(this).text().trim() === data.province_name;
-      })
-      .val();
-
-    const selectedStatus = $("#editStatus option")
-      .filter(function () {
-        return $(this).text().trim() === data.status;
-      })
-      .val();
-
-    $("#userId").val(data.id);
-    $("#editInputFirstName").val(data.name);
-    $("#editInputLastName").val(data.last_name);
-    $("#editInputUsername").val(data.username);
-    $("#editInputEmail").val(data.email);
-    $("#editRoles").val(selectedRole);
-    $("#editProvinces").val(selectedProvince);
-    $("#editStatus").val(selectedStatus);
-    $("#editarModal").modal("show");
-  }
-
-  function recargarTabla() {
-    $("#usersDataTable").DataTable().ajax.reload();
-  }
-</script>
-<script nonce="<%= cspNonce %>">
   $(document).ready(function () {
-    const table = $("#usersDataTable").DataTable({
+    const table = $("#DataTable").DataTable({
       responsive: true,
       select: {
         info: false,
@@ -163,7 +35,7 @@ include('partials/formularios/users/editUserForm') %> <%- contentFor('styles')
       serverSide: true,
       ajax: "/api/users", // Ruta de la API en tu servidor Express.js
       columns: [
-        { title: "ID", data: "id" },
+        { title: "Id", data: "id" },
         { title: "NOMBRE", data: "name" },
         { title: "APELLIDOS", data: "last_name" },
         { title: "CORREO", data: "email" },
@@ -215,91 +87,5 @@ include('partials/formularios/users/editUserForm') %> <%- contentFor('styles')
         },
       ],
     });
-  });
-</script>
-<script nonce="<%= cspNonce %>">
-  document.addEventListener("DOMContentLoaded", () => {
-    const registerForm = document.getElementById("registerForm");
-    const editForm = document.getElementById("editForm");
-
-    const setupForm = (modal, form, messageBox, url) => {
-      const validateForm = () => {
-        const errors = [];
-        const data = Object.fromEntries(new FormData(form).entries());
-
-        // Check for empty fields
-        for (const key in data) {
-          if (!data[key].trim()) {
-            errors.push(`El campo ${key} es requerido.`);
-          }
-        }
-        // Validate password.
-        if (data.password !== data.password2) {
-          errors.push("Las contraseñas no coinciden.");
-        }
-        if (/\s/.test(data.password)) {
-          errors.push("La contraseña no puede tener espacios en blanco");
-        }
-        if (data.password.length < 6) {
-          errors.push("La contraseña debe tener al menos 6 caracteres.");
-        }
-
-        return errors;
-      };
-
-      const displayErrors = (errors) => {
-        messageBox.innerHTML = errors
-          .map(
-            (error) =>
-              `<div class="alert alert-danger mb-1 py-1"><strong>¡Error!</strong> ${error}</div>`
-          )
-          .join("");
-      };
-
-      form.addEventListener("submit", async (event) => {
-        event.preventDefault();
-        const errors = validateForm();
-        if (errors.length > 0) {
-          displayErrors(errors);
-          return;
-        }
-
-        const data = Object.fromEntries(new FormData(form).entries());
-        messageBox.innerHTML = "";
-
-        try {
-          const response = await fetch(url, {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify(data),
-          });
-
-          const result = await response.json();
-
-          if (!response.ok) {
-            displayErrors([result.error]);
-          } else {
-            messageBox.innerHTML = `<div class="alert alert-success mb-1 py-1"><strong>¡Hecho!</strong> ${result.success}</div>`;
-            recargarTabla();
-            setTimeout(() => {
-              messageBox.innerHTML = "";
-              form.reset();
-              $(`#${modal}`).modal("hide");
-            }, 1000);
-          }
-        } catch (error) {
-          console.error(error);
-          displayErrors(["Ocurrió un error al enviar el formulario"]);
-        }
-      });
-    };
-    const crearModal = "crearModal";
-    const registerMessageBox = document.getElementById("messageBox");
-    setupForm(crearModal, registerForm, registerMessageBox, "/addUser");
-    const editarModal = "editarModal";
-    const editMessageBox = document.getElementById("editMessageBox");
-    setupForm(editarModal, editForm, editMessageBox, "/editUser");
   });
 </script>
