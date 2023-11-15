@@ -3,12 +3,19 @@
   <li class="breadcrumb-item"><a href="/">Dashboard</a></li>
   <li class="breadcrumb-item active">Usuarios</li>
 </ol>
+
 <div class="card mb-4">
   <div class="card-header">
     <i class="fa-solid fa-users-gear"></i>
     Usuarios
   </div>
+
   <div class="card-body">
+    <div class="row mb-4">
+      <div class="col-12">
+        <a class="btn btn-sm btn-outline-success">Añadir</a>
+      </div>
+    </div>
     <table
       id="DataTable"
       class="display responsive table table-hover w-100 fs-6"
@@ -21,6 +28,7 @@
 <!--Datatables-->
 <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
 <script src="https://cdn.datatables.net/1.13.6/js/dataTables.bootstrap5.min.js"></script>
+<script src="https://cdn.datatables.net/responsive/2.2.9/js/dataTables.responsive.min.js"></script>
 <script src="https://cdn.datatables.net/select/1.7.0/js/dataTables.select.min.js"></script>
 
 <script nonce="<%=cspNonce%>">
@@ -36,25 +44,22 @@
       ajax: "/api/users", // Ruta de la API en tu servidor Express.js
       columns: [
         { title: "Id", data: "id" },
-        { title: "NOMBRE", data: "name" },
-        { title: "APELLIDOS", data: "last_name" },
-        { title: "CORREO", data: "email" },
-        { title: "USUARIO", data: "username" },
-        { title: "ROL", data: "rol_name" },
-        { title: "PROVINCIA", data: "province_name" },
+        { title: "Nombre", data: "name" },
+        { title: "Apellidos", data: "last_name", width: "fit-content" },
+        { title: "Usuario", data: "username", width: "fit-content" },
+        { title: "Correo", data: "email", width: "fit-content" },
+        { title: "Rol", data: "rol_name", width: "fit-content" },
+        { title: "Provincia", data: "province_name", width: "fit-content" },
         {
-          title: "ESTADO",
+          title: "Estado",
           data: "status",
           render: function (data) {
             if (data === "HABILITADO") {
-              return `
-              <button title="INHABILITADO" class="btn btn-success btn-sm w-100" style="pointer-events:none">Habilitado</button>`;
-            } else {
-              return `
-              <button title="INHABILITADO" class="btn btn-danger btn-sm w-100 nowrap" style="pointer-events:none">Inhabilitado</button>`;
+              return `<span class="badge bg-success">Habilitado</span>`;
             }
+            return `<span class="badge bg-danger">Inhabilitado</span>`;
           },
-          width: "11%",
+          width: "fit-content",
         },
       ],
       oLanguage: { sSearch: "" },
@@ -62,30 +67,6 @@
         url: "https://cdn.datatables.net/plug-ins/1.13.6/i18n/es-ES.json",
         searchPlaceholder: "Buscar...",
       },
-      dom: '<"d-sm-flex justify-content-sm-between"lf><"my-1 d-flex justify-content-center" B>rt<"d-flex justify-content-center" i><"d-flex justify-content-center"p>',
-      buttons: [
-        {
-          text: '<i class="fas fa-plus"></i> Crear',
-          action: function (e, dt, node, config) {
-            $("#crearModal").modal("show");
-          },
-          className: "btn btn-success btn-sm",
-        },
-        {
-          text: '<i class="fas fa-pencil-alt"></i> Editar',
-          action: function (e, dt, node, config) {
-            // Obtener la fila seleccionada
-            const data = table.row({ selected: true }).data();
-            const editForm = $("#editForm");
-            if (data) {
-              showEditModal(editForm, data);
-            } else {
-              $("#rowErrorModal").modal("show");
-            }
-          },
-          className: "btn btn-warning btn-sm",
-        },
-      ],
     });
   });
 </script>
