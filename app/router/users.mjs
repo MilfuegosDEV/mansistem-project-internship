@@ -13,7 +13,7 @@ import UserModel from "../models/UserModel.mjs";
 const router = Router();
 
 // Manejo de registro
-router.post("/addUser", async (req, res, next) => {
+router.post("/addUser", async (req, res, _next) => {
   const validations = [
     (req) => checkNotEmpty(req.body.name, "nombre"),
     (req) => checkNotEmpty(req.body.lastname, "apellido"),
@@ -39,7 +39,7 @@ router.post("/addUser", async (req, res, next) => {
         .status(400)
         .json({ errors: [{ msg: "El usuario ya existe" }] });
 
-    await UserController.add(
+    const result = await UserController.add(
       req.body.name,
       req.body.lastname,
       req.body.username,
@@ -49,10 +49,43 @@ router.post("/addUser", async (req, res, next) => {
       req.body.province
     );
 
-    return res.status(200).json({ result: "Usuario registrado" });
+    if (result) {
+      return res.status(200).json({ result: "Usuario registrado" });
+    } else {
+      return res
+        .status(422)
+        .json({ errors: [{ msg: "No se ha podido completar el registro" }] });
+    }
   } catch (err) {
     return res.status(422).json({ errors: [{ msg: "Ha ocurrido un error" }] });
   }
+});
+
+router.post("/editUser", async (req, res, _next) => {
+  const validations = [
+    (req) => checkMinLength(req.body.password, 6),
+    (req) => checkPasswordsMatch(req.body.password, req.body.password2),
+    (req) => checkForBlank(req.body.password, "editar contraseña"),
+  ];
+  const error = handleValidation(validations, req);
+  if (error) return res.status(422).json({ errors: error });
+
+  try {
+    const foundUser = await UserModel.findById(req.body.userId);
+    if (!foundUser)
+      return res
+        .status(400)
+        .json({ errors: [{ msg: "El usuario no existe" }] });
+
+    await UserController.edit(
+      req.body.userId,
+      req.body.email,
+      req.body.password.trim(),
+      req.body.role,
+      req.body.province,
+      req.body.status
+    );
+  } catch {}
 });
 
 export default router;

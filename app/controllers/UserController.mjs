@@ -22,7 +22,7 @@ export default class {
           (name, last_name, username, email, password, role_id, province_id) 
         VALUES 
           (?, ?, ?, ?, ?, ?, ?)`;
-      const result = await db.query(query, [
+      await db.query(query, [
         name.toUpperCase().trim(),
         last_name.toUpperCase().trim(),
         username.toLowerCase().trim(),
@@ -32,9 +32,10 @@ export default class {
         province,
       ]);
 
-      return result;
+      return 1;
     } catch (error) {
-      throw new Error(error);
+      console.error(error);
+      return 0;
     }
   }
   static async edit(id, email, password, role, province, status_id) {
@@ -44,7 +45,7 @@ export default class {
         UPDATE USER 
           SET email=?,password=?, role_id=?, province_id = ?, status_id=?
         WHERE id=?;`;
-      const result = await db.query(query, [
+      await db.query(query, [
         email.toLowerCase().trim(),
         hashedPassword,
         role,
@@ -52,9 +53,10 @@ export default class {
         status_id,
         id,
       ]);
-      return result;
+      return 1;
     } catch (error) {
-      throw new Error(error);
+      console.log(error);
+      return 0;
     }
   }
 }
