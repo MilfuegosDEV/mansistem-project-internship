@@ -8,8 +8,8 @@ export async function status() {
   try {
     const QUERY = "SELECT * FROM STATUS";
     const [results] = await db.query(QUERY);
-    console.log(results);
-   } catch (err) {
+    return results;
+  } catch (err) {
     throw new Error(err);
   }
 }
