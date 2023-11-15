@@ -12,16 +12,15 @@
 
   <div class="card-body">
     <div class="row mb-4">
-      <div class="col-12">
-        <a class="btn btn-sm btn-outline-success">Añadir</a>
-      </div>
+      <table
+        id="DataTable"
+        class="display responsive table table-hover w-100 fs-6"
+      ></table>
     </div>
-    <table
-      id="DataTable"
-      class="display responsive table table-hover w-100 fs-6"
-    ></table>
   </div>
 </div>
+<%- include ("./partials/formularios/users.ejs") %> 
+<%- include("./partials/errorRowModal.ejs") %> 
 <%- contentFor('styles') %>
 <!--Datatables-->
 <%- contentFor('scripts') %>
@@ -30,43 +29,87 @@
 <script src="https://cdn.datatables.net/1.13.6/js/dataTables.bootstrap5.min.js"></script>
 <script src="https://cdn.datatables.net/responsive/2.2.9/js/dataTables.responsive.min.js"></script>
 <script src="https://cdn.datatables.net/select/1.7.0/js/dataTables.select.min.js"></script>
+<script src="https://cdn.datatables.net/buttons/2.4.2/js/dataTables.buttons.min.js"></script>
+<script nonce="<%=cspNonce%>">
+  function showEditModal(form, data) {
+    const selectedRole = $("#editRoles option")
+      .filter(function () {
+        return $(this).text().trim() === data.rol_name;
+      })
+      .val();
 
+    const selectedProvince = $("#editProvinces option")
+      .filter(function () {
+        return $(this).text().trim() === data.province_name;
+      })
+      .val();
+
+    const selectedStatus = $("#editStatus option")
+      .filter(function () {
+        return $(this).text().trim() === data.status;
+      })
+      .val();
+
+    $("#userId").val(data.id);
+    $("#editInputFirstName").val(data.name);
+    $("#editInputLastName").val(data.last_name);
+    $("#editInputUsername").val(data.username);
+    $("#editInputEmail").val(data.email);
+    $("#editRoles").val(selectedRole);
+    $("#editProvinces").val(selectedProvince);
+    $("#editStatus").val(selectedStatus);
+    $("#editarModal").modal("show");
+  }
+</script>
 <script nonce="<%=cspNonce%>">
   $(document).ready(function () {
-    const table = $("#DataTable").DataTable({
-      responsive: true,
-      select: {
-        info: false,
-        style: "single",
-      },
-      processing: true,
-      serverSide: true,
-      ajax: "/api/users", // Ruta de la API en tu servidor Express.js
-      columns: [
-        { title: "Id", data: "id" },
-        { title: "Nombre", data: "name" },
-        { title: "Apellidos", data: "last_name", width: "fit-content" },
-        { title: "Usuario", data: "username", width: "fit-content" },
-        { title: "Correo", data: "email", width: "fit-content" },
-        { title: "Rol", data: "rol_name", width: "fit-content" },
-        { title: "Provincia", data: "province_name", width: "fit-content" },
-        {
-          title: "Estado",
-          data: "status",
-          render: function (data) {
-            if (data === "HABILITADO") {
-              return `<span class="badge bg-success">Habilitado</span>`;
-            }
-            return `<span class="badge bg-danger">Inhabilitado</span>`;
-          },
-          width: "fit-content",
+    datatableConfig("#DataTable", "/api/users", [
+      { title: "Id", data: "id" },
+      { title: "Nombre", data: "name" },
+      { title: "Apellidos", data: "last_name" },
+      { title: "Usuario", data: "username" },
+      { title: "Correo", data: "email" },
+      { title: "Rol", data: "rol_name", width: "5%" },
+      { title: "Provincia", data: "province_name", width: "5%" },
+      {
+        title: "Estado",
+        data: "status",
+        render: function (data) {
+          if (data === "HABILITADO") {
+            return `<span class="badge bg-success">Habilitado</span>`;
+          }
+          return `<span class="badge bg-danger">Inhabilitado</span>`;
         },
-      ],
-      oLanguage: { sSearch: "" },
-      language: {
-        url: "https://cdn.datatables.net/plug-ins/1.13.6/i18n/es-ES.json",
-        searchPlaceholder: "Buscar...",
+        width: "5%",
       },
+    ]);
+  });
+</script>
+<script nonce="<%= cspNonce %>">
+  $(document).ready(function () {
+    $("#registerForm").submit(function (event) {
+      event.preventDefault();
+      const messages = document.getElementById("messageBox");
+      const data = Object.fromEntries(new FormData(this).entries());
+      $.ajax({
+        url: "/addUser",
+        method: "POST",
+        contentType: "application/json",
+        data: JSON.stringify(data),
+        success: function (response) {
+          messages.innerHTML = `<div class="alert alert-success mb-1 py-1"><strong>¡Hecho!</strong> ${response.result}</div>`;
+          setTimeout(() => {
+            messages.innerHTML = "";
+            $("#registerForm")[0].reset();
+            $(`#crearModal`).modal("hide");
+            $("#DataTable").DataTable().ajax.reload();
+          }, 1000);
+        },
+        error: function (err) {
+          const result = err.responseJSON;
+          displayErrors(messages, result.errors);
+        },
+      });
     });
   });
 </script>
