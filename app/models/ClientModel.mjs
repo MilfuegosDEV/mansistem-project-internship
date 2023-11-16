@@ -36,7 +36,6 @@ export default class {
    * @param {string} phone
    * @returns {Promise<object>} Una promesa que se resuelve con un objeto que contiene la información del cliente.
    */
-
   static async findByPhoneNumber(phone) {
     if (!phone) return undefined;
     try {
