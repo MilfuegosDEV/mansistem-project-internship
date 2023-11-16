@@ -13,7 +13,7 @@ import UserModel from "../models/UserModel.mjs";
 const router = Router();
 
 // Manejo de registro
-router.post("/addUser", async (req, res, next) => {
+router.post("/add", async (req, res, _next) => {
   const validations = [
     (req) => checkNotEmpty(req.body.name, "nombre"),
     (req) => checkNotEmpty(req.body.lastname, "apellido"),
@@ -39,7 +39,7 @@ router.post("/addUser", async (req, res, next) => {
         .status(400)
         .json({ errors: [{ msg: "El usuario ya existe" }] });
 
-    await UserController.add(
+    const result = await UserController.add(
       req.body.name,
       req.body.lastname,
       req.body.username,
@@ -49,10 +49,45 @@ router.post("/addUser", async (req, res, next) => {
       req.body.province
     );
 
-    return res.status(200).json({ result: "Usuario registrado" });
+    if (result) return res.status(200).json({ result: "Usuario registrado" });
+    return res
+      .status(422)
+      .json({ errors: [{ msg: "No se ha podido registrar el usuario." }] });
   } catch (err) {
     return res.status(422).json({ errors: [{ msg: "Ha ocurrido un error" }] });
   }
 });
 
+// Manejo de registro
+router.post("/edit", async (req, res, _next) => {
+  const validations = [
+    (req) => checkNotEmpty(req.body.email, "email"),
+    (req) => checkMinLength(req.body.password, 6, "contraseña"),
+    (req) => checkPasswordsMatch(req.body.password, req.body.password2),
+    (req) => checkForBlank(req.body.password, "contraseña"),
+    (req) => checkForBlank(req.body.email, "email"),
+    (req) => checkForBlank(req.body.username, "nombre de usuario"),
+  ];
+
+  // Manejar las validaciones
+  const error = handleValidation(validations, req);
+  if (error) return res.status(422).json({ errors: error });
+  try {
+    const result = await UserController.edit(
+      req.body.userId,
+      req.body.email,
+      req.body.password.trim(),
+      req.body.role,
+      req.body.province,
+      req.body.status
+    );
+
+    if (result) return res.status(200).json({ result: "Usuario editado." });
+    return res
+      .status(422)
+      .json({ errors: [{ msg: "No se ha podido editar el usuario." }] });
+  } catch (err) {
+    return res.status(422).json({ errors: [{ msg: "Ha ocurrido un error" }] });
+  }
+});
 export default router;

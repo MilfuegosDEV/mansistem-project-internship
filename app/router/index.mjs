@@ -27,5 +27,5 @@ router.get("/users", ensureAuthenticated, async (req, res, _next) => {
 });
 
 router.use("/", auth);
-router.use("/", userHandlers);
+router.use("/users", userHandlers);
 export { router };

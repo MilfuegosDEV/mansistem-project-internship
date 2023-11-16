@@ -22,7 +22,6 @@
 <%- include ("./partials/formularios/users.ejs") %> 
 <%- include("./partials/errorRowModal.ejs") %> 
 <%- contentFor('styles') %>
-<!--Datatables-->
 <%- contentFor('scripts') %>
 <!--Datatables-->
 <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
@@ -63,8 +62,8 @@
 </script>
 <script nonce="<%=cspNonce%>">
   $(document).ready(function () {
-    datatableConfig("#DataTable", "/api/users", [
-      { title: "Id", data: "id" },
+    const table = datatableConfig("#DataTable", "/api/users", [
+      { title: "Id", data: "id", visible: false },
       { title: "Nombre", data: "name" },
       { title: "Apellidos", data: "last_name" },
       { title: "Usuario", data: "username" },
@@ -92,7 +91,7 @@
       const messages = document.getElementById("messageBox");
       const data = Object.fromEntries(new FormData(this).entries());
       $.ajax({
-        url: "/addUser",
+        url: "/users/add",
         method: "POST",
         contentType: "application/json",
         data: JSON.stringify(data),
@@ -102,6 +101,34 @@
             messages.innerHTML = "";
             $("#registerForm")[0].reset();
             $(`#crearModal`).modal("hide");
+            $("#DataTable").DataTable().ajax.reload();
+          }, 1000);
+        },
+        error: function (err) {
+          const result = err.responseJSON;
+          displayErrors(messages, result.errors);
+        },
+      });
+    });
+  });
+</script>
+<script nonce="<%= cspNonce %>">
+  $(document).ready(function () {
+    $("#editForm").submit(function (event) {
+      event.preventDefault();
+      const messages = document.getElementById("editMessageBox");
+      const data = Object.fromEntries(new FormData(this).entries());
+      $.ajax({
+        url: "/users/edit",
+        method: "POST",
+        contentType: "application/json",
+        data: JSON.stringify(data),
+        success: function (response) {
+          messages.innerHTML = `<div class="alert alert-success mb-1 py-1"><strong>¡Hecho!</strong> ${response.result}</div>`;
+          setTimeout(() => {
+            messages.innerHTML = "";
+            $("#editForm")[0].reset();
+            $(`#editarModal`).modal("hide");
             $("#DataTable").DataTable().ajax.reload();
           }, 1000);
         },

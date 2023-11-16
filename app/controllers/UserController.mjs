@@ -13,6 +13,16 @@ export default class {
    * @param {string} province_id Provincia del usuario
    */
   static async add(name, last_name, username, email, password, role, province) {
+    if (
+      !name ||
+      !last_name ||
+      !username ||
+      !email ||
+      !password ||
+      !role ||
+      !province
+    )
+      return 0;
     try {
       // Hash de la contraseña antes de almacenarla
       const hashedPassword = await bcryptjs.hash(password, 10); // El '10' es el número de rondas de salting, considera configurarlo externamente
@@ -22,7 +32,7 @@ export default class {
           (name, last_name, username, email, password, role_id, province_id) 
         VALUES 
           (?, ?, ?, ?, ?, ?, ?)`;
-      const result = await db.query(query, [
+      await db.query(query, [
         name.toUpperCase().trim(),
         last_name.toUpperCase().trim(),
         username.toLowerCase().trim(),
@@ -31,20 +41,22 @@ export default class {
         role,
         province,
       ]);
-
-      return result;
+      return 1;
     } catch (error) {
-      throw new Error(error);
+      console.error("Error", error);
+      return 0;
     }
   }
   static async edit(id, email, password, role, province, status_id) {
+    if (!id || !email || !password || !role || !province || !status_id)
+      return 0;
     try {
       const hashedPassword = await bcryptjs.hash(password, 10);
       const query = `
         UPDATE USER 
           SET email=?,password=?, role_id=?, province_id = ?, status_id=?
         WHERE id=?;`;
-      const result = await db.query(query, [
+      await db.query(query, [
         email.toLowerCase().trim(),
         hashedPassword,
         role,
@@ -52,9 +64,10 @@ export default class {
         status_id,
         id,
       ]);
-      return result;
+      return 1;
     } catch (error) {
-      throw new Error(error);
+      console.error("Error", error);
+      return 0;
     }
   }
 }
