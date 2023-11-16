@@ -10,67 +10,19 @@
   </div>
   <div class="card-body">
     <table
-      id="clientsDataTable"
+      id="DataTable"
       class="display responsive table table-hover wrap w-100 fs-6"
     ></table>
   </div>
 </div>
-<%- include('partials/errorRowModal.ejs') %> 
-<%- include('partials/formularios/clients/newClientForm') %> 
-<%- include('partials/formularios/clients/editClientForm') %> 
-<%- contentFor('styles') %>
+<%- include('partials/errorRowModal.ejs') %> <%- contentFor('styles') %> <%-
+contentFor('scripts') %>
 <!--Datatables-->
-<link
-  rel="stylesheet"
-  type="text/css"
-  href="https://cdn.datatables.net/responsive/2.2.9/css/responsive.dataTables.min.css"
-/>
-<link
-  rel="stylesheet"
-  href="https://cdn.datatables.net/1.13.6/css/dataTables.bootstrap5.min.css"
-/>
-<link
-  rel="stylesheet"
-  type="text/css"
-  href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.3.0/css/bootstrap.min.css"
-/>
-<link
-  rel="stylesheet"
-  href="https://cdn.datatables.net/select/1.7.0/css/select.bootstrap5.min.css"
-/>
-
-<%- contentFor('scripts') %>
-<!--Datatables-->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
 <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
-<script src="https://cdn.datatables.net/responsive/2.2.9/js/dataTables.responsive.min.js"></script>
 <script src="https://cdn.datatables.net/1.13.6/js/dataTables.bootstrap5.min.js"></script>
-<script src="https://cdn.datatables.net/buttons/2.4.2/js/dataTables.buttons.min.js"></script>
+<script src="https://cdn.datatables.net/responsive/2.2.9/js/dataTables.responsive.min.js"></script>
 <script src="https://cdn.datatables.net/select/1.7.0/js/dataTables.select.min.js"></script>
-<script nonce="<%=cspNonce%>">
-  $(document).ready(function () {
-    // Initialize the auto-resize textareas
-    $(".auto-resize").on("input click touchstart ", function () {
-      this.style.height = "auto";
-      this.style.height = this.scrollHeight + "px";
-    });
-
-    // Update the character count for all textareas with the class "charCount"
-    $(".charCount").on("input", function () {
-      var $textarea = $(this);
-      var $charCountDisplay = $textarea.next().find(".charCountDisplay");
-      var text = $textarea.val();
-      var maxLength = $textarea.attr("maxlength");
-
-      if (text.length > maxLength) {
-        $textarea.val(text.substring(0, maxLength));
-        $charCountDisplay.text(maxLength);
-      } else {
-        $charCountDisplay.text(text.length);
-      }
-    });
-  });
-</script>
+<script src="https://cdn.datatables.net/buttons/2.4.2/js/dataTables.buttons.min.js"></script>
 <script nonce="<%=cspNonce%>">
   function showEditModal(form, data) {
     const selectedProvince = $("#editProvinces option")
@@ -94,74 +46,38 @@
     $("#editStatus").val(selectedStatus);
     $("#editarModal").modal("show");
   }
-
-  function recargarTabla() {
-    $("#clientsDataTable").DataTable().ajax.reload();
-  }
 </script>
 <script nonce="<%= cspNonce %>">
   $(document).ready(function () {
-    const table = $("#clientsDataTable").DataTable({
-      responsive: true,
-      select: {
-        info: false,
-        style: "single",
-      },
-      processing: true,
-      serverSide: true,
-      ajax: "/api/clients", // Ruta de la API en tu servidor Express.js
-      columns: [
-        { title: "ID", data: "id" },
-        { title: "NOMBRE", data: "name" },
-        { title: "TELÉFONO", data: "phone" },
-        { title: "CORREO", data: "email" },
-        { title: "DIRECCIÓN", data: "address", width: "30%" }, // Ajusta el ancho de la columna de dirección al 30% del contenedor
-        { title: "PROVINCIA", data: "province_name" },
+    const table = datatableConfig(
+      "#DataTable",
+      "/api/clients",
+      [
+        { title: "Id", data: "id", visible: false },
+        { title: "Cliente", data: "name" },
+        { title: "Teléfono", data: "phone" },
+        { title: "Correo", data: "email" },
+        { title: "Dirección", data: "address" }, // Ajusta el ancho de la columna de dirección al 30% del contenedor
+        { title: "Provincia", data: "province_name", width: "5%" },
         {
-          title: "ESTADO",
+          title: "Estado",
           data: "status",
           render: function (data) {
             if (data === "HABILITADO") {
-              return `
-              <button title="INHABILITADO" class="btn btn-success btn-sm w-100" style="pointer-events:none">Habilitado</button>`;
-            } else {
-              return `
-              <button title="INHABILITADO" class="btn btn-danger btn-sm w-100 nowrap" style="pointer-events:none">Inhabilitado</button>`;
+              return `<span class="badge bg-success">Habilitado</span>`;
             }
+            return `<span class="badge bg-danger">Inhabilitado</span>`;
           },
-          width: "11%",
+          width: "5%",
         },
       ],
-      oLanguage: { sSearch: "" },
-      language: {
-        url: "https://cdn.datatables.net/plug-ins/1.13.6/i18n/es-ES.json",
-        searchPlaceholder: "Buscar...",
-      },
-      dom: '<"d-sm-flex justify-content-sm-between"lf><"my-1 d-flex justify-content-center" B>rt<"d-flex justify-content-center" i><"d-flex justify-content-center"p>',
-      buttons: [
+      [
         {
-          text: '<i class="fas fa-plus"></i> Crear',
-          action: function (e, dt, node, config) {
-            $("#crearModal").modal("show");
-          },
-          className: "btn btn-success btn-sm",
+          targets: [1, 2, 3, 5, 6],
+          className: "text-nowrap",
         },
-        {
-          text: '<i class="fas fa-pencil-alt"></i> Editar',
-          action: function (e, dt, node, config) {
-            // Obtener la fila seleccionada
-            const data = table.row({ selected: true }).data();
-            const editForm = $("#editForm");
-            if (data) {
-              showEditModal(editForm, data);
-            } else {
-              $("#rowErrorModal").modal("show");
-            }
-          },
-          className: "btn btn-warning btn-sm",
-        },
-      ],
-    });
+      ]
+    );
   });
 </script>
 <script nonce="<%= cspNonce %>">

@@ -35,15 +35,10 @@ function displayErrors(selector, errors) {
     .join("");
 }
 
-function datatableConfig(selector, url, columnsConfig) {
+function datatableConfig(selector, url, columnsConfig, columnDefs) {
   const table = $(selector).DataTable({
     responsive: true,
-    columnDefs: [
-      {
-        targets: "_all",
-        className: "text-nowrap",
-      },
-    ],
+    columnDefs: columnDefs,
     select: {
       info: false,
       style: "single",

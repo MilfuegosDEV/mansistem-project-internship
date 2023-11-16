@@ -26,6 +26,17 @@ router.get("/users", ensureAuthenticated, async (req, res, _next) => {
   return;
 });
 
+router.get("/clients", ensureAuthenticated, async (req, res, _next) => {
+  res.render("clients", {
+    title: "Clientes",
+    active: "clients",
+    user: req.user,
+    status: await status(),
+    provinces: await provinces(),
+  });
+  return;
+});
+
 router.use("/", auth);
 router.use("/users", userHandlers);
 export { router };

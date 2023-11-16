@@ -60,26 +60,36 @@ contentFor('scripts') %>
 </script>
 <script nonce="<%=cspNonce%>">
   $(document).ready(function () {
-    const table = datatableConfig("#DataTable", "/api/users", [
-      { title: "Id", data: "id", visible: false },
-      { title: "Nombre", data: "name" },
-      { title: "Apellidos", data: "last_name" },
-      { title: "Usuario", data: "username" },
-      { title: "Correo", data: "email" },
-      { title: "Rol", data: "rol_name", width: "5%" },
-      { title: "Provincia", data: "province_name", width: "5%" },
-      {
-        title: "Estado",
-        data: "status",
-        render: function (data) {
-          if (data === "HABILITADO") {
-            return `<span class="badge bg-success">Habilitado</span>`;
-          }
-          return `<span class="badge bg-danger">Inhabilitado</span>`;
+    const table = datatableConfig(
+      "#DataTable",
+      "/api/users",
+      [
+        { title: "Id", data: "id", visible: false },
+        { title: "Nombre", data: "name" },
+        { title: "Apellidos", data: "last_name" },
+        { title: "Usuario", data: "username" },
+        { title: "Correo", data: "email" },
+        { title: "Rol", data: "rol_name", width: "5%" },
+        { title: "Provincia", data: "province_name", width: "5%" },
+        {
+          title: "Estado",
+          data: "status",
+          render: function (data) {
+            if (data === "HABILITADO") {
+              return `<span class="badge bg-success">Habilitado</span>`;
+            }
+            return `<span class="badge bg-danger">Inhabilitado</span>`;
+          },
+          width: "5%",
         },
-        width: "5%",
-      },
-    ]);
+      ],
+      [
+        {
+          targets: "_all",
+          className: "text-nowrap",
+        },
+      ]
+    );
   });
 </script>
 <script nonce="<%= cspNonce %>">
