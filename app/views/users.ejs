@@ -19,10 +19,9 @@
     </div>
   </div>
 </div>
-<%- include ("./partials/formularios/users.ejs") %> 
-<%- include("./partials/errorRowModal.ejs") %> 
-<%- contentFor('styles') %>
-<%- contentFor('scripts') %>
+<%- include ("./partials/formularios/users.ejs") %> <%-
+include("./partials/errorRowModal.ejs") %> <%- contentFor('styles') %> <%-
+contentFor('scripts') %>
 <!--Datatables-->
 <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
 <script src="https://cdn.datatables.net/1.13.6/js/dataTables.bootstrap5.min.js"></script>
@@ -107,6 +106,9 @@
         error: function (err) {
           const result = err.responseJSON;
           displayErrors(messages, result.errors);
+          setTimeout(() => {
+            messages.innerHTML = "";
+          }, 5000);
         },
       });
     });
@@ -135,6 +137,9 @@
         error: function (err) {
           const result = err.responseJSON;
           displayErrors(messages, result.errors);
+          setTimeout(() => {
+            messages.innerHTML = "";
+          }, 5000);
         },
       });
     });

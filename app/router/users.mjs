@@ -46,7 +46,8 @@ router.post("/add", async (req, res, _next) => {
       req.body.email,
       req.body.password.trim(),
       req.body.role,
-      req.body.province
+      req.body.province,
+      req.user.id
     );
 
     if (result) return res.status(200).json({ result: "Usuario registrado" });
@@ -73,19 +74,25 @@ router.post("/edit", async (req, res, _next) => {
   const error = handleValidation(validations, req);
   if (error) return res.status(422).json({ errors: error });
   try {
-    const result = await UserController.edit(
-      req.body.userId,
-      req.body.email,
-      req.body.password.trim(),
-      req.body.role,
-      req.body.province,
-      req.body.status
-    );
-
-    if (result) return res.status(200).json({ result: "Usuario editado." });
-    return res
-      .status(422)
-      .json({ errors: [{ msg: "No se ha podido editar el usuario." }] });
+    if (req.user.id != req.body.userId) {
+      const result = await UserController.edit(
+        req.body.userId,
+        req.body.email,
+        req.body.password.trim(),
+        req.body.role,
+        req.body.province,
+        req.body.status,
+        req.user.id
+      );
+      if (result) return res.status(200).json({ result: "Usuario editado." });
+      return res
+        .status(422)
+        .json({ errors: [{ msg: "No se ha podido editar el usuario." }] });
+    } else {
+      return res
+        .status(422)
+        .json({ errors: [{ msg: "No puedes editar tu propio usuario." }] });
+    }
   } catch (err) {
     return res.status(422).json({ errors: [{ msg: "Ha ocurrido un error" }] });
   }
