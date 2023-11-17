@@ -4,7 +4,7 @@ import Triggers from "../../db/triggers/index.mjs";
 
 class UserController extends Triggers {
   constructor() {
-    super("USER", "USER_AUDIT");
+    super("USER");
   }
   /**
    * Inserta un nuevo usuario
