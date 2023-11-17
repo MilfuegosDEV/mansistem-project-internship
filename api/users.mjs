@@ -73,8 +73,8 @@ router.get("/users", async (req, res, _next) => {
     });
   } catch (err) {
     // Handle errors
-    console.error("Error fetching users:", err);
-    res.status(500).send("Server error occurred while fetching users.");
+    console.error("Error al recuperar los usuarios:", err);
+    res.status(500).send("Error del servidor al recuperar los usuarios");
   }
 });
 

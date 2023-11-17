@@ -8,15 +8,15 @@ class UserController extends Triggers {
   }
   /**
    * Inserta un nuevo usuario
-   * @param {string} name 
-   * @param {string} last_name 
-   * @param {string} username 
-   * @param {string} email 
-   * @param {string} password 
-   * @param {number} role 
-   * @param {number} province 
-   * @param {number} performed_by_user_id 
-   * @returns 
+   * @param {string} name
+   * @param {string} last_name
+   * @param {string} username
+   * @param {string} email
+   * @param {string} password
+   * @param {number} role
+   * @param {number} province
+   * @param {number} performed_by_user_id
+   * @returns
    */
   async add(
     name,
@@ -40,24 +40,24 @@ class UserController extends Triggers {
     )
       return 0;
 
-      try {
-        const hashedPassword = await bcryptjs.hash(password, 10);
-        const query = `
+    try {
+      const hashedPassword = await bcryptjs.hash(password, 10);
+      const query = `
         INSERT INTO USER 
         (name, last_name, username, email, password, role_id, province_id) 
         VALUES 
         (?, ?, ?, ?, ?, ?, ?)`;
-        await db.query(query, [
-          name.toUpperCase().trim(),
-          last_name.toUpperCase().trim(),
-          username.toLowerCase().trim(),
-          email.toLowerCase().trim(),
-          hashedPassword,
-          role,
-          province,
-        ]);
-        
-        await this.InsertionAudit(performed_by_user_id);
+      await db.query(query, [
+        name,
+        last_name,
+        username,
+        email,
+        hashedPassword,
+        role,
+        province,
+      ]);
+
+      await this.InsertionAudit(performed_by_user_id);
       return 1;
     } catch (error) {
       console.error("Error", error);
@@ -67,13 +67,13 @@ class UserController extends Triggers {
   /**
    * Actualiza la información de un usuario
    * @param {number} updated_id El usuario que será actualizado
-   * @param {string} email 
-   * @param {string} password 
-   * @param {number} role 
-   * @param {number} province 
-   * @param {number} status 
+   * @param {string} email
+   * @param {string} password
+   * @param {number} role
+   * @param {number} province
+   * @param {number} status
    * @param {number} performed_by_user_id El usuario que realizó la actualización
-   * @returns 
+   * @returns
    */
   async edit(
     updated_id,
@@ -90,7 +90,7 @@ class UserController extends Triggers {
       !password ||
       !role ||
       !province ||
-      !status ||
+      typeof status === "undefined" ||
       !performed_by_user_id
     )
       return 0;
@@ -100,17 +100,17 @@ class UserController extends Triggers {
       await this.UpdateAudit(performed_by_user_id, updated_id, {
         email: email,
         password: hashedPassword,
-        role_id: parseInt(role),
-        province_id: parseInt(province),
-        status_id: parseInt(status),
+        role_id: role,
+        province_id: province,
+        status_id: status,
       });
 
       const query = `
         UPDATE USER 
-          SET email=?,password=?, role_id=?, province_id = ?, status_id=?
+          SET email=?,password=?, role_id=?, province_id=?, status_id=?
         WHERE id=?;`;
       const result = await db.query(query, [
-        email.toLowerCase().trim(),
+        email,
         hashedPassword,
         role,
         province,
