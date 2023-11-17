@@ -40,14 +40,14 @@ router.post("/add", async (req, res, _next) => {
         .json({ errors: [{ msg: "El usuario ya existe" }] });
 
     const result = await UserController.add(
-      req.body.name,
-      req.body.lastname,
-      req.body.username,
-      req.body.email,
+      req.body.name.toUpperCase().trim(),
+      req.body.lastname.toUpperCase().trim(),
+      req.body.username.toLowerCase().trim(),
+      req.body.email.toLowerCase().trim(),
       req.body.password.trim(),
-      req.body.role,
-      req.body.province,
-      req.user.id
+      parseInt(req.body.role),
+      parseInt(req.body.province),
+      parseInt(req.user.id)
     );
 
     if (result) return res.status(200).json({ result: "Usuario registrado" });
@@ -55,7 +55,9 @@ router.post("/add", async (req, res, _next) => {
       .status(422)
       .json({ errors: [{ msg: "No se ha podido registrar el usuario." }] });
   } catch (err) {
-    return res.status(422).json({ errors: [{ msg: "Ha ocurrido un error" }] });
+    return res
+      .status(500)
+      .json({ errors: [{ msg: `Ha ocurrido un error interno del servidor: ${err}` }] });
   }
 });
 
@@ -76,13 +78,13 @@ router.post("/edit", async (req, res, _next) => {
   try {
     if (req.user.id != req.body.userId) {
       const result = await UserController.edit(
-        req.body.userId,
-        req.body.email,
+        parseInt(req.body.userId),
+        req.body.email.toLowerCase().trim(),
         req.body.password.trim(),
-        req.body.role,
-        req.body.province,
-        req.body.status,
-        req.user.id
+        parseInt(req.body.role),
+        parseInt(req.body.province),
+        parseInt(req.body.status),
+        parseInt(req.user.id)
       );
       if (result) return res.status(200).json({ result: "Usuario editado." });
       return res
@@ -94,7 +96,9 @@ router.post("/edit", async (req, res, _next) => {
         .json({ errors: [{ msg: "No puedes editar tu propio usuario." }] });
     }
   } catch (err) {
-    return res.status(422).json({ errors: [{ msg: "Ha ocurrido un error" }] });
+    return res
+    .status(500)
+    .json({ errors: [{ msg: `Ha ocurrido un error interno del servidor: ${err}` }] });
   }
 });
 export default router;

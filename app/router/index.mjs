@@ -2,6 +2,7 @@ import { ensureAuthenticated } from "../middlewares/auth.mjs";
 import { status, provinces, roles } from "../models/utils/index.mjs";
 import auth from "./auth/index.mjs";
 import userHandlers from "./users.mjs";
+import clientHandlers from "./clients.mjs";
 import { Router } from "express";
 
 const router = Router();
@@ -39,4 +40,5 @@ router.get("/clients", ensureAuthenticated, async (req, res, _next) => {
 
 router.use("/", auth);
 router.use("/users", userHandlers);
+router.use("/clients", clientHandlers);
 export { router };

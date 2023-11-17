@@ -15,7 +15,8 @@
     ></table>
   </div>
 </div>
-<%- include('partials/errorRowModal.ejs') %> <%- contentFor('styles') %> <%-
+<%- include('partials/errorRowModal.ejs') %> <%-
+include('partials/formularios/clients.ejs') %> <%- contentFor('styles') %> <%-
 contentFor('scripts') %>
 <!--Datatables-->
 <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
@@ -23,6 +24,7 @@ contentFor('scripts') %>
 <script src="https://cdn.datatables.net/responsive/2.2.9/js/dataTables.responsive.min.js"></script>
 <script src="https://cdn.datatables.net/select/1.7.0/js/dataTables.select.min.js"></script>
 <script src="https://cdn.datatables.net/buttons/2.4.2/js/dataTables.buttons.min.js"></script>
+<script src="/public/js/charCount.js"></script>
 <script nonce="<%=cspNonce%>">
   function showEditModal(form, data) {
     const selectedProvince = $("#editProvinces option")
@@ -82,81 +84,64 @@ contentFor('scripts') %>
   });
 </script>
 <script nonce="<%= cspNonce %>">
-  document.addEventListener("DOMContentLoaded", () => {
-    const registerForm = document.getElementById("registerForm");
-    const editForm = document.getElementById("editForm");
-
-    const setupForm = (modal, form, messageBox, url) => {
-      messageBox.innerHTML = "";
-      const validateForm = () => {
-        const errors = [];
-        const data = Object.fromEntries(new FormData(form).entries());
-
-        // Check for empty fields
-        for (const key in data) {
-          if (!data[key].trim()) {
-            errors.push(`El campo ${key} es requerido.`);
-          }
-        }
-        if (!/^[0-9]*$/.test(data.phone)) {
-          errors.push("El campo teléfono no admite caracteres no númericos");
-        }
-        return errors;
-      };
-
-      const displayErrors = (errors) => {
-        messageBox.innerHTML = errors
-          .map(
-            (error) =>
-              `<div class="alert alert-danger mb-1 py-1"><strong>¡Error!</strong> ${error}</div>`
-          )
-          .join("");
-      };
-
-      form.addEventListener("submit", async (event) => {
-        event.preventDefault();
-        const errors = validateForm();
-        if (errors.length > 0) {
-          displayErrors(errors);
-          return;
-        }
-
-        const data = Object.fromEntries(new FormData(form).entries());
-        messageBox.innerHTML = "";
-
-        try {
-          const response = await fetch(url, {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify(data),
-          });
-
-          const result = await response.json();
-
-          if (!response.ok) {
-            displayErrors([result.error]);
-          } else {
-            messageBox.innerHTML = `<div class="alert alert-success mb-1 py-1"><strong>¡Hecho!</strong> ${result.success}</div>`;
-            recargarTabla();
-            setTimeout(() => {
-              messageBox.innerHTML = "";
-              form.reset();
-              $(`#${modal}`).modal("hide");
-            }, 1000);
-          }
-        } catch (error) {
-          console.error(error);
-          displayErrors(["Ocurrió un error al enviar el formulario"]);
-        }
+  $(document).ready(function () {
+    $("#registerForm").submit(function (event) {
+      event.preventDefault();
+      const messages = document.getElementById("messageBox");
+      const data = Object.fromEntries(new FormData(this).entries());
+      $.ajax({
+        url: "/clients/add",
+        method: "POST",
+        contentType: "application/json",
+        data: JSON.stringify(data),
+        success: function (response) {
+          messages.innerHTML = `<div class="alert alert-success mb-1 py-1"><strong>¡Hecho!</strong> ${response.result}</div>`;
+          setTimeout(() => {
+            messages.innerHTML = "";
+            $("#registerForm")[0].reset();
+            $(`#crearModal`).modal("hide");
+            $("#DataTable").DataTable().ajax.reload();
+          }, 1000);
+        },
+        error: function (err) {
+          const result = err.responseJSON;
+          displayErrors(messages, result.errors);
+          setTimeout(() => {
+            messages.innerHTML = "";
+          }, 5000);
+        },
       });
-    };
-    const crearModal = "crearModal";
-    const registerMessageBox = document.getElementById("messageBox");
-    setupForm(crearModal, registerForm, registerMessageBox, "/addClient");
-    const editarModal = "editarModal";
-    const editMessageBox = document.getElementById("editMessageBox");
-    setupForm(editarModal, editForm, editMessageBox, "/editClient");
+    });
+  });
+</script>
+<script nonce="<%= cspNonce %>">
+  $(document).ready(function () {
+    $("#editForm").submit(function (event) {
+      event.preventDefault();
+      const messages = document.getElementById("editMessageBox");
+      const data = Object.fromEntries(new FormData(this).entries());
+      $.ajax({
+        url: "/clients/edit",
+        method: "POST",
+        contentType: "application/json",
+        data: JSON.stringify(data),
+        success: function (response) {
+          messages.innerHTML = `<div class="alert alert-success mb-1 py-1"><strong>¡Hecho!</strong> ${response.result}</div>`;
+          setTimeout(() => {
+            messages.innerHTML = "";
+            $("#editForm")[0].reset();
+            $(`#editarModal`).modal("hide");
+            $("#DataTable").DataTable().ajax.reload();
+          }, 1000);
+        },
+        error: function (err) {
+          const result = err.responseJSON;
+          displayErrors(messages, result.errors);
+          setTimeout(() => {
+            messages.innerHTML = "";
+          }, 5000);
+        },
+      });
+    });
   });
 </script>

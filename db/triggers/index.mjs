@@ -3,17 +3,30 @@ import db from "../index.mjs";
 export default class Triggers {
   /**
    * HISTORIAL DE CAMBIOS. ADEMÁS, INDICA QUIÉN REALIZÓ EL CAMBIO.
+   * Si no existe una tabla de auditoria para la tabla que deseas auditar,
+   * esta se generará automáticamente.
    * @param {string} TABLE La tabla que será auditada.
-   * @param {string} TABLE_AUDIT La tabla que guarda el historial de cambios.
    */
-  constructor(TABLE, TABLE_AUDIT) {
+  constructor(TABLE) {
     if (!TABLE) throw new Error("No se ha indicado la tabla a auditar.");
-    if (!TABLE_AUDIT)
-      throw new Error(
-        "No se ha indicado la tabla para guardar el historial de cambios."
-      );
     this.TABLE = TABLE;
-    this.TABLE_AUDIT = TABLE_AUDIT;
+    this.TABLE_AUDIT = `${this.TABLE}_AUDIT`;
+
+    // CREAR LA TABLA DE AUDITORIA EN EL CASO DE QUE NO EXISTA PARA X TABLA;
+    db.query(`
+      CREATE TABLE IF NOT EXISTS ${this.TABLE_AUDIT} (
+        audit_id INT AUTO_INCREMENT PRIMARY KEY,
+        updated_id INT NOT NULL,
+        action_performed ENUM('INSERT','UPDATE'),
+        performed_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        performed_by_user_id INT NOT NULL,
+        field_changed VARCHAR(255),
+        old_value VARCHAR(255),
+        new_value VARCHAR(255),
+        
+      FOREIGN KEY (updated_id) REFERENCES ${this.TABLE}(id),
+      FOREIGN KEY (performed_by_user_id) REFERENCES USER(id)
+    );`);
   }
 
   /**
@@ -28,7 +41,12 @@ export default class Triggers {
 
       await db.query(
         `INSERT INTO ${this.TABLE_AUDIT} (updated_id, action_performed, performed_by_user_id, field_changed) VALUES (?, ?, ?, ?);`,
-        [last[0].id, "INSERT", performed_by_user_id, `NEW ${this.TABLE}`]
+        [
+          last[0].id,
+          "INSERT",
+          performed_by_user_id,
+          `new ${this.TABLE.toLowerCase()}`,
+        ]
       );
     } catch (err) {
       console.error(err);

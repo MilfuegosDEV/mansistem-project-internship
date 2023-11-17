@@ -1,59 +1,42 @@
 import db from "../../db/index.mjs";
-import bcryptjs from "bcryptjs";
 import Triggers from "../../db/triggers/index.mjs";
 
-class UserController extends Triggers {
+class ClientController extends Triggers {
   constructor() {
-    super("USER");
+    super("CLIENT");
   }
   /**
-   * Inserta un nuevo usuario
+   * Inserta un nuevo cliente
    * @param {string} name
-   * @param {string} last_name
-   * @param {string} username
+   * @param {string} address
+   * @param {string} phone
    * @param {string} email
-   * @param {string} password
-   * @param {number} role
    * @param {number} province
-   * @param {number} performed_by_user_id
+   * @param {number} performed_by_user_id El usuario que realizó la acción.
    * @returns
    */
-  async add(
-    name,
-    last_name,
-    username,
-    email,
-    password,
-    role,
-    province,
-    performed_by_user_id
-  ) {
+  async add(name, address, phone, email, province, performed_by_user_id) {
     if (
       !name ||
-      !last_name ||
-      !username ||
+      !address ||
+      !phone ||
       !email ||
-      !password ||
-      !role ||
       !province ||
       !performed_by_user_id
     )
       return 0;
 
     try {
-      const hashedPassword = await bcryptjs.hash(password, 10);
       const query = `
-        INSERT INTO USER 
-        (name, last_name, username, email, password, role_id, province_id) 
+        INSERT INTO CLIENT 
+            (name, address, phone, email, province_id) 
         VALUES 
-        (?, ?, ?, ?, ?, ?, ?)`;
+            (?, ?, ?, ?, ?)`;
       await db.query(query, [
         name,
-        last_name,
-        username,
+        address,
+        phone,
         email,
-        hashedPassword,
-        role,
         province,
       ]);
 
@@ -65,11 +48,12 @@ class UserController extends Triggers {
     }
   }
   /**
-   * Actualiza la información de un usuario
-   * @param {number} updated_id El usuario que será actualizado
+   * Actualiza la información de un cliente
+   * @param {number} updated_id El cliente que será actualizado
+   * @param {string} name
+   * @param {string} address
+   * @param {string} phone
    * @param {string} email
-   * @param {string} password
-   * @param {number} role
    * @param {number} province
    * @param {number} status
    * @param {number} performed_by_user_id El usuario que realizó la actualización
@@ -77,42 +61,45 @@ class UserController extends Triggers {
    */
   async edit(
     updated_id,
+    name,
+    address,
+    phone,
     email,
-    password,
-    role,
     province,
     status,
     performed_by_user_id
   ) {
     if (
       !updated_id ||
+      !name ||
+      !address ||
+      !phone ||
       !email ||
-      !password ||
-      !role ||
       !province ||
-      typeof status === "undefined" ||
+      typeof status === 'undefined' ||
       !performed_by_user_id
     )
       return 0;
 
     try {
-      const hashedPassword = await bcryptjs.hash(password, 10);
       await this.UpdateAudit(performed_by_user_id, updated_id, {
+        name: name,
+        address: address,
+        phone: phone,
         email: email,
-        password: hashedPassword,
-        role_id: role,
         province_id: province,
-        status_id: status,
+        status_id: province, 
       });
 
       const query = `
         UPDATE USER 
-          SET email=?,password=?, role_id=?, province_id=?, status_id=?
+          SET name=?, address=?, phone=?, email=?, province_id=?, status_id=?
         WHERE id=?;`;
       const result = await db.query(query, [
+        name,
+        address,
+        phone,       
         email,
-        hashedPassword,
-        role,
         province,
         status,
         updated_id,
@@ -126,4 +113,4 @@ class UserController extends Triggers {
   }
 }
 
-export default new UserController();
+export default new ClientController();

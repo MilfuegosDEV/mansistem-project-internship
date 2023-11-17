@@ -8,8 +8,9 @@ export default class {
    */
   static async findByName(name) {
     if (!name) return undefined;
+    name = name.toUpperCase().trim();
     try {
-      const QUERY = "SELECT name FROM CLIENT WHERE name = ?";
+      const QUERY = "SELECT id, name FROM CLIENT WHERE name = ?";
       const [results] = await db.query(QUERY, [name]);
       return results[0];
     } catch (err) {
@@ -23,8 +24,9 @@ export default class {
    */
   static async findByEmail(email) {
     if (!email) return undefined;
+    email = email.toLowerCase().trim();
     try {
-      const QUERY = "SELECT name FROM CLIENT WHERE email = ?";
+      const QUERY = "SELECT id, name FROM CLIENT WHERE email = ?";
       const [results] = await db.query(QUERY, [email]);
       return results[0];
     } catch (err) {
@@ -39,7 +41,7 @@ export default class {
   static async findByPhoneNumber(phone) {
     if (!phone) return undefined;
     try {
-      const query = "SELECT name FROM CLIENT WHERE phone = ?";
+      const query = "SELECT id, name FROM CLIENT WHERE phone = ?";
       const [results] = await db.query(query, [phone]);
       return results[0];
     } catch (err) {
@@ -47,7 +49,7 @@ export default class {
     }
   }
   /**
-   * Obtiene la información de todos los clientes usuarios habilitados.
+   * Obtiene la información de todos los clientes habilitados.
    * @returns {Promise<Array<object>>} Una promesa que se resulve devolviendo un arreglo con todos los clientes habilitados.
    */
   static async getEnabled() {
