@@ -41,7 +41,7 @@ router.get("/clients", async (req, res, next) => {
         WHERE ${likeClauses}`;
 
     // SQL queries
-    const totalQuery = "SELECT COUNT(*) AS total FROM USER";
+    const totalQuery = "SELECT COUNT(*) AS total FROM CLIENT";
     const totalFilteredQuery = `SELECT COUNT(*) AS total ${baseQuery}`;
     const clientsQuery = `
         SELECT 
@@ -70,8 +70,8 @@ router.get("/clients", async (req, res, next) => {
     });
   } catch (err) {
     // Handle errors
-    console.error("Error fetching clients:", err);
-    res.status(500).send("Server error occurred while fetching clients.");
+    console.error("Error al recuperar los clientes:", err);
+    res.status(500).send("Error del servidor al recuperar los clientes");
   }
 });
 

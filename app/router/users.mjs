@@ -55,7 +55,9 @@ router.post("/add", async (req, res, _next) => {
       .status(422)
       .json({ errors: [{ msg: "No se ha podido registrar el usuario." }] });
   } catch (err) {
-    return res.status(422).json({ errors: [{ msg: "Ha ocurrido un error" }] });
+    return res
+      .status(500)
+      .json({ errors: [{ msg: `Ha ocurrido un error interno del servidor: ${err}` }] });
   }
 });
 
@@ -94,7 +96,9 @@ router.post("/edit", async (req, res, _next) => {
         .json({ errors: [{ msg: "No puedes editar tu propio usuario." }] });
     }
   } catch (err) {
-    return res.status(422).json({ errors: [{ msg: "Ha ocurrido un error" }] });
+    return res
+    .status(500)
+    .json({ errors: [{ msg: `Ha ocurrido un error interno del servidor: ${err}` }] });
   }
 });
 export default router;

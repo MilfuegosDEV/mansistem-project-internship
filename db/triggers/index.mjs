@@ -25,7 +25,7 @@ export default class Triggers {
         new_value VARCHAR(255),
         
       FOREIGN KEY (updated_id) REFERENCES ${this.TABLE}(id),
-      FOREIGN KEY (performed_by_user_id) REFERENCES ${this.TABLE}(id)
+      FOREIGN KEY (performed_by_user_id) REFERENCES USER(id)
     );`);
   }
 

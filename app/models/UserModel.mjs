@@ -8,6 +8,7 @@ export default class {
    */
   static async findByUsername(username) {
     if (!username) return undefined;
+    username = username.toLowerCase().trim();
     try {
       const QUERY = `SELECT * FROM USER WHERE username = ?`;
       const [result] = await db.query(QUERY, [username]);
@@ -20,8 +21,8 @@ export default class {
   /**
    * Obtiene la información del usuario mediante su nombre de id.
    * @param {Int} id
-   * @returns {Promise<object>} Una promesa que se resulve devolviendo un objeto con la información del usuario. 
-  */
+   * @returns {Promise<object>} Una promesa que se resulve devolviendo un objeto con la información del usuario.
+   */
   static async findById(id) {
     if (!id) return undefined;
     try {
