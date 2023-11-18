@@ -105,7 +105,7 @@ router.post("/edit", async (req, res, next) => {
     if (foundClientByName.id !== parseInt(req.body.clientId))
       return res
         .status(400)
-        .json({ errors: [{ msg: "El cliente ya existe." }] });
+        .json({ errors: [{ msg: "El nombre del cliente ya está en uso." }] });
     if (foundClientByEmail.id !== parseInt(req.body.clientId))
       return res.status(400).json({
         errors: [
@@ -122,21 +122,21 @@ router.post("/edit", async (req, res, next) => {
           },
         ],
       });
-    const [result] = await ClientController.edit(
+    const result = await ClientController.edit(
       parseInt(req.body.clientId),
       req.body.name.toUpperCase().trim(),
       req.body.address.toUpperCase().trim(),
       req.body.phone.trim(),
       req.body.email.toLowerCase().trim(),
       parseInt(req.body.province),
+      parseInt(req.body.status),
       parseInt(req.user.id)
     );
-    console.log(result);
     if (result)
-      return res.status(200).json({ result: "Cliente registrado exito." });
+      return res.status(200).json({ result: "Cliente editado exito." });
     return res
       .status(422)
-      .json({ errors: [{ msg: "No se ha podido registrar el cliente" }] });
+      .json({ errors: [{ msg: "No se ha podido editar el cliente" }] });
   } catch (err) {
     console.log(err);
     return res.status(500).json({

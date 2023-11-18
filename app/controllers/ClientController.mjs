@@ -32,13 +32,7 @@ class ClientController extends Triggers {
             (name, address, phone, email, province_id) 
         VALUES 
             (?, ?, ?, ?, ?)`;
-      await db.query(query, [
-        name,
-        address,
-        phone,
-        email,
-        province,
-      ]);
+      await db.query(query, [name, address, phone, email, province]);
 
       await this.InsertionAudit(performed_by_user_id);
       return 1;
@@ -76,7 +70,7 @@ class ClientController extends Triggers {
       !phone ||
       !email ||
       !province ||
-      typeof status === 'undefined' ||
+      typeof status === "undefined" ||
       !performed_by_user_id
     )
       return 0;
@@ -88,17 +82,17 @@ class ClientController extends Triggers {
         phone: phone,
         email: email,
         province_id: province,
-        status_id: province, 
+        status_id: province,
       });
 
       const query = `
-        UPDATE USER 
+        UPDATE CLIENT 
           SET name=?, address=?, phone=?, email=?, province_id=?, status_id=?
         WHERE id=?;`;
       const result = await db.query(query, [
         name,
         address,
-        phone,       
+        phone,
         email,
         province,
         status,
