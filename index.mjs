@@ -93,6 +93,7 @@ const sessionMiddleware = session({
   secret: process.env.SESSION_SECRET, // clave secreta segura desde variables de entorno
   saveUninitialized: true,
   resave: true,
+  rolling: true, // al enviar la solicitud se reactualiza el tiempo de session
   cookie: {
     httpOnly: true,
     secure: process.env.NODE_ENV === "production", // habilitado en producción
@@ -102,6 +103,14 @@ const sessionMiddleware = session({
 });
 
 app.use(sessionMiddleware);
+
+// Middleware para actualizar el tiempo de la sesión en cada solicitud
+app.use((req, res, next) => {
+  if (req.session) {
+    req.session.cookie.maxAge = 1 * 3_600_000;
+  }
+  next();
+});
 
 // Para el login.
 passport_config(passport);
