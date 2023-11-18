@@ -14,6 +14,7 @@ export default class {
       const [results] = await db.query(QUERY, [name]);
       return results[0];
     } catch (err) {
+      console.log(err)
       throw new Error(err);
     }
   }
@@ -30,6 +31,7 @@ export default class {
       const [results] = await db.query(QUERY, [email]);
       return results[0];
     } catch (err) {
+      console.log(err)
       throw new Error(err);
     }
   }
@@ -45,6 +47,7 @@ export default class {
       const [results] = await db.query(query, [phone]);
       return results[0];
     } catch (err) {
+      console.log(err)
       throw new Error(err);
     }
   }
@@ -58,6 +61,7 @@ export default class {
       const [results] = await db.query(QUERY, [1]);
       return results;
     } catch (err) {
+      console.log(err)
       throw new Error(err);
     }
   }
