@@ -1,0 +1,156 @@
+<h1 class="mt-4">Usuarios</h1>
+<ol class="breadcrumb mb-4">
+  <li class="breadcrumb-item"><a href="/">Dashboard</a></li>
+  <li class="breadcrumb-item active">Usuarios</li>
+</ol>
+
+<div class="card mb-4">
+  <div class="card-header">
+    <i class="fa-solid fa-users-gear"></i>
+    Usuarios
+  </div>
+
+  <div class="card-body">
+    <div class="row mb-4">
+      <table
+        id="DataTable"
+        class="display responsive table table-hover w-100 fs-6"
+      ></table>
+    </div>
+  </div>
+</div>
+<%- include ("./partials/formularios/users.ejs") %> <%-
+include("./partials/errorRowModal.ejs") %> <%- contentFor('styles') %> <%-
+contentFor('scripts') %>
+<!--Datatables-->
+<script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+<script src="https://cdn.datatables.net/1.13.6/js/dataTables.bootstrap5.min.js"></script>
+<script src="https://cdn.datatables.net/responsive/2.2.9/js/dataTables.responsive.min.js"></script>
+<script src="https://cdn.datatables.net/select/1.7.0/js/dataTables.select.min.js"></script>
+<script src="https://cdn.datatables.net/buttons/2.4.2/js/dataTables.buttons.min.js"></script>
+<script nonce="<%=cspNonce%>">
+  function showEditModal(form, data) {
+    const selectedRole = $("#editRoles option")
+      .filter(function () {
+        return $(this).text().trim() === data.rol_name;
+      })
+      .val();
+
+    const selectedProvince = $("#editProvinces option")
+      .filter(function () {
+        return $(this).text().trim() === data.province_name;
+      })
+      .val();
+
+    const selectedStatus = $("#editStatus option")
+      .filter(function () {
+        return $(this).text().trim() === data.status;
+      })
+      .val();
+
+    $("#userId").val(data.id);
+    $("#editInputFirstName").val(data.name);
+    $("#editInputLastName").val(data.last_name);
+    $("#editInputEmail").val(data.email);
+    $("#editRoles").val(selectedRole);
+    $("#editProvinces").val(selectedProvince);
+    $("#editStatus").val(selectedStatus);
+    $("#editarModal").modal("show");
+  }
+</script>
+<script nonce="<%=cspNonce%>">
+  $(document).ready(function () {
+    const table = datatableConfig(
+      "#DataTable",
+      "/api/users",
+      [
+        { title: "Id", data: "id" },
+        { title: "Nombre", data: "name" },
+        { title: "Apellidos", data: "last_name" },
+        { title: "Usuario", data: "username" },
+        { title: "Correo", data: "email" },
+        { title: "Rol", data: "rol_name", width: "5%" },
+        { title: "Provincia", data: "province_name", width: "5%" },
+        {
+          title: "Estado",
+          data: "status",
+          render: function (data) {
+            if (data === "HABILITADO") {
+              return `<span class="badge bg-success">Habilitado</span>`;
+            }
+            return `<span class="badge bg-danger">Inhabilitado</span>`;
+          },
+          width: "5%",
+        },
+      ],
+      [
+        {
+          targets: "_all",
+          className: "text-nowrap",
+        },
+      ]
+    );
+  });
+</script>
+<script nonce="<%= cspNonce %>">
+  $(document).ready(function () {
+    $("#registerForm").submit(function (event) {
+      event.preventDefault();
+      const messages = document.getElementById("messageBox");
+      const data = Object.fromEntries(new FormData(this).entries());
+      $.ajax({
+        url: "/users/add",
+        method: "POST",
+        contentType: "application/json",
+        data: JSON.stringify(data),
+        success: function (response) {
+          messages.innerHTML = `<div class="alert alert-success mb-1 py-1"><strong>¡Hecho!</strong> ${response.result}</div>`;
+          setTimeout(() => {
+            messages.innerHTML = "";
+            $("#registerForm")[0].reset();
+            $(`#crearModal`).modal("hide");
+            $("#DataTable").DataTable().ajax.reload();
+          }, 1000);
+        },
+        error: function (err) {
+          const result = err.responseJSON;
+          displayErrors(messages, result.errors);
+          setTimeout(() => {
+            messages.innerHTML = "";
+          }, 5000);
+        },
+      });
+    });
+  });
+</script>
+<script nonce="<%= cspNonce %>">
+  $(document).ready(function () {
+    $("#editForm").submit(function (event) {
+      event.preventDefault();
+      const messages = document.getElementById("editMessageBox");
+      const data = Object.fromEntries(new FormData(this).entries());
+      $.ajax({
+        url: "/users/edit",
+        method: "POST",
+        contentType: "application/json",
+        data: JSON.stringify(data),
+        success: function (response) {
+          messages.innerHTML = `<div class="alert alert-success mb-1 py-1"><strong>¡Hecho!</strong> ${response.result}</div>`;
+          setTimeout(() => {
+            messages.innerHTML = "";
+            $("#editForm")[0].reset();
+            $(`#editarModal`).modal("hide");
+            $("#DataTable").DataTable().ajax.reload();
+          }, 1000);
+        },
+        error: function (err) {
+          const result = err.responseJSON;
+          displayErrors(messages, result.errors);
+          setTimeout(() => {
+            messages.innerHTML = "";
+          }, 5000);
+        },
+      });
+    });
+  });
+</script>

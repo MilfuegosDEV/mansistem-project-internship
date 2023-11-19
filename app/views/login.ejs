@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, shrink-to-fit=no"
+    />
+    <link rel="shortcut icon" href="/public/assets/favicon.ico" />
+    <meta name="description" content="ManSistem HELPDESK" />
+    <meta name="author" content="MilfuegosDEV" />
+    <title>MANSISTEM | LOGIN</title>
+    <link href="/public/css/styles.css" rel="stylesheet" />
+    <script
+      src="https://use.fontawesome.com/releases/v6.3.0/js/all.js"
+      crossorigin="anonymous"
+    ></script>
+  </head>
+  <body>
+    <div class="auth-bg">
+      <div id="layoutAuthentication">
+        <div id="layoutAuthentication_content">
+          <main>
+            <div class="container">
+              <div
+                class="row justify-content-center vh-100 align-content-center"
+              >
+                <div class="col-lg-6">
+                  <div class="card shadow-lg border-0 rounded-lg">
+                    <div class="card-header">
+                      <h3 class="text-center font-weight-light my-2">
+                        Iniciar Sesion
+                      </h3>
+                      <div
+                        class="d-flex justify-content-center align-content-center mb-2"
+                      >
+                        <div class="w-50 mb-2">
+                          <img
+                            src="/public/assets/images/logo.png"
+                            alt=""
+                            srcset=""
+                            width="100%"
+                            class="img-fluid"
+                            style="opacity: 0.95"
+                          />
+                        </div>
+                      </div>
+
+                      <div id="messages">
+                        <%- include('./partials/messages') %>
+                      </div>
+                    </div>
+                    <div class="card-body">
+                      <form method="post" id="login">
+                        <div class="form-floating mb-2 mb-md-3">
+                          <input
+                            class="form-control"
+                            id="inputUsername"
+                            type="text"
+                            placeholder="Usuario"
+                            name="username"
+                            autocomplete="true"
+                            required
+                          />
+                          <label for="inputUsername">Usuario</label>
+                        </div>
+                        <div class="row mb-2 mb-md-3">
+                          <div class="col-12">
+                            <div class="form-floating">
+                              <input
+                                class="form-control"
+                                id="inputPassword"
+                                type="password"
+                                placeholder="Create a password"
+                                name="password"
+                                autocomplete="true"
+                                required
+                              />
+                              <label for="inputPassword">Contraseña</label>
+                            </div>
+                          </div>
+                        </div>
+
+                        <div class="mt-4 mb-0">
+                          <div class="d-grid">
+                            <button class="btn btn-primary btn-block py-2">
+                              Continuar
+                            </button>
+                          </div>
+                        </div>
+                      </form>
+                    </div>
+                    <div class="card-footer text-center py-3">
+                      <div class="small"></div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </main>
+        </div>
+      </div>
+    </div>
+    <script
+      src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"
+      crossorigin="anonymous"
+    ></script>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script nonce="<%=cspNonce%>">
+      function displayErrors(selector, errors) {
+        selector.innerHTML = errors
+          .map(
+            (error) =>
+              `<div class="alert alert-danger mb-1 py-1"><strong>¡Error!</strong> ${error.msg}</div>`
+          )
+          .join("");
+      }
+    </script>
+    <script nonce="<%=cspNonce%>">
+      $(document).ready(function () {
+        const messages = document.getElementById("messages");
+        $("#login").submit(function (event) {
+          event.preventDefault();
+          const data = Object.fromEntries(new FormData(this).entries());
+          $.ajax({
+            url: "/login",
+            method: "POST",
+            contentType: "application/json",
+            data: JSON.stringify(data),
+            success: function (response) {
+              window.location.href = response.redirectUrl;
+            },
+            error: function (error) {
+              const result = error.responseJSON;
+              displayErrors(messages, result.errors);
+            },
+          });
+        });
+      });
+    </script>
+  </body>
+</html>

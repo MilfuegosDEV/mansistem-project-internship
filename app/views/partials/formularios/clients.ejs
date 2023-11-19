@@ -1,0 +1,250 @@
+<!-- Crear usuario -->
+<div
+  class="modal fade"
+  id="crearModal"
+  tabindex="-1"
+  aria-labelledby="crearModalLabel"
+  aria-hidden="true"
+>
+  <div class="modal-dialog modal-lg modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header d-block">
+        <h5 class="modal-title mb-2" id="crearModalLabel">Nuevo Cliente</h5>
+        <div id="messageBox"></div>
+      </div>
+      <div class="modal-body">
+        <form method="post" id="registerForm">
+          <div class="row">
+            <div class="col-12 mb-2 mb-md-3">
+              <div class="form-floating">
+                <input
+                  class="form-control"
+                  id="inputName"
+                  type="text"
+                  placeholder="Nombre"
+                  name="name"
+                  autocomplete="false"
+                  required
+                />
+                <label for="inputName">Nombre</label>
+              </div>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-sm-6 col-12 mb-2 mb-md-3">
+              <div class="form-floating">
+                <input
+                  class="form-control"
+                  id="inputPhone"
+                  type="text"
+                  placeholder="Télefono"
+                  name="phone"
+                  autocomplete="false"
+                  required
+                />
+                <label for="inputPhone">Télefono</label>
+              </div>
+            </div>
+            <div class="col-sm-6 col-12 mb-2 mb-md-3">
+              <div class="form-floating">
+                <input
+                  class="form-control"
+                  id="inputEmail"
+                  type="email"
+                  placeholder="Correo"
+                  name="email"
+                  autocomplete="false"
+                  required
+                />
+                <label for="inputEmail">Correo</label>
+              </div>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-12 mb-2 mb-md-3">
+              <div class="form-floating">
+                <select
+                  class="form-select"
+                  id="provinces"
+                  name="province"
+                  autocomplete="false"
+                  required
+                >
+                  <% provinces.forEach(province => { %>
+                  <option value="<%= province.id %>">
+                    <%= province.name %>
+                  </option>
+                  <% }); %>
+                </select>
+                <label for="provinces" class="form-label"
+                  >Provincias (elige una):</label
+                >
+              </div>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-12">
+              <div class="form-floating">
+                <textarea
+                  class="form-control charCount auto-resize"
+                  id="inputAddress"
+                  type="text"
+                  autocomplete="false"
+                  placeholder="Dirección"
+                  name="address"
+                  required
+                  maxlength="255"
+                ></textarea>
+                <p><span class="charCountDisplay">0</span> / 255 caracteres</p>
+                <label for="inputAddress">Dirección</label>
+              </div>
+            </div>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-danger" data-bs-dismiss="modal">
+          Cerrar
+        </button>
+        <button type="submit" class="btn btn-success" form="registerForm">
+          Registrar
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Crear usuario -->
+<div
+  class="modal fade"
+  id="editarModal"
+  tabindex="-1"
+  aria-labelledby="editarModalLabel"
+  aria-hidden="true"
+>
+  <div class="modal-dialog modal-lg modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header d-block">
+        <h5 class="modal-title mb-2" id="editarModalLabel">Editar Cliente</h5>
+        <div id="editMessageBox"></div>
+      </div>
+      <div class="modal-body">
+        <form method="post" id="editForm">
+          <input type="text" id="clientId" name="clientId" class="d-none" />
+          <div class="row">
+            <div class="col-12 mb-2 mb-md-3">
+              <div class="form-floating">
+                <input
+                  class="form-control"
+                  id="editInputName"
+                  type="text"
+                  placeholder="Nombre"
+                  name="name"
+                  autocomplete="false"
+                  required
+                />
+                <label for="editInputName">Nombre</label>
+              </div>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-sm-6 col-12 mb-2 mb-md-3">
+              <div class="form-floating">
+                <input
+                  class="form-control"
+                  id="editInputPhone"
+                  type="text"
+                  placeholder="Télefono"
+                  name="phone"
+                  autocomplete="false"
+                  required
+                />
+                <label for="editInputPhone">Télefono</label>
+              </div>
+            </div>
+            <div class="col-sm-6 col-12 mb-2 mb-md-3">
+              <div class="form-floating">
+                <input
+                  class="form-control"
+                  id="editInputEmail"
+                  type="email"
+                  placeholder="Correo"
+                  name="email"
+                  autocomplete="false"
+                  required
+                />
+                <label for="editInputEmail">Correo</label>
+              </div>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-sm-6 col-12 mb-2 mb-md-3">
+              <div class="form-floating">
+                <select
+                  class="form-select"
+                  id="editProvinces"
+                  name="province"
+                  autocomplete="false"
+                  required
+                >
+                  <% provinces.forEach(province => { %>
+                  <option value="<%= province.id %>">
+                    <%= province.name %>
+                  </option>
+                  <% }); %>
+                </select>
+                <label for="editProvinces" class="form-label"
+                  >Provincias (elige una):</label
+                >
+              </div>
+            </div>
+            <div class="col-sm-6 col-12 mb-2 mb-md-3">
+              <div class="form-floating">
+                <select
+                  class="form-select"
+                  name="status"
+                  id="editStatus"
+                  autocomplete="false"
+                  required
+                >
+                  <% status.forEach(value => { %>
+                  <option value="<%= value.id %>"><%= value.info %></option>
+                  <% }); %>
+                </select>
+                <label for="editStatus" class="form-label"
+                  >Estado: (elige uno):</label
+                >
+              </div>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-12">
+              <div class="form-floating">
+                <textarea
+                  class="form-control charCount auto-resize"
+                  id="editInputAddress"
+                  type="text"
+                  autocomplete="false"
+                  placeholder="Dirección"
+                  name="address"
+                  required
+                  maxlength="255"
+                ></textarea>
+                <p><span class="charCountDisplay">0</span> / 255 caracteres</p>
+                <label for="editInputAddress">Dirección</label>
+              </div>
+            </div>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-danger" data-bs-dismiss="modal">
+          Cerrar
+        </button>
+        <button type="submit" class="btn btn-success" form="editForm">
+          Registrar
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
