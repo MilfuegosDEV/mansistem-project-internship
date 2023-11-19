@@ -15,7 +15,7 @@ export const forwardAuthenticated = (req, res, next) => {
   res.redirect("/");
 };
 
-export const isUserAdmin = (req, _res, next) => {
+export const justForAdmins = (req, _res, next) => {
   if (req.user.role_id === 1) {
     return next();
   }

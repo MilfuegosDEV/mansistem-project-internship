@@ -1,4 +1,4 @@
-import { ensureAuthenticated } from "../middlewares/auth.mjs";
+import { ensureAuthenticated, justForAdmins } from "../middlewares/auth.mjs";
 import { status, provinces, roles } from "../models/utils/index.mjs";
 import auth from "./auth/index.mjs";
 import userHandlers from "./users.mjs";
@@ -15,28 +15,38 @@ router.get("/", ensureAuthenticated, async (req, res, _next) => {
   });
 });
 
-router.get("/users", ensureAuthenticated, async (req, res, _next) => {
-  res.render("users", {
-    title: "Usuarios",
-    active: "users",
-    user: req.user,
-    userRoles: await roles(),
-    status: await status(),
-    provinces: await provinces(),
-  });
-  return;
-});
+router.get(
+  "/users",
+  ensureAuthenticated,
+  justForAdmins,
+  async (req, res, _next) => {
+    res.render("users", {
+      title: "Usuarios",
+      active: "users",
+      user: req.user,
+      userRoles: await roles(),
+      status: await status(),
+      provinces: await provinces(),
+    });
+    return;
+  }
+);
 
-router.get("/clients", ensureAuthenticated, async (req, res, _next) => {
-  res.render("clients", {
-    title: "Clientes",
-    active: "clients",
-    user: req.user,
-    status: await status(),
-    provinces: await provinces(),
-  });
-  return;
-});
+router.get(
+  "/clients",
+  justForAdmins,
+  ensureAuthenticated,
+  async (req, res, _next) => {
+    res.render("clients", {
+      title: "Clientes",
+      active: "clients",
+      user: req.user,
+      status: await status(),
+      provinces: await provinces(),
+    });
+    return;
+  }
+);
 
 router.use("/", auth);
 router.use("/users", userHandlers);

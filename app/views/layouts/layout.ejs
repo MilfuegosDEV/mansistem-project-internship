@@ -8,7 +8,7 @@
       content="width=device-width, initial-scale=1, shrink-to-fit=no"
     />
     <link rel="shortcut icon" href="/public/assets/favicon.ico" />
-    <meta name="description" content="ManSistem HELPDESK" />
+    <meta name="description" content="MANSISTEM DASHBOARD" />
     <meta name="author" content="MilfuegosDEV" />
     <title>MANSISTEM | <%= title %></title>
     <link href="/public/css/styles.css" rel="stylesheet" />
@@ -26,26 +26,7 @@
       >
         <i class="fas fa-bars"></i>
       </button>
-      <!-- Navbar Search-->
-      <form
-        class="d-none d-md-inline-block form-inline ms-auto me-0 me-md-3 my-2 my-md-0"
-      >
-        <div class="input-group">
-          <input
-            class="form-control"
-            type="text"
-            placeholder="Search for..."
-            aria-label="Search for..."
-            aria-describedby="btnNavbarSearch"
-            id="searchNavBar"
-          />
-          <button class="btn btn-primary" id="btnNavbarSearch" type="button">
-            <i class="fas fa-search"></i>
-          </button>
-        </div>
-      </form>
-      <!-- Navbar-->
-      <ul class="navbar-nav ms-auto ms-md-0 me-3 me-lg-4">
+      <ul class="navbar-nav ms-auto me-0 me-md-3 my-2 my-md-0">
         <li class="nav-item dropdown">
           <a
             class="nav-link dropdown-toggle"
@@ -70,137 +51,9 @@
     </nav>
     <div id="layoutSidenav">
       <div id="layoutSidenav_nav">
-        <nav class="sb-sidenav accordion sb-sidenav-dark" id="sidenavAccordion">
-          <div class="sb-sidenav-menu">
-            <div class="nav">
-              <div class="sb-sidenav-menu-heading">Core</div>
-              <a
-                class="nav-link <%= active === 'home' ? 'active' : '' %>"
-                href="/"
-              >
-                <div class="sb-nav-link-icon">
-                  <i class="fas fa-tachometer-alt"></i>
-                </div>
-                Dashboard
-              </a>
-              <div class="sb-sidenav-menu-heading">HELPDESK</div>
-              <!--Casos-->
-              <a
-                class="nav-link <%= active === 'tickets' ? 'active' : '' %>"
-                href="/tickets"
-              >
-                <div class="sb-nav-link-icon">
-                  <i class="fa-solid fa-screwdriver-wrench"></i>
-                </div>
-                Casos
-              </a>
-              <!-- Fin Casos-->
-              <!-- Usuarios -->
-              <a
-                class="nav-link <%= active === 'users' ? 'active' : '' %>"
-                href="/users"
-              >
-                <div class="sb-nav-link-icon">
-                  <i class="fa-solid fa-users-gear"></i>
-                </div>
-                Usuarios
-              </a>
-              <!-- Fin Usuarios -->
-              <!-- Clientes -->
-              <a
-                class="nav-link <%= active === 'clients' ? 'active' : '' %>"
-                href="/clients"
-              >
-                <div class="sb-nav-link-icon">
-                  <i class="fa-solid fa-building-user"></i>
-                </div>
-                Clientes
-              </a>
-
-              <!--Fin Clientes-->
-              <!--Inventario-->
-              <a
-                class="nav-link collapsed"
-                href="#"
-                data-bs-toggle="collapse"
-                data-bs-target="#collapseInventario"
-                aria-expanded="false"
-                aria-controls="collapseLayouts"
-              >
-                <div class="sb-nav-link-icon">
-                  <i class="fa-solid fa-boxes-stacked"></i>
-                </div>
-                Inventario
-                <div class="sb-sidenav-collapse-arrow">
-                  <i class="fas fa-angle-down"></i>
-                </div>
-              </a>
-              <div
-                class="collapse"
-                id="collapseInventario"
-                aria-labelledby="headingOne"
-                data-bs-parent="#sidenavAccordion"
-              >
-                <nav class="sb-sidenav-menu-nested nav">
-                  <a class="nav-link" href="layout-static.html">Ver</a>
-                  <a class="nav-link" href="layout-sidenav-light.html"
-                    >Agregar</a
-                  >
-                </nav>
-              </div>
-              <!--Fin Inventario-->
-              <!--Equipos-->
-              <a
-                class="nav-link collapsed"
-                href="#"
-                data-bs-toggle="collapse"
-                data-bs-target="#collapseEquipos"
-                aria-expanded="false"
-                aria-controls="collapseLayouts"
-              >
-                <div class="sb-nav-link-icon">
-                  <i class="fa-solid fa-print"></i>
-                </div>
-                Equipos
-                <div class="sb-sidenav-collapse-arrow">
-                  <i class="fas fa-angle-down"></i>
-                </div>
-              </a>
-              <div
-                class="collapse"
-                id="collapseEquipos"
-                aria-labelledby="headingOne"
-                data-bs-parent="#sidenavAccordion"
-              >
-                <nav class="sb-sidenav-menu-nested nav">
-                  <a class="nav-link" href="layout-static.html">Ver</a>
-                  <a class="nav-link" href="layout-sidenav-light.html"
-                    >Agregar</a
-                  >
-                </nav>
-              </div>
-              <!--Fin Equipos-->
-
-              <div class="sb-sidenav-menu-heading">Addons</div>
-              <a class="nav-link" href="charts.html">
-                <div class="sb-nav-link-icon">
-                  <i class="fas fa-chart-area"></i>
-                </div>
-                Charts
-              </a>
-              <a class="nav-link" href="tables.html">
-                <div class="sb-nav-link-icon"><i class="fas fa-table"></i></div>
-                Tables
-              </a>
-            </div>
-          </div>
-          <div class="sb-sidenav-footer">
-            <div class="small">Bienvenido:</div>
-            <%= user.name %>
-            <br />
-            <%= user.last_name %>
-          </div>
-        </nav>
+        <% if (user.role_id === 1) { %> <%- include
+        ('../partials/adminSideBar.ejs') %> <% } else { %> <%-
+        include('../partials/userSideBar.ejs')%> <% } %>
       </div>
       <div id="layoutSidenav_content">
         <main>
@@ -211,7 +64,9 @@
             <div
               class="d-flex align-items-center justify-content-between small"
             >
-              <div class="text-muted">Copyright &copy; MANSISTEM S.A. 2023</div>
+              <div class="text-muted text-center">
+                Copyright &copy; MANSISTEM S.A. <%= (new Date).getFullYear() %>
+              </div>
             </div>
           </div>
         </footer>
