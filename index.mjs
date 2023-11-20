@@ -55,7 +55,6 @@ app.use(
       ],
       scriptSrc: [
         "'self'",
-        "https://code.jquery.com",
         "https://use.fontawesome.com",
         "https://cdn.jsdelivr.net",
         "https://cdnjs.cloudflare.com",
