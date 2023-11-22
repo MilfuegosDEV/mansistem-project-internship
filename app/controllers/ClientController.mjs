@@ -82,7 +82,7 @@ class ClientController extends Triggers {
         phone: phone,
         email: email,
         province_id: province,
-        status_id: province,
+        status_id: status,
       });
 
       const query = `
