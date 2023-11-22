@@ -48,6 +48,16 @@ router.get(
   }
 );
 
+router.get("/devices/classes", ensureAuthenticated, justForAdmins, async (req, res, next) => {
+  res.render("deviceClasses", {
+    title: "Dispositivos",
+    active: "deviceClasses",
+    user: req.user,
+    status: await status()
+  });
+  return;
+});
+
 router.use("/", auth);
 router.use("/users", userHandlers);
 router.use("/clients", clientHandlers);
