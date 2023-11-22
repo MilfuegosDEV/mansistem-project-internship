@@ -76,9 +76,9 @@ contentFor('scripts') %>
           data: "status",
           render: function (data) {
             if (data === "HABILITADO") {
-              return `<span class="badge bg-success">Habilitado</span>`;
+              return `<span class="badge bg-success">${data}</span>`;
             }
-            return `<span class="badge bg-danger">Inhabilitado</span>`;
+            return `<span class="badge bg-danger">${data}</span>`;
           },
           width: "5%",
         },
