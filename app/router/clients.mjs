@@ -9,10 +9,32 @@ import {
   checkPhoneNumber,
   handleValidation,
 } from "../middlewares/validation.mjs";
+import { provinces, status } from "../models/utils/index.mjs";
+import { ensureAuthenticated, justForAdmins } from "../middlewares/auth.mjs";
 
 const router = Router();
 
-router.post("/add", async (req, res, next) => {
+// Views
+
+router.get(
+  "/",
+  justForAdmins,
+  ensureAuthenticated,
+  async (req, res, _next) => {
+    res.render("clients", {
+      title: "Clientes",
+      active: "clients",
+      user: req.user,
+      status: await status(),
+      provinces: await provinces(),
+    });
+    return;
+  }
+);
+
+// Handlers
+
+router.post("/add", async (req, res, _next) => {
   const validations = [
     (req) => checkNotEmpty(req.body.name, "nombre"),
     (req) => checkNotEmpty(req.body.phone, "teléfono"),
@@ -77,7 +99,7 @@ router.post("/add", async (req, res, next) => {
   }
 });
 
-router.post("/edit", async (req, res, next) => {
+router.post("/edit", async (req, res, _next) => {
   const validations = [
     (req) => checkNotEmpty(req.body.name, "nombre"),
     (req) => checkNotEmpty(req.body.phone, "teléfono"),

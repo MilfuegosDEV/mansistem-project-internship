@@ -9,8 +9,29 @@ import {
   handleValidation,
 } from "../middlewares/validation.mjs";
 import UserModel from "../models/UserModel.mjs";
+import { ensureAuthenticated, justForAdmins } from "../middlewares/auth.mjs";
+import { provinces, roles, status } from "../models/utils/index.mjs";
 
 const router = Router();
+
+// Vistas
+
+router.get(
+  "/",
+  ensureAuthenticated,
+  justForAdmins,
+  async (req, res, _next) => {
+    res.render("users", {
+      title: "Usuarios",
+      active: "users",
+      user: req.user,
+      userRoles: await roles(),
+      status: await status(),
+      provinces: await provinces(),
+    });
+    return;
+  }
+);
 
 // Manejo de registro
 router.post("/add", async (req, res, _next) => {

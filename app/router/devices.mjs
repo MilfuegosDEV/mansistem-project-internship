@@ -1,3 +1,5 @@
+import { status } from "../models/utils/index.mjs";
+
 import {
   checkNotEmpty,
   checkMaxLength,
@@ -9,10 +11,63 @@ import DeviceClassModel from "../models/DeviceClassModel.mjs";
 import DeviceClassController from "../controllers/DeviceClassController.mjs";
 import DeviceSupplierModel from "../models/DeviceSupplierModel.mjs";
 import DeviceSupplierController from "../controllers/DeviceSupplierController.mjs";
+import { ensureAuthenticated, justForAdmins } from "../middlewares/auth.mjs";
 
 const router = Router();
 
-router.post("/classes/add", async (req, res, next) => {
+// Views
+
+router.get(
+  "/suppliers",
+  ensureAuthenticated,
+  justForAdmins,
+  async (req, res, _next) => {
+    res.render("deviceSupplier", {
+      title: "Proveedores",
+      active: "deviceSupplier",
+      user: req.user,
+      status: await status(),
+    });
+    return;
+  }
+);
+
+router.get(
+  "/classes",
+  ensureAuthenticated,
+  justForAdmins,
+  async (req, res, _next) => {
+    res.render("deviceClasses", {
+      title: "Dispositivos",
+      active: "deviceClasses",
+      user: req.user,
+      status: await status(),
+    });
+    return;
+  }
+);
+
+router.get(
+  "/types",
+  ensureAuthenticated,
+  justForAdmins,
+  async (req, res, _next) => {
+    res.render("deviceTypes", {
+      title: "Tipos",
+      active: "deviceTypes",
+      user: req.user,
+      status: await status(),
+      deviceClass: await DeviceClassModel.getEnabled(),
+      deviceSupplier: await DeviceSupplierModel.getEnabled()
+    });
+    return;
+  }
+);
+
+
+// handlers
+
+router.post("/classes/add", async (req, res, _next) => {
   const validations = [
     (req) => checkNotEmpty(req.body.name, "nombre"),
     (req) => checkMaxLength(req.body.name, 20, "nombre"),

@@ -1,11 +1,10 @@
-import { ensureAuthenticated, justForAdmins } from "../middlewares/auth.mjs";
-import { status, provinces, roles } from "../models/utils/index.mjs";
-import auth from "./auth/index.mjs";
-import userHandlers from "./users.mjs";
-import clientHandlers from "./clients.mjs";
-import deviceHandlers from "./devices.mjs";
-import { Router } from "express";
+import { ensureAuthenticated } from "../middlewares/auth.mjs";
 
+import auth from "./auth/index.mjs";
+import users from "./users.mjs";
+import clients from "./clients.mjs";
+import devices from "./devices.mjs";
+import { Router } from "express";
 const router = Router();
 
 router.get("/", ensureAuthenticated, async (req, res, _next) => {
@@ -16,86 +15,8 @@ router.get("/", ensureAuthenticated, async (req, res, _next) => {
   });
 });
 
-router.get(
-  "/users",
-  ensureAuthenticated,
-  justForAdmins,
-  async (req, res, _next) => {
-    res.render("users", {
-      title: "Usuarios",
-      active: "users",
-      user: req.user,
-      userRoles: await roles(),
-      status: await status(),
-      provinces: await provinces(),
-    });
-    return;
-  }
-);
-
-router.get(
-  "/clients",
-  justForAdmins,
-  ensureAuthenticated,
-  async (req, res, _next) => {
-    res.render("clients", {
-      title: "Clientes",
-      active: "clients",
-      user: req.user,
-      status: await status(),
-      provinces: await provinces(),
-    });
-    return;
-  }
-);
-
-router.get(
-  "/devices/classes",
-  ensureAuthenticated,
-  justForAdmins,
-  async (req, res, next) => {
-    res.render("deviceClasses", {
-      title: "Dispositivos",
-      active: "deviceClasses",
-      user: req.user,
-      status: await status(),
-    });
-    return;
-  }
-);
-
-router.get(
-  "/devices/suppliers",
-  ensureAuthenticated,
-  justForAdmins,
-  async (req, res, next) => {
-    res.render("deviceSupplier", {
-      title: "Proveedores",
-      active: "deviceSupplier",
-      user: req.user,
-      status: await status(),
-    });
-    return;
-  }
-);
-
-router.get(
-  "/devices/types",
-  ensureAuthenticated,
-  justForAdmins,
-  async (req, res, next) => {
-    res.render("deviceTypes", {
-      title: "Tipos",
-      active: "deviceTypes",
-      user: req.user,
-      status: await status(),
-    });
-    return;
-  }
-);
-
 router.use("/", auth);
-router.use("/users", userHandlers);
-router.use("/clients", clientHandlers);
-router.use("/devices", deviceHandlers);
+router.use("/users", users);
+router.use("/clients", clients);
+router.use("/devices", devices);
 export { router };
