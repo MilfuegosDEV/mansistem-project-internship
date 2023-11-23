@@ -15,7 +15,6 @@ router.post("/classes/add", async (req, res, next) => {
   const validations = [
     (req) => checkNotEmpty(req.body.name, "nombre"),
     (req) => checkMaxLength(req.body.name, 20, "nombre"),
-    (req) => checkForBlank(req.body.name, "nombre"),
   ];
   const err = handleValidation(validations, req);
   if (err) return res.status(422).json({ errors: err });
