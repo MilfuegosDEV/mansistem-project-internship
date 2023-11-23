@@ -1,13 +1,14 @@
 import {
   checkNotEmpty,
   checkMaxLength,
-  checkForBlank,
   handleValidation,
 } from "../middlewares/validation.mjs";
 
-import e, { Router } from "express";
+import { Router } from "express";
 import DeviceClassModel from "../models/DeviceClassModel.mjs";
 import DeviceClassController from "../controllers/DeviceClassController.mjs";
+import DeviceSupplierModel from "../models/DeviceSupplierModel.mjs";
+import DeviceSupplierController from "../controllers/DeviceSupplierController.mjs";
 
 const router = Router();
 
@@ -53,6 +54,57 @@ router.post("/classes/edit", async (req, res, _next) => {
     return res
       .status(422)
       .json({ errors: [{ msg: "No se ha podido editar la clase" }] });
+  } catch (err) {
+    return res.status(500).json({
+      errors: [{ msg: `Ha ocurrido un error interno del servidor: ${err}` }],
+    });
+  }
+});
+
+router.post("/suppliers/add", async (req, res, _next) => {
+  const validations = [
+    (req) => checkNotEmpty(req.body.name, "nombre"),
+    (req) => checkMaxLength(req.body.name, 20, "nombre"),
+  ];
+  const err = handleValidation(validations, req);
+  if (err) return res.status(422).json({ errors: err });
+
+  try {
+    const foundSupplier = await DeviceSupplierModel.findByName(req.body.name);
+    if (foundSupplier)
+      return res.status(422).json({
+        errors: [{ msg: "El proveedor ya fue registrado" }],
+      });
+    const result = await DeviceSupplierController.add(
+      req.body.name.toUpperCase().trim(),
+      req.user.id
+    );
+    if (result)
+      return res
+        .status(201)
+        .json({ result: "Proveedor registrado con éxito." });
+    return res
+      .status(422)
+      .json({ errors: [{ msg: "No se ha podido registrar el proveedor" }] });
+  } catch (err) {
+    return res.status(500).json({
+      errors: [{ msg: `Ha ocurrido un error interno del servidor: ${err}` }],
+    });
+  }
+});
+
+router.post("/suppliers/edit", async (req, res, _next) => {
+  try {
+    const result = await DeviceSupplierController.edit(
+      parseInt(req.body.deviceSupplierId),
+      parseInt(req.body.status),
+      parseInt(req.user.id)
+    );
+    if (result)
+      return res.status(201).json({ result: "Proveedor editado con éxito." });
+    return res
+      .status(422)
+      .json({ errors: [{ msg: "No se ha podido editar el proveedor" }] });
   } catch (err) {
     return res.status(500).json({
       errors: [{ msg: `Ha ocurrido un error interno del servidor: ${err}` }],
