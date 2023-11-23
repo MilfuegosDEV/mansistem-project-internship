@@ -63,6 +63,7 @@ router.get(
     return;
   }
 );
+
 router.get(
   "/devices/suppliers",
   ensureAuthenticated,
@@ -71,6 +72,21 @@ router.get(
     res.render("deviceSupplier", {
       title: "Proveedores",
       active: "deviceSupplier",
+      user: req.user,
+      status: await status(),
+    });
+    return;
+  }
+);
+
+router.get(
+  "/devices/types",
+  ensureAuthenticated,
+  justForAdmins,
+  async (req, res, next) => {
+    res.render("deviceTypes", {
+      title: "Tipos",
+      active: "deviceTypes",
       user: req.user,
       status: await status(),
     });
