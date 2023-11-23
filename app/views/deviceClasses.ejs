@@ -1,4 +1,5 @@
 <h1 class="mt-4">Clases</h1>
+<p class="lead">Consiste en lo más general del dispositivo.</p>
 <ol class="breadcrumb mb-4">
   <li class="breadcrumb-item"><a href="/">Dashboard</a></li>
   <li class="breadcrumb-item"><a href="/devices">Dispositivos</a></li>
@@ -16,9 +17,8 @@
     ></table>
   </div>
 </div>
-<%- include('partials/formularios/deviceClasses.ejs') %>
-<%- include('partials/errorRowModal.ejs') %>
-<%- contentFor('styles') %> <%-
+<%- include('partials/formularios/deviceClasses.ejs') %> <%-
+include('partials/errorRowModal.ejs') %> <%- contentFor('styles') %> <%-
 contentFor('scripts') %>
 <!--Datatables-->
 <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
