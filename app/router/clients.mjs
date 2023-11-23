@@ -64,7 +64,6 @@ router.post("/add", async (req, res, next) => {
       parseInt(req.body.province),
       parseInt(req.user.id)
     );
-    console.log(result);
 
     if (result)
       return res.status(200).json({ result: "Cliente registrado exito." });
