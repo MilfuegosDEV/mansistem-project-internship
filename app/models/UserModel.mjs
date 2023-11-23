@@ -4,7 +4,7 @@ export default class {
   /**
    * Obtiene la información del usuario mediante su nombre de usuario.
    * @param {String} username
-   * @returns {Promise<object>} Una promesa que se resulve devolviendo un objeto con la información del usuario.
+   * @returns {Promise<object> | undefined} Una promesa que se resulve devolviendo un objeto con la información del usuario.
    */
   static async findByUsername(username) {
     if (!username) return undefined;
@@ -21,7 +21,7 @@ export default class {
   /**
    * Obtiene la información del usuario mediante su nombre de id.
    * @param {Int} id
-   * @returns {Promise<object>} Una promesa que se resulve devolviendo un objeto con la información del usuario.
+   * @returns {Promise<object> | undefined} Una promesa que se resulve devolviendo un objeto con la información del usuario.
    */
   static async findById(id) {
     if (!id) return undefined;
@@ -35,7 +35,7 @@ export default class {
   }
   /**
    * Obtiene la información de todos los usuarios usuarios habilitados.
-   * @returns {Promise<Array<object>>} Una promesa que se resulve devolviendo un arreglo con todos los usuarios habilitados.
+   * @returns {Promise<Array<object>> | undefined } Una promesa que se resulve devolviendo un arreglo con todos los usuarios habilitados.
    */
   static async getEnabled() {
     try {

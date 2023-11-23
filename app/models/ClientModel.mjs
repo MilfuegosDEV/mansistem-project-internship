@@ -4,7 +4,7 @@ export default class {
   /**
    * Busca un cliente mediante su nombre.
    * @param {String} name
-   * @returns {Promise<object>} Una promesa que se resuelve con un objeto que contiene la información del cliente.
+   * @returns {Promise<object> | undefined} Una promesa que se resuelve con un objeto que contiene la información del cliente.
    */
   static async findByName(name) {
     if (!name) return undefined;
@@ -21,7 +21,7 @@ export default class {
   /**
    * Busca un cliente mediante su email.
    * @param {String} email
-   * @returns {Promise<object>} Una promesa que se resuelve con un objeto que contiene la información del cliente.
+   * @returns {Promise<object> | undefined} Una promesa que se resuelve con un objeto que contiene la información del cliente.
    */
   static async findByEmail(email) {
     if (!email) return undefined;
@@ -38,7 +38,7 @@ export default class {
   /**
    * Busca un cliente mediante su número de teléfono.
    * @param {string} phone
-   * @returns {Promise<object>} Una promesa que se resuelve con un objeto que contiene la información del cliente.
+   * @returns {Promise<object> | undefined} Una promesa que se resuelve con un objeto que contiene la información del cliente.
    */
   static async findByPhoneNumber(phone) {
     if (!phone) return undefined;

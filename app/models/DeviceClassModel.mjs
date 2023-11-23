@@ -4,7 +4,7 @@ export default class DeviceClassModel {
   /**
    * Recupera una clase de dispositivo mediante su nombre
    * @param {string} name
-   * @returns
+   * @returns {Promise <object> | undefined}
    */
   static async findByName(name) {
     if (!name) return undefined;
