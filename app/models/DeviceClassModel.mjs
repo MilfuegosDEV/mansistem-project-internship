@@ -17,4 +17,18 @@ export default class DeviceClassModel {
       throw new Error(err);
     }
   }
+
+  /**
+   * Recupera todas las clases de los dispositivos que estén habilitados
+   * @returns {Promise <Array<object>> | undefined}
+   */
+  static async getEnabled() {
+    try {
+      const QUERY = "SELECT id, name FROM DEVICE_CLASS WHERE status_id = ?";
+      const [results] = await db.query(QUERY, [1]);
+      return results;
+    } catch (err) {
+      throw new Error(err);
+    }
+  }
 }

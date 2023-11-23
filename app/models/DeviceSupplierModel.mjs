@@ -17,4 +17,17 @@ export default class DeviceSupplierModel {
       throw new Error(err);
     }
   }
+  /**
+   * Recupera todos los provedores que estén habilitados
+   * @returns {Promise<Array<object>> | undefined}
+   */
+  static async getEnabled() {
+    try {
+      const QUERY = "SELECT id, name FROM DEVICE_SUPPLIER WHERE status_id=?";
+      const [results] = await db.query(QUERY, [1]);
+      return results;
+    } catch (err) {
+      throw new Error(err);
+    }
+  }
 }
