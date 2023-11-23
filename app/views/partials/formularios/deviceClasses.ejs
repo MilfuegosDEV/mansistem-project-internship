@@ -60,7 +60,12 @@
       </div>
       <div class="modal-body">
         <form method="post" id="editForm">
-          <input type="text" id="deviceClassId" name="deviceClassId" class="d-none" />
+          <input
+            type="text"
+            id="deviceClassId"
+            name="deviceClassId"
+            class="d-none"
+          />
           <div class="row">
             <div class="col-12 mb-2 mb-md-3">
               <div class="form-floating">
@@ -85,6 +90,7 @@
                   name="status"
                   id="editStatus"
                   autocomplete="false"
+                  title="Ten en cuenta que se si inhabilitas o una clase, esto inhabilitará todos sus dispositivos y tipos de dispositivos."
                   required
                 >
                   <% status.forEach(value => { %>
@@ -103,7 +109,12 @@
         <button type="button" class="btn btn-danger" data-bs-dismiss="modal">
           Cerrar
         </button>
-        <button type="submit" class="btn btn-success" form="editForm">
+        <button
+          type="submit"
+          class="btn btn-success"
+          form="editForm"
+          title="Ten en cuenta que se si inhabilitas o una clase, esto inhabilitará todos sus dispositivos y tipos de dispositivos."
+        >
           Registrar
         </button>
       </div>
