@@ -48,7 +48,7 @@ contentFor('scripts') %>
       "/api/devices/classes",
       [
         { title: "Id", data: "id" },
-        { title: "Dispositivo", data: "name" },
+        { title: "Clase", data: "name" },
         {
           title: "Estado",
           data: "status",
@@ -58,7 +58,7 @@ contentFor('scripts') %>
             }
             return `<span class="badge bg-danger">${data}</span>`;
           },
-          width: "5%",
+          width: "30%",
         },
       ],
       [
