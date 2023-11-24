@@ -97,9 +97,9 @@ router.post("/edit", async (req, res, _next) => {
   const error = handleValidation(validations, req);
   if (error) return res.status(422).json({ errors: error });
   try {
-    if (req.user.id != req.body.userId) {
+    if (req.user.id != req.body.id) {
       const result = await UserController.edit(
-        parseInt(req.body.userId),
+        parseInt(req.body.id),
         req.body.email.toLowerCase().trim(),
         req.body.password.trim(),
         parseInt(req.body.role),

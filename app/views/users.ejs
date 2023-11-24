@@ -205,7 +205,7 @@
                 <label for="editInputFirstName">Nombre</label>
               </div>
             </div>
-            <input type="text" name="userId" id="userId" class="d-none" />
+            <input type="text" name="id" id="id" class="d-none" />
             <div class="col-sm-6 col-12 mb-2 mb-md-3">
               <div class="form-floating">
                 <input
@@ -367,7 +367,7 @@ contentFor('scripts') %>
       })
       .val();
 
-    $("#userId").val(data.id);
+    $("#id").val(data.id);
     $("#editInputFirstName").val(data.name);
     $("#editInputLastName").val(data.last_name);
     $("#editInputEmail").val(data.email);

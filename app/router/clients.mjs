@@ -123,11 +123,11 @@ router.post("/edit", async (req, res, _next) => {
     const foundClientByPhone = await ClientModel.findByPhoneNumber(
       req.body.phone
     );
-    if (foundClientByName.id !== parseInt(req.body.clientId))
+    if (foundClientByName.id !== parseInt(req.body.id))
       return res
         .status(400)
         .json({ errors: [{ msg: "El nombre del cliente ya está en uso." }] });
-    if (foundClientByEmail.id !== parseInt(req.body.clientId))
+    if (foundClientByEmail.id !== parseInt(req.body.id))
       return res.status(400).json({
         errors: [
           {
@@ -135,7 +135,7 @@ router.post("/edit", async (req, res, _next) => {
           },
         ],
       });
-    if (foundClientByPhone.id !== parseInt(req.body.clientId))
+    if (foundClientByPhone.id !== parseInt(req.body.id))
       return res.status(400).json({
         errors: [
           {
@@ -144,7 +144,7 @@ router.post("/edit", async (req, res, _next) => {
         ],
       });
     const result = await ClientController.edit(
-      parseInt(req.body.clientId),
+      parseInt(req.body.id),
       req.body.name.toUpperCase().trim(),
       req.body.address.toUpperCase().trim(),
       req.body.phone.trim(),

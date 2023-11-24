@@ -147,7 +147,7 @@
       </div>
       <div class="modal-body">
         <form method="post" id="editForm">
-          <input type="text" id="clientId" name="clientId" class="d-none" />
+          <input type="text" id="id" name="id" class="d-none" />
           <div class="row">
             <div class="col-12 mb-2 mb-md-3">
               <div class="form-floating">
@@ -290,7 +290,7 @@ contentFor('scripts') %>
       })
       .val();
 
-    $("#clientId").val(data.id);
+    $("#id").val(data.id);
     $("#editInputName").val(data.name);
     $("#editInputPhone").val(data.phone);
     $("#editInputEmail").val(data.email);

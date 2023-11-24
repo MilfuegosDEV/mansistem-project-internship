@@ -81,8 +81,8 @@
         <form method="post" id="editForm">
           <input
             type="text"
-            id="deviceSupplierId"
-            name="deviceSupplierId"
+            id="id"
+            name="id"
             class="d-none"
           />
           <div class="row">
@@ -158,7 +158,7 @@ contentFor('scripts') %>
       })
       .val();
 
-    $("#deviceSupplierId").val(data.id);
+    $("#id").val(data.id);
     $("#editInputName").val(data.name);
     $("#editStatus").val(selectedStatus);
     $("#editarModal").modal("show");

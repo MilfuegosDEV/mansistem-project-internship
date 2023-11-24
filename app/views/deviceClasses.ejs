@@ -82,8 +82,8 @@
         <form method="post" id="editForm">
           <input
             type="text"
-            id="deviceClassId"
-            name="deviceClassId"
+            id="id"
+            name="id"
             class="d-none"
           />
           <div class="row">
@@ -159,7 +159,7 @@
       })
       .val();
 
-    $("#deviceClassId").val(data.id);
+    $("#id").val(data.id);
     $("#editInputName").val(data.name);
     $("#editStatus").val(selectedStatus);
     $("#editarModal").modal("show");
