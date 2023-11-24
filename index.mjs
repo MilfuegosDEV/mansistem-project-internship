@@ -117,7 +117,6 @@ app.use(passport.session());
 
 // Utlizando ejs como motor de vistas
 app.set("view engine", "ejs");
-app.set("views", "app/views");
 app.use("/views", express.static(path.join(__dirname, "views")));
 
 // para permitir usar un master page.
