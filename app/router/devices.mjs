@@ -102,7 +102,7 @@ router.post("/classes/add", async (req, res, _next) => {
 router.post("/classes/edit", async (req, res, _next) => {
   try {
     const result = await DeviceClassController.edit(
-      parseInt(req.body.deviceClassId),
+      parseInt(req.body.id),
       parseInt(req.body.status),
       parseInt(req.user.id)
     );
@@ -153,7 +153,7 @@ router.post("/suppliers/add", async (req, res, _next) => {
 router.post("/suppliers/edit", async (req, res, _next) => {
   try {
     const result = await DeviceSupplierController.edit(
-      parseInt(req.body.deviceSupplierId),
+      parseInt(req.body.id),
       parseInt(req.body.status),
       parseInt(req.user.id)
     );
@@ -202,5 +202,25 @@ router.post("/types/add", async (req, res, _next) => {
     });
   }
 });
+
+router.post("/types/edit", async (req, res, _next) => {
+  try {
+    const result = await DeviceTypeController.edit(
+      parseInt(req.body.id),
+      parseInt(req.body.status),
+      parseInt(req.user.id)
+    );
+    if (result)
+      return res.status(201).json({ result: "El tipo de dispositivo ha editado con éxito." });
+    return res
+      .status(422)
+      .json({ errors: [{ msg: "No se ha podido editar el tipo de dispositivo" }] });
+  } catch (err) {
+    return res.status(500).json({
+      errors: [{ msg: `Ha ocurrido un error interno del servidor: ${err}` }],
+    });
+  }
+});
+
 
 export default router;

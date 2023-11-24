@@ -28,7 +28,7 @@
   aria-labelledby="crearModalLabel"
   aria-hidden="true"
 >
-  <div class="modal-dialog modal-sm modal-dialog-centered">
+  <div class="modal-dialog modal-md modal-dialog-centered">
     <div class="modal-content">
       <div class="modal-header d-block">
         <h5 class="modal-title mb-2" id="crearModalLabel">Nuevo Tipo</h5>
@@ -67,7 +67,7 @@
                   <% }); %>
                 </select>
                 <label for="deviceClass" class="form-label"
-                  >Clase (Selecciona uno):
+                  >Clase (Escoge uno):
                 </label>
               </div>
             </div>
@@ -85,7 +85,7 @@
                   <% }); %>
                 </select>
                 <label for="deviceSupplier" class="form-label"
-                  >Proveedor (Selecciona uno):
+                  >Proveedor (Escoge uno):
                 </label>
               </div>
             </div>
@@ -103,11 +103,110 @@
     </div>
   </div>
 </div>
-<!--TODO: EDITAR FORM -->
+<!-- editar tipo -->
 
-<%- include('partials/errorRowModal.ejs') %> 
-<%- contentFor('styles') %> 
-<%- contentFor('scripts') %>
+<div
+  class="modal fade"
+  id="editarModal"
+  tabindex="-1"
+  aria-labelledby="editarModalLabel"
+  aria-hidden="true"
+>
+  <div class="modal-dialog modal-md modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header d-block">
+        <h5 class="modal-title mb-2" id="editarModalLabel">Editar Tipo</h5>
+        <div id="editMessageBox"></div>
+      </div>
+      <div class="modal-body">
+        <form method="post" id="editForm">
+          <input type="text" id="id" name="id" class="d-none" />
+          <div class="row">
+            <div class="col-12 mb-2 mb-md-3">
+              <div class="form-floating">
+                <input
+                  class="form-control"
+                  id="editInputName"
+                  type="text"
+                  placeholder="Nombre"
+                  name="name"
+                  autocomplete="false"
+                  disabled
+                />
+                <label for="editInputName">Nombre</label>
+              </div>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-sm-6 col-12 mb-2 mb-md-3">
+              <div class="form-floating">
+                <input
+                  class="form-control"
+                  id="editClass"
+                  type="text"
+                  placeholder="Clase"
+                  name="class"
+                  disabled
+                />
+                <label for="editClass">Clase</label>
+              </div>
+            </div>
+            <div class="col-sm-6 col-12 mb-2 mb-md-3">
+              <div class="form-floating">
+                <input
+                  class="form-control"
+                  id="editDeviceSupplier"
+                  type="text"
+                  placeholder="Proveedor"
+                  name="supplier"
+                  disabled
+                />
+                <label for="editDeviceSupplier">Proveedor</label>
+              </div>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-12 mb-2 mb-md-3">
+              <div class="form-floating">
+                <select
+                  class="form-select"
+                  name="status"
+                  id="editStatus"
+                  autocomplete="false"
+                  title="Ten en cuenta que si inhabilitas un proveedor, esto inhabilitará todos sus dispositivos y tipos de dispositivos."
+                  required
+                >
+                  <% status.forEach(value => { %>
+                  <option value="<%= value.id %>"><%= value.info %></option>
+                  <% }); %>
+                </select>
+                <label for="editStatus" class="form-label"
+                  >Estado: (elige uno):</label
+                >
+              </div>
+            </div>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-danger" data-bs-dismiss="modal">
+          Cerrar
+        </button>
+        <button
+          type="submit"
+          class="btn btn-success"
+          form="editForm"
+          title="Ten en cuenta que si inhabilitas un proveedor, esto inhabilitará todos sus dispositivos y tipos de dispositivos."
+        >
+          Registrar
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<%- include('partials/errorRowModal.ejs') %> <%- contentFor('styles') %> <%-
+contentFor('scripts') %>
 <!--Datatables-->
 <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
 <script src="https://cdn.datatables.net/1.13.6/js/dataTables.bootstrap5.min.js"></script>
@@ -123,8 +222,10 @@
       })
       .val();
 
-    $("#deviceSupplierId").val(data.id);
+    $("#id").val(data.id);
     $("#editInputName").val(data.name);
+    $("#editClass").val(data.class);
+    $("#editDeviceSupplier").val(data.supplier);
     $("#editStatus").val(selectedStatus);
     $("#editarModal").modal("show");
   }
@@ -198,7 +299,7 @@
       const messages = document.getElementById("editMessageBox");
       const data = Object.fromEntries(new FormData(this).entries());
       $.ajax({
-        url: "/devices/devices/edit",
+        url: "/devices/types/edit",
         method: "POST",
         contentType: "application/json",
         data: JSON.stringify(data),

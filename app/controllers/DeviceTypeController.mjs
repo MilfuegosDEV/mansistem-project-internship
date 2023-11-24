@@ -29,8 +29,8 @@ class DeviceTypeController extends Triggers {
     }
   }
   /**
-   * Actualiza el estado de un proveedor
-   * @param {number} updated_id El proveedor que será actualizada
+   * Actualiza el estado de un tipo de dispositivo
+   * @param {number} updated_id El tipo de dispositivo que será actualizada
    * @param {number} status
    * @param {number} performed_by_user_id El usuario que realizó la acción
    * @returns {Promise <1|0>}
@@ -38,7 +38,7 @@ class DeviceTypeController extends Triggers {
   async edit(updated_id, status, performed_by_user_id) {
     if (typeof status === "undefined") return 0;
     try {
-      const QUERY = "UPDATE DEVICE_SUPPLIER SET status_id=? WHERE id=?";
+      const QUERY = "UPDATE DEVICE_TYPE SET status_id=? WHERE id=?";
       await this.UpdateAudit(performed_by_user_id, updated_id, {
         status_id: status,
       });
