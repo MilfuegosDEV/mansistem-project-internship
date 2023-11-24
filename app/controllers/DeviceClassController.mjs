@@ -36,6 +36,18 @@ class DeviceClassController extends Triggers {
     if (typeof status === "undefined") return 0;
     try {
       const QUERY = "UPDATE DEVICE_CLASS SET status_id=? WHERE id=?";
+
+      if (status === 0) {
+        await db.query(
+          "UPDATE DEVICE_TYPE set status_id=0 WHERE device_class_id = ?",
+          updated_id
+        );
+        await db.query(
+          "UPDATE DEVICE set status_id=0 WHERE device_class_id=?",
+          updated_id
+        );
+      }
+
       await this.UpdateAudit(performed_by_user_id, updated_id, {
         status_id: status,
       });

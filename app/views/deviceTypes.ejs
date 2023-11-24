@@ -298,6 +298,11 @@ contentFor('scripts') %>
       event.preventDefault();
       const messages = document.getElementById("editMessageBox");
       const data = Object.fromEntries(new FormData(this).entries());
+      const supplierValue = $("#editDeviceSupplier").val();
+      const classValue = $("#editClass").val();
+      data.supplier = supplierValue;
+      data.className = classValue;
+
       $.ajax({
         url: "/devices/types/edit",
         method: "POST",

@@ -39,6 +39,17 @@ class DeviceSupplierController extends Triggers {
       await this.UpdateAudit(performed_by_user_id, updated_id, {
         status_id: status,
       });
+
+      if (status === 0) {
+        await db.query(
+          "UPDATE DEVICE_TYPE set status_id=0 WHERE device_supplier_id=?",
+          updated_id
+        );
+        await db.query(
+          "UPDATE DEVICE set status_id=0 WHERE device_supplier_id=?",
+          updated_id
+        );
+      }
       await db.query(QUERY, [status, updated_id]);
       return 1;
     } catch (err) {

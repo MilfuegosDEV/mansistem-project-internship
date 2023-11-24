@@ -32,18 +32,33 @@ class DeviceTypeController extends Triggers {
    * Actualiza el estado de un tipo de dispositivo
    * @param {number} updated_id El tipo de dispositivo que será actualizada
    * @param {number} status
+   * @param {string} className,
+   * @param {string} supplier
    * @param {number} performed_by_user_id El usuario que realizó la acción
    * @returns {Promise <1|0>}
    */
-  async edit(updated_id, status, performed_by_user_id) {
-    if (typeof status === "undefined") return 0;
+  async edit(updated_id, className, supplier, status, performed_by_user_id) {
+    if (!className || !supplier || typeof status === "undefined") return 0;
     try {
-      const QUERY = "UPDATE DEVICE_TYPE SET status_id=? WHERE id=?";
-      await this.UpdateAudit(performed_by_user_id, updated_id, {
-        status_id: status,
-      });
-      await db.query(QUERY, [status, updated_id]);
-      return 1;
+      // Verifica si la clase o el proveedor están habilitados
+      const [supplierFound] = await db.query(
+        "SELECT status_id FROM DEVICE_SUPPLIER WHERE name=?",
+        [supplier]
+      );
+      const [classFound] = await db.query(
+        "SELECT status_id FROM DEVICE_CLASS WHERE name=?",
+        [className]
+      );
+
+      if (supplierFound[0].status_id === 1 || classFound[0].status_id) {
+        const QUERY = "UPDATE DEVICE_TYPE SET status_id=? WHERE id=?";
+        await this.UpdateAudit(performed_by_user_id, updated_id, {
+          status_id: status,
+        });
+        await db.query(QUERY, [status, updated_id]);
+        return 1;
+      }
+      return 0;
     } catch (err) {
       console.error(err);
       return 0;

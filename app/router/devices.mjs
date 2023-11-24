@@ -207,6 +207,8 @@ router.post("/types/edit", async (req, res, _next) => {
   try {
     const result = await DeviceTypeController.edit(
       parseInt(req.body.id),
+      req.body.className.toUpperCase().trim(),
+      req.body.supplier.toUpperCase().trim(),
       parseInt(req.body.status),
       parseInt(req.user.id)
     );
