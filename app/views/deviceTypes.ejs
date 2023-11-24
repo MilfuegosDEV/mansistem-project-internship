@@ -1,4 +1,8 @@
 <h1 class="mt-4">Tipos de dispositivos</h1>
+<p class="lead">
+  Una descripción más detallada de la clase del producto. Ejemplo:
+</p>
+<p class="small">Tipo: PORTÁTIL | Clase: PC | Proveedor: LENOVO</p>
 <ol class="breadcrumb mb-4">
   <li class="breadcrumb-item"><a href="/">Dashboard</a></li>
   <li class="breadcrumb-item"><a href="/devices">Dispositivos</a></li>
@@ -47,8 +51,8 @@ contentFor('scripts') %>
       "/api/devices/types",
       [
         { title: "Id", data: "id" },
-        { title: "Nombre", data: "name" },
-        { title: 'Clase', data: 'class'},
+        { title: "Tipo", data: "name" },
+        { title: "Clase", data: "class" },
         { title: "Proveedor", data: "supplier" },
         {
           title: "Estado",
@@ -78,7 +82,7 @@ contentFor('scripts') %>
       const messages = document.getElementById("messageBox");
       const data = Object.fromEntries(new FormData(this).entries());
       $.ajax({
-        url: "/devices/suppliers/add",
+        url: "/devices/types/add",
         method: "POST",
         contentType: "application/json",
         data: JSON.stringify(data),
@@ -109,7 +113,7 @@ contentFor('scripts') %>
       const messages = document.getElementById("editMessageBox");
       const data = Object.fromEntries(new FormData(this).entries());
       $.ajax({
-        url: "/devices/suppliers/edit",
+        url: "/devices/devices/edit",
         method: "POST",
         contentType: "application/json",
         data: JSON.stringify(data),

@@ -6,10 +6,10 @@
   aria-labelledby="crearModalLabel"
   aria-hidden="true"
 >
-  <div class="modal-dialog modal-lg modal-dialog-centered">
+  <div class="modal-dialog modal-sm modal-dialog-centered">
     <div class="modal-content">
       <div class="modal-header d-block">
-        <h5 class="modal-title mb-2" id="crearModalLabel">Nuevo tipo de dispositivo</h5>
+        <h5 class="modal-title mb-2" id="crearModalLabel">Nuevo Tipo</h5>
         <div id="messageBox"></div>
       </div>
       <div class="modal-body">
@@ -21,12 +21,12 @@
                   class="form-control"
                   id="inputName"
                   type="text"
-                  placeholder="Nombre"
+                  placeholder="Tipo"
                   name="name"
                   autocomplete="false"
                   required
                 />
-                <label for="inputName">Nombre</label>
+                <label for="inputName">Tipo</label>
               </div>
             </div>
           </div>
@@ -47,7 +47,7 @@
                   <% }); %>
                 </select>
                 <label for="deviceClass" class="form-label"
-                  >Clase de dispositivo (Selecciona uno): </label
+                  >Clase (Selecciona uno): </label
                 >
               </div>
             </div>
@@ -67,7 +67,7 @@
                   <% }); %>
                 </select>
                 <label for="deviceSupplier" class="form-label"
-                  >Proveedor del dispositivo (Selecciona uno): </label
+                  >Proveedor (Selecciona uno): </label
                 >
               </div>
             </div>

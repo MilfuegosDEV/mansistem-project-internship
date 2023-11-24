@@ -12,6 +12,8 @@ import DeviceClassController from "../controllers/DeviceClassController.mjs";
 import DeviceSupplierModel from "../models/DeviceSupplierModel.mjs";
 import DeviceSupplierController from "../controllers/DeviceSupplierController.mjs";
 import { ensureAuthenticated, justForAdmins } from "../middlewares/auth.mjs";
+import DeviceTypeModel from "../models/DeviceTypeModel.mjs";
+import DeviceTypeController from "../controllers/DeviceTypeController.mjs";
 
 const router = Router();
 
@@ -58,7 +60,7 @@ router.get(
       user: req.user,
       status: await status(),
       deviceClass: await DeviceClassModel.getEnabled(),
-      deviceSupplier: await DeviceSupplierModel.getEnabled()
+      deviceSupplier: await DeviceSupplierModel.getEnabled(),
     });
     return;
   }
@@ -160,6 +162,40 @@ router.post("/suppliers/edit", async (req, res, _next) => {
     return res
       .status(422)
       .json({ errors: [{ msg: "No se ha podido editar el proveedor" }] });
+  } catch (err) {
+    return res.status(500).json({
+      errors: [{ msg: `Ha ocurrido un error interno del servidor: ${err}` }],
+    });
+  }
+});
+
+router.post("/types/add", async (req, res, _next) => {
+  const validations = [
+    (req) => checkNotEmpty(req.body.name, "nombre"),
+    (req) => checkMaxLength(req.body.name, 20, "nombre"),
+  ];
+  const err = handleValidation(validations, req);
+  if (err) return res.status(422).json({ errors: err });
+
+  try {
+    const foundType = await DeviceTypeModel.findType(req.body.name, parseInt(req.body.deviceClass), parseInt(req.body.deviceSupplier));
+    if (foundType)
+      return res.status(422).json({
+        errors: [{ msg: "El tipo de dispositivo ya fue registrado" }],
+      });
+    const result = await DeviceTypeController.add(
+      req.body.name.toUpperCase().trim(),
+      parseInt(req.body.deviceSupplier),
+      parseInt(req.body.deviceClass),
+      req.user.id
+    );
+    if (result)
+      return res
+        .status(201)
+        .json({ result: "Tipo de dispositivo registrado con éxito." });
+    return res
+      .status(422)
+      .json({ errors: [{ msg: "No se ha podido registrar el tipo de dispositivo" }] });
   } catch (err) {
     return res.status(500).json({
       errors: [{ msg: `Ha ocurrido un error interno del servidor: ${err}` }],
