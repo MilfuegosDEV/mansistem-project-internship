@@ -14,10 +14,21 @@ import DeviceSupplierController from "../controllers/DeviceSupplierController.mj
 import { ensureAuthenticated, justForAdmins } from "../middlewares/auth.mjs";
 import DeviceTypeModel from "../models/DeviceTypeModel.mjs";
 import DeviceTypeController from "../controllers/DeviceTypeController.mjs";
+import DeviceController from "../controllers/DeviceController.mjs";
 
 const router = Router();
 
 // Views
+
+router.get("/", ensureAuthenticated, justForAdmins, async (req, res, _next) => {
+  res.render("devices", {
+    title: "Dispositivos",
+    active: "devices",
+    user: req.user,
+    status: await status(),
+    deviceClass: await DeviceClassModel.getEnabled(),
+  });
+});
 
 router.get(
   "/suppliers",
@@ -66,8 +77,79 @@ router.get(
   }
 );
 
-
 // handlers
+
+router.post("/add", async (req, res, _next) => {
+  const validations = [
+    (req) => checkMaxLength(req.body.name, 20, "modelo"),
+    (req) => checkNotEmpty(req.body.name, "modelo"),
+    (req) => checkNotEmpty(req.body.deviceClass, "clase"),
+    (req) => checkNotEmpty(req.body.type, "tipo"),
+  ];
+
+  // req.body.type = "id del tipo - id del proveedor proveedor"
+  // 1-2 = id del tipo es 1 y el id del proveedor es 2.
+
+  const err = handleValidation(validations, req);
+  if (err) return res.status(422).json({ errors: err });
+
+  const [typeId, supplierId] = req.body.type.split("-");
+
+  try {
+    const result = await DeviceController.add(
+      req.body.name.toUpperCase().trim(),
+      parseInt(req.body.deviceClass),
+      parseInt(supplierId),
+      parseInt(typeId),
+      req.user.id
+    );
+
+    if (result)
+      return res
+        .status(201)
+        .json({ result: "Se ha registrado el dispositivos" });
+    return res
+      .status(422)
+      .json({ errros: [{ msg: "No se ha podido registrar el dispositivo." }] });
+  } catch (e) {
+    return res.status(500).json({
+      errors: [{ msg: `Ha ocurrido un error interno del servidor: ${e}` }],
+    });
+  }
+});
+
+router.post("/edit", async (req, res) => {
+  try {
+    const result = await DeviceController.edit(
+      req.user.id,
+      req.body.class_name.toUpperCase().trim(),
+      req.body.supplier_name.toUpperCase().trim(),
+      req.body.type_name.toUpperCase().trim(),
+      parseInt(req.body.status),
+      parseInt(req.body.id)
+    );
+    if (result === 1)
+      return res
+        .status(201)
+        .json({ result: "El tipo de dispositivo ha editado con éxito." });
+    else if (null === result) {
+      return res.status(422).json({
+        errors: [
+          {
+            msg: `Para poder continuar, revisa que el proveedor, la clase del dispositivo y el tipo esten habilitados.`,
+          },
+        ],
+      });
+    }
+    return res.status(422).json({
+      errors: [{ msg: "No se ha podido editar el tipo de dispositivo" }],
+    });
+  } catch (err) {
+    return res.status(500).json({
+      errors: [{ msg: `Ha ocurrido un error interno del servidor: ${err}` }],
+    });
+  }
+});
 
 router.post("/classes/add", async (req, res, _next) => {
   const validations = [
@@ -178,7 +260,11 @@ router.post("/types/add", async (req, res, _next) => {
   if (err) return res.status(422).json({ errors: err });
 
   try {
-    const foundType = await DeviceTypeModel.findType(req.body.name, parseInt(req.body.deviceClass), parseInt(req.body.deviceSupplier));
+    const foundType = await DeviceTypeModel.findType(
+      req.body.name,
+      parseInt(req.body.deviceClass),
+      parseInt(req.body.deviceSupplier)
+    );
     if (foundType)
       return res.status(422).json({
         errors: [{ msg: "El tipo de dispositivo ya fue registrado" }],
@@ -193,9 +279,9 @@ router.post("/types/add", async (req, res, _next) => {
       return res
         .status(201)
         .json({ result: "Tipo de dispositivo registrado con éxito." });
-    return res
-      .status(422)
-      .json({ errors: [{ msg: "No se ha podido registrar el tipo de dispositivo" }] });
+    return res.status(422).json({
+      errors: [{ msg: "No se ha podido registrar el tipo de dispositivo" }],
+    });
   } catch (err) {
     return res.status(500).json({
       errors: [{ msg: `Ha ocurrido un error interno del servidor: ${err}` }],
@@ -212,17 +298,27 @@ router.post("/types/edit", async (req, res, _next) => {
       parseInt(req.body.status),
       parseInt(req.user.id)
     );
-    if (result)
-      return res.status(201).json({ result: "El tipo de dispositivo ha editado con éxito." });
-    return res
-      .status(422)
-      .json({ errors: [{ msg: "No se ha podido editar el tipo de dispositivo" }] });
+    if (result === 1)
+      return res
+        .status(201)
+        .json({ result: "El tipo de dispositivo ha editado con éxito." });
+    else if (null === result) {
+      return res.status(422).json({
+        errors: [
+          {
+            msg: `Para poder continuar, revisa que el proveedor y la clase estén dispositivo esten habilitados.`,
+          },
+        ],
+      });
+    }
+    return res.status(422).json({
+      errors: [{ msg: "No se ha podido editar el tipo de dispositivo" }],
+    });
   } catch (err) {
     return res.status(500).json({
       errors: [{ msg: `Ha ocurrido un error interno del servidor: ${err}` }],
     });
   }
 });
-
 
 export default router;

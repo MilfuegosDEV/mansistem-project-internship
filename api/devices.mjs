@@ -50,6 +50,7 @@ router.get("/", async (req, res, _next) => {
         SELECT 
           DEVICE.id, 
           DEVICE.model AS model,
+          DEVICE_TYPE.name AS type,
           DEVICE_CLASS.name AS className,
           DEVICE_SUPPLIER.name AS supplier,
           STATUS.info AS status

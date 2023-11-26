@@ -1,5 +1,7 @@
 import db from "../../db/index.mjs";
 import Triggers from "../../db/triggers/index.mjs";
+import DeviceClassModel from "../models/DeviceClassModel.mjs";
+import DeviceSupplierModel from "../models/DeviceSupplierModel.mjs";
 
 class DeviceTypeController extends Triggers {
   constructor() {
@@ -20,7 +22,7 @@ class DeviceTypeController extends Triggers {
         "INSERT INTO DEVICE_TYPE (name, device_supplier_id, device_class_id) VALUES (?, ?, ?)";
 
       await db.query(QUERY, [name, supplier_id, class_id]);
-      
+
       await this.InsertionAudit(performed_by_user_id);
       return 1;
     } catch (err) {
@@ -32,7 +34,7 @@ class DeviceTypeController extends Triggers {
    * Actualiza el estado de un tipo de dispositivo
    * @param {number} updated_id El tipo de dispositivo que será actualizada
    * @param {number} status
-   * @param {string} className,
+   * @param {string} className
    * @param {string} supplier
    * @param {number} performed_by_user_id El usuario que realizó la acción
    * @returns {Promise <1|0>}
@@ -41,16 +43,10 @@ class DeviceTypeController extends Triggers {
     if (!className || !supplier || typeof status === "undefined") return 0;
     try {
       // Verifica si la clase o el proveedor están habilitados
-      const [supplierFound] = await db.query(
-        "SELECT status_id FROM DEVICE_SUPPLIER WHERE name=?",
-        [supplier]
-      );
-      const [classFound] = await db.query(
-        "SELECT status_id FROM DEVICE_CLASS WHERE name=?",
-        [className]
-      );
+      const supplierInfo = await DeviceSupplierModel.findByName(supplier);
+      const classInfo = await DeviceClassModel.findByName(className);
 
-      if (supplierFound[0].status_id && classFound[0].status_id) {
+      if (supplierInfo.status_id && classInfo.status_id) {
         const QUERY = "UPDATE DEVICE_TYPE SET status_id=? WHERE id=?";
         await this.UpdateAudit(performed_by_user_id, updated_id, {
           status_id: status,
@@ -58,7 +54,7 @@ class DeviceTypeController extends Triggers {
         await db.query(QUERY, [status, updated_id]);
         return 1;
       }
-      return 0;
+      return null;
     } catch (err) {
       console.error(err);
       return 0;

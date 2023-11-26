@@ -10,7 +10,7 @@ export default class DeviceClassModel {
     if (!name) return undefined;
     name = name.toUpperCase().trim();
     try {
-      const QUERY = "SELECT id, name FROM DEVICE_CLASS WHERE name = ?";
+      const QUERY = "SELECT id, name, status_id FROM DEVICE_CLASS WHERE name = ?";
       const [results] = await db.query(QUERY, [name]);
       return results[0];
     } catch (err) {
@@ -27,6 +27,16 @@ export default class DeviceClassModel {
       const QUERY = "SELECT id, name FROM DEVICE_CLASS WHERE status_id = ?";
       const [results] = await db.query(QUERY, [1]);
       return results;
+    } catch (err) {
+      throw new Error(err);
+    }
+  }
+  static async getById(id) {
+    if (typeof id === "undefined") return undefined;
+    try {
+      const QUERY = "SELECT * FROM DEVICE_CLASS WHERE id=?";
+      const [results] = await db.query(QUERY, [id]);
+      return results[0];
     } catch (err) {
       throw new Error(err);
     }
