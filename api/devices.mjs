@@ -1,11 +1,94 @@
+import DeviceTypeModel from "../app/models/DeviceTypeModel.mjs";
 import db from "../db/index.mjs";
 import { createLikeClauses, parseQueryParams } from "./helper/index.mjs";
 import { Router } from "express";
 
 const router = Router();
 
+// dispositivos
+router.get("/", async (req, res, _next) => {
+  const columns = [
+    { title: "DEVICE.id", data: "id" },
+    { title: "DEVICE.model", data: "modelo" },
+    { title: "DEVICE_TYPE.name", data: "tipo" },
+    { title: "DEVICE_CLASS.name", data: "clase" },
+    { title: "DEVICE_SUPPLIER.name", data: "proveedor" },
+    { title: "STATUS.info", data: "estado" },
+  ];
+
+  // Extract query parameters using a destructuring assignment
+  try {
+    const {
+      draw,
+      start,
+      length,
+      searchValue,
+      columnIndex,
+      orderDirection,
+      columnFilter,
+    } = parseQueryParams(req.query);
+
+    // Set default orderByColumn to "DEVICE.id"
+    const orderByColumn = columns[columnIndex]?.title || "DEVICE.id";
+
+    // Create LIKE clauses for search
+    const likeClauses = createLikeClauses(searchValue, columns, columnFilter);
+
+    // Base query for fetching devices with JOIN operations
+    const baseQuery = `
+        FROM DEVICE
+        INNER JOIN DEVICE_TYPE ON DEVICE.device_type_id = DEVICE_TYPE.id
+        INNER JOIN DEVICE_CLASS ON DEVICE.device_class_id = DEVICE_CLASS.id
+        INNER JOIN DEVICE_SUPPLIER ON DEVICE.device_supplier_id = DEVICE_SUPPLIER.id
+        INNER JOIN STATUS ON DEVICE.status_id = STATUS.id
+        WHERE ${likeClauses}`;
+
+    // SQL queries
+    const totalQuery = "SELECT COUNT(*) AS total FROM DEVICE";
+    const totalFilteredQuery = `SELECT COUNT(*) AS total ${baseQuery}`;
+    const devicesQuery = `
+        SELECT 
+          DEVICE.id, 
+          DEVICE.model AS model,
+          DEVICE_CLASS.name AS className,
+          DEVICE_SUPPLIER.name AS supplier,
+          STATUS.info AS status
+        ${baseQuery}
+        ORDER BY ${orderByColumn} ${orderDirection}
+        LIMIT ? OFFSET ?`;
+
+    // Execute queries
+    const [totalResult] = await db.query(totalQuery);
+    const [totalFilteredResult] = await db.query(totalFilteredQuery);
+    const [devices] = await db.query(devicesQuery, [length, start]);
+
+    // Send JSON response to the devices
+    res.json({
+      draw,
+      recordsTotal: totalResult[0].total,
+      recordsFiltered: totalFilteredResult[0].total,
+      data: devices,
+    });
+  } catch (err) {
+    // Handle errors
+    console.error("Error al recuperar los dispositivos:", err);
+    res.status(500).send("Error del servidor al recuperar los dispositivos");
+  }
+});
+
+router.get("/getByClass", async (req, res, next) => {
+  try {
+    const results = await DeviceTypeModel.getEnabledByClass(
+      req.query.deviceClass
+    );
+    return res.status(200).json(results);
+  } catch (err) {
+    next(err);
+  }
+});
+
 // Clases de dispositivos
-router.get("/classes", async (req, res, next) => {
+router.get("/classes", async (req, res, _next) => {
   const columns = [
     { title: "DEVICE_CLASS.id", data: "id" },
     { title: "DEVICE_CLASS.name", data: "clase" },
@@ -70,7 +153,7 @@ router.get("/classes", async (req, res, next) => {
 });
 
 // proveedores de dispositivos
-router.get("/suppliers", async (req, res, next) => {
+router.get("/suppliers", async (req, res, _next) => {
   const columns = [
     { title: "DEVICE_SUPPLIER.id", data: "id" },
     { title: "DEVICE_SUPPLIER.name", data: "proveedor" },
@@ -135,7 +218,7 @@ router.get("/suppliers", async (req, res, next) => {
 });
 
 // tipos de dispositivos
-router.get("/types", async (req, res, next) => {
+router.get("/types", async (req, res, _next) => {
   const columns = [
     { title: "DEVICE_TYPE.id", data: "id" },
     { title: "DEVICE_TYPE.name", data: "tipo" },
