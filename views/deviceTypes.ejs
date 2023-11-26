@@ -62,6 +62,9 @@
                   autocomplete="false"
                   required
                 >
+                  <option value="" disabled selected>
+                    Seleccione una opción
+                  </option>
                   <% deviceClass.forEach(value => { %>
                   <option value="<%= value.id %>"><%= value.name %></option>
                   <% }); %>
@@ -80,6 +83,9 @@
                   autocomplete="false"
                   required
                 >
+                  <option value="" disabled selected>
+                    Seleccione una opción
+                  </option>
                   <% deviceSupplier.forEach(value => { %>
                   <option value="<%= value.id %>"><%= value.name %></option>
                   <% }); %>
@@ -140,27 +146,29 @@
           <div class="row">
             <div class="col-sm-6 col-12 mb-2 mb-md-3">
               <div class="form-floating">
-                <input
-                  class="form-control"
-                  id="editClass"
-                  type="text"
-                  placeholder="Clase"
+                <select
+                  class="form-select"
                   name="class"
+                  id="editClass"
+                  autocomplete="false"
                   disabled
-                />
+                >
+                  <option></option>
+                </select>
                 <label for="editClass">Clase</label>
               </div>
             </div>
             <div class="col-sm-6 col-12 mb-2 mb-md-3">
               <div class="form-floating">
-                <input
-                  class="form-control"
-                  id="editDeviceSupplier"
-                  type="text"
-                  placeholder="Proveedor"
+                <select
+                  class="form-select"
                   name="supplier"
+                  id="editDeviceSupplier"
+                  autocomplete="false"
                   disabled
-                />
+                >
+                  <option></option>
+                </select>
                 <label for="editDeviceSupplier">Proveedor</label>
               </div>
             </div>
@@ -173,7 +181,6 @@
                   name="status"
                   id="editStatus"
                   autocomplete="false"
-                  title="Ten en cuenta que si inhabilitas un proveedor, esto inhabilitará todos sus dispositivos y tipos de dispositivos."
                   required
                 >
                   <% status.forEach(value => { %>
@@ -196,7 +203,6 @@
           type="submit"
           class="btn btn-success"
           form="editForm"
-          title="Ten en cuenta que si inhabilitas un proveedor, esto inhabilitará todos sus dispositivos y tipos de dispositivos."
         >
           Registrar
         </button>
@@ -224,8 +230,8 @@ contentFor('scripts') %>
 
     $("#id").val(data.id);
     $("#editInputName").val(data.name);
-    $("#editClass").val(data.class);
-    $("#editDeviceSupplier").val(data.supplier);
+    $("#editClass option").val(data.class).text(data.class);
+    $("#editDeviceSupplier option").val(data.supplier).text(data.supplier);
     $("#editStatus").val(selectedStatus);
     $("#editarModal").modal("show");
   }

@@ -79,12 +79,7 @@
       </div>
       <div class="modal-body">
         <form method="post" id="editForm">
-          <input
-            type="text"
-            id="id"
-            name="id"
-            class="d-none"
-          />
+          <input type="text" id="id" name="id" class="d-none" />
           <div class="row">
             <div class="col-12 mb-2 mb-md-3">
               <div class="form-floating">
@@ -112,6 +107,9 @@
                   title="Ten en cuenta que si inhabilitas un proveedor, esto inhabilitará todos sus dispositivos y tipos de dispositivos."
                   required
                 >
+                  <option value="" disabled selected>
+                    Seleccione una opción
+                  </option>
                   <% status.forEach(value => { %>
                   <option value="<%= value.id %>"><%= value.info %></option>
                   <% }); %>

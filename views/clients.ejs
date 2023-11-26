@@ -87,6 +87,9 @@
                   autocomplete="false"
                   required
                 >
+                  <option value="" disabled selected>
+                    Seleccione una opción
+                  </option>
                   <% provinces.forEach(province => { %>
                   <option value="<%= province.id %>">
                     <%= province.name %>
@@ -204,6 +207,9 @@
                   autocomplete="false"
                   required
                 >
+                  <option value="" disabled selected>
+                    Seleccione una opción
+                  </option>
                   <% provinces.forEach(province => { %>
                   <option value="<%= province.id %>">
                     <%= province.name %>
@@ -224,6 +230,9 @@
                   autocomplete="false"
                   required
                 >
+                  <option value="" disabled selected>
+                    Seleccione una opción
+                  </option>
                   <% status.forEach(value => { %>
                   <option value="<%= value.id %>"><%= value.info %></option>
                   <% }); %>
@@ -266,8 +275,7 @@
   </div>
 </div>
 
-<%- include('partials/errorRowModal.ejs') %> 
-<%- contentFor('styles') %> <%-
+<%- include('partials/errorRowModal.ejs') %> <%- contentFor('styles') %> <%-
 contentFor('scripts') %>
 <!--Datatables-->
 <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>

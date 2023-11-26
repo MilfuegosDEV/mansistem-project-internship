@@ -129,6 +129,9 @@
                   autocomplete="false"
                   required
                 >
+                  <option value="" disabled selected>
+                    Seleccione una opción
+                  </option>
                   <% userRoles.forEach(role => { %>
                   <option value="<%= role.id %>"><%= role.name %></option>
                   <% }); %>
@@ -145,6 +148,9 @@
                   autocomplete="false"
                   required
                 >
+                  <option value="" disabled selected>
+                    Seleccione una opción
+                  </option>
                   <% provinces.forEach(province => { %>
                   <option value="<%= province.id %>">
                     <%= province.name %>
@@ -276,6 +282,9 @@
                   autocomplete="false"
                   required
                 >
+                  <option value="" disabled selected>
+                    Seleccione una opción
+                  </option>
                   <% userRoles.forEach(role => { %>
                   <option value="<%= role.id %>"><%= role.name %></option>
                   <% }); %>
@@ -294,6 +303,9 @@
                   autocomplete="false"
                   required
                 >
+                  <option value="" disabled selected>
+                    Seleccione una opción
+                  </option>
                   <% provinces.forEach(province => { %>
                   <option value="<%= province.id %>">
                     <%= province.name %>
@@ -315,6 +327,9 @@
                 autocomplete="false"
                 required
               >
+                <option value="" disabled selected>
+                  Seleccione una opción
+                </option>
                 <% status.forEach(value => { %>
                 <option value="<%= value.id %>"><%= value.info %></option>
                 <% }); %>

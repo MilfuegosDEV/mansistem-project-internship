@@ -20,7 +20,7 @@ class DeviceTypeController extends Triggers {
         "INSERT INTO DEVICE_TYPE (name, device_supplier_id, device_class_id) VALUES (?, ?, ?)";
 
       await db.query(QUERY, [name, supplier_id, class_id]);
-
+      
       await this.InsertionAudit(performed_by_user_id);
       return 1;
     } catch (err) {
@@ -50,7 +50,7 @@ class DeviceTypeController extends Triggers {
         [className]
       );
 
-      if (supplierFound[0].status_id === 1 || classFound[0].status_id) {
+      if (supplierFound[0].status_id && classFound[0].status_id) {
         const QUERY = "UPDATE DEVICE_TYPE SET status_id=? WHERE id=?";
         await this.UpdateAudit(performed_by_user_id, updated_id, {
           status_id: status,
