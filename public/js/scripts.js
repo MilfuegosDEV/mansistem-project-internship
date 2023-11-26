@@ -80,5 +80,3 @@ function datatableConfig(selector, url, columnsConfig, columnDefs) {
   });
   return table;
 }
-
-const socket = io();

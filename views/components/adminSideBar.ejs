@@ -90,14 +90,32 @@
         </div>
       </a>
       <div
-        class="collapse"
+        class="collapse <%= ['devices', 'deviceTypes', 'deviceSupplier', 'deviceClasses'].includes(active) ? 'show' : '' %>"
         id="collapseEquipos"
         aria-labelledby="headingOne"
         data-bs-parent="#sidenavAccordion"
       >
         <nav class="sb-sidenav-menu-nested nav">
-          <a class="nav-link" href="layout-static.html">Ver</a>
-          <a class="nav-link" href="layout-sidenav-light.html">Agregar</a>
+          <a
+            class="nav-link <%= active === 'devices' ? 'active' : ''%>"
+            href="/devices"
+            >Dispositivos</a
+          >
+          <a
+            class="nav-link <%= active === 'deviceTypes' ? 'active' : ''%>"
+            href="/devices/types"
+            >Tipos</a
+          >
+          <a
+            class="nav-link <%= active === 'deviceSupplier' ? 'active' : ''%>"
+            href="/devices/suppliers"
+            >Proveedores</a
+          >
+          <a
+            class="nav-link <%= active === 'deviceClasses' ? 'active' : ''%>"
+            href="/devices/classes"
+            >Clases</a
+          >
         </nav>
       </div>
       <!--Fin Equipos-->

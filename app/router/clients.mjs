@@ -9,10 +9,32 @@ import {
   checkPhoneNumber,
   handleValidation,
 } from "../middlewares/validation.mjs";
+import { provinces, status } from "../models/utils/index.mjs";
+import { ensureAuthenticated, justForAdmins } from "../middlewares/auth.mjs";
 
 const router = Router();
 
-router.post("/add", async (req, res, next) => {
+// Views
+
+router.get(
+  "/",
+  justForAdmins,
+  ensureAuthenticated,
+  async (req, res, _next) => {
+    res.render("clients", {
+      title: "Clientes",
+      active: "clients",
+      user: req.user,
+      status: await status(),
+      provinces: await provinces(),
+    });
+    return;
+  }
+);
+
+// Handlers
+
+router.post("/add", async (req, res, _next) => {
   const validations = [
     (req) => checkNotEmpty(req.body.name, "nombre"),
     (req) => checkNotEmpty(req.body.phone, "teléfono"),
@@ -64,7 +86,6 @@ router.post("/add", async (req, res, next) => {
       parseInt(req.body.province),
       parseInt(req.user.id)
     );
-    console.log(result);
 
     if (result)
       return res.status(200).json({ result: "Cliente registrado exito." });
@@ -78,7 +99,7 @@ router.post("/add", async (req, res, next) => {
   }
 });
 
-router.post("/edit", async (req, res, next) => {
+router.post("/edit", async (req, res, _next) => {
   const validations = [
     (req) => checkNotEmpty(req.body.name, "nombre"),
     (req) => checkNotEmpty(req.body.phone, "teléfono"),
@@ -102,11 +123,11 @@ router.post("/edit", async (req, res, next) => {
     const foundClientByPhone = await ClientModel.findByPhoneNumber(
       req.body.phone
     );
-    if (foundClientByName.id !== parseInt(req.body.clientId))
+    if (foundClientByName.id !== parseInt(req.body.id))
       return res
         .status(400)
         .json({ errors: [{ msg: "El nombre del cliente ya está en uso." }] });
-    if (foundClientByEmail.id !== parseInt(req.body.clientId))
+    if (foundClientByEmail.id !== parseInt(req.body.id))
       return res.status(400).json({
         errors: [
           {
@@ -114,7 +135,7 @@ router.post("/edit", async (req, res, next) => {
           },
         ],
       });
-    if (foundClientByPhone.id !== parseInt(req.body.clientId))
+    if (foundClientByPhone.id !== parseInt(req.body.id))
       return res.status(400).json({
         errors: [
           {
@@ -123,7 +144,7 @@ router.post("/edit", async (req, res, next) => {
         ],
       });
     const result = await ClientController.edit(
-      parseInt(req.body.clientId),
+      parseInt(req.body.id),
       req.body.name.toUpperCase().trim(),
       req.body.address.toUpperCase().trim(),
       req.body.phone.trim(),

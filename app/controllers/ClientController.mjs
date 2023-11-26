@@ -13,7 +13,7 @@ class ClientController extends Triggers {
    * @param {string} email
    * @param {number} province
    * @param {number} performed_by_user_id El usuario que realizó la acción.
-   * @returns
+   * @returns {Promise <1|0>}
    */
   async add(name, address, phone, email, province, performed_by_user_id) {
     if (
@@ -51,7 +51,7 @@ class ClientController extends Triggers {
    * @param {number} province
    * @param {number} status
    * @param {number} performed_by_user_id El usuario que realizó la actualización
-   * @returns
+   * @returns {Promise <1|0>}
    */
   async edit(
     updated_id,

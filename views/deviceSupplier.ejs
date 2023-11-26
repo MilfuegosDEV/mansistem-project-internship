@@ -1,0 +1,255 @@
+<h1 class="mt-4">Proveedores</h1>
+<ol class="breadcrumb mb-4">
+  <li class="breadcrumb-item"><a href="/">Dashboard</a></li>
+  <li class="breadcrumb-item"><a href="/devices">Dispositivos</a></li>
+  <li class="breadcrumb-item active">Proveedores</li>
+</ol>
+<div class="card mb-4">
+  <div class="card-header">
+    <i class="fa-solid fa-truck me-1"></i>
+    Proveedores
+  </div>
+  <div class="card-body">
+    <table
+      id="DataTable"
+      class="display responsive table table-hover wrap w-100 fs-6"
+    ></table>
+  </div>
+</div>
+
+<!-- Crear proveedor -->
+<div
+  class="modal fade"
+  id="crearModal"
+  tabindex="-1"
+  aria-labelledby="crearModalLabel"
+  aria-hidden="true"
+>
+  <div class="modal-dialog modal-md modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header d-block">
+        <h5 class="modal-title mb-2" id="crearModalLabel">Nuevo Proveedor</h5>
+        <div id="messageBox"></div>
+      </div>
+      <div class="modal-body">
+        <form method="post" id="registerForm">
+          <div class="row">
+            <div class="col-12 mb-2 mb-md-3">
+              <div class="form-floating">
+                <input
+                  class="form-control"
+                  id="inputName"
+                  type="text"
+                  placeholder="Nombre"
+                  name="name"
+                  autocomplete="false"
+                  required
+                />
+                <label for="inputName">Nombre</label>
+              </div>
+            </div>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-danger" data-bs-dismiss="modal">
+          Cerrar
+        </button>
+        <button type="submit" class="btn btn-success" form="registerForm">
+          Registrar
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- editar proveedor -->
+<div
+  class="modal fade"
+  id="editarModal"
+  tabindex="-1"
+  aria-labelledby="editarModalLabel"
+  aria-hidden="true"
+>
+  <div class="modal-dialog modal-md modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header d-block">
+        <h5 class="modal-title mb-2" id="editarModalLabel">Editar Proveedor</h5>
+        <div id="editMessageBox"></div>
+      </div>
+      <div class="modal-body">
+        <form method="post" id="editForm">
+          <input type="text" id="id" name="id" class="d-none" />
+          <div class="row">
+            <div class="col-12 mb-2 mb-md-3">
+              <div class="form-floating">
+                <input
+                  class="form-control"
+                  id="editInputName"
+                  type="text"
+                  placeholder="Nombre"
+                  name="name"
+                  autocomplete="false"
+                  disabled
+                />
+                <label for="editInputName">Nombre</label>
+              </div>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-12 mb-2 mb-md-3">
+              <div class="form-floating">
+                <select
+                  class="form-select"
+                  name="status"
+                  id="editStatus"
+                  autocomplete="false"
+                  title="Ten en cuenta que si inhabilitas un proveedor, esto inhabilitará todos sus dispositivos y tipos de dispositivos."
+                  required
+                >
+                  <option value="" disabled selected>
+                    Seleccione una opción
+                  </option>
+                  <% status.forEach(value => { %>
+                  <option value="<%= value.id %>"><%= value.info %></option>
+                  <% }); %>
+                </select>
+                <label for="editStatus" class="form-label"
+                  >Estado: (elige uno):</label
+                >
+              </div>
+            </div>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-danger" data-bs-dismiss="modal">
+          Cerrar
+        </button>
+        <button
+          type="submit"
+          class="btn btn-success"
+          form="editForm"
+          title="Ten en cuenta que si inhabilitas un proveedor, esto inhabilitará todos sus dispositivos y tipos de dispositivos."
+        >
+          Registrar
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<%- include('partials/errorRowModal.ejs') %> <%- contentFor('styles') %> <%-
+contentFor('scripts') %>
+<!--Datatables-->
+<script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+<script src="https://cdn.datatables.net/1.13.6/js/dataTables.bootstrap5.min.js"></script>
+<script src="https://cdn.datatables.net/responsive/2.2.9/js/dataTables.responsive.min.js"></script>
+<script src="https://cdn.datatables.net/select/1.7.0/js/dataTables.select.min.js"></script>
+<script src="https://cdn.datatables.net/buttons/2.4.2/js/dataTables.buttons.min.js"></script>
+<script src="/public/js/charCount.js"></script>
+<script nonce="<%=cspNonce%>">
+  function showEditModal(form, data) {
+    const selectedStatus = $("#editStatus option")
+      .filter(function () {
+        return $(this).text().trim() === data.status;
+      })
+      .val();
+
+    $("#id").val(data.id);
+    $("#editInputName").val(data.name);
+    $("#editStatus").val(selectedStatus);
+    $("#editarModal").modal("show");
+  }
+</script>
+<script nonce="<%= cspNonce %>">
+  $(document).ready(function () {
+    const table = datatableConfig(
+      "#DataTable",
+      "/api/devices/suppliers",
+      [
+        { title: "Id", data: "id" },
+        { title: "Proveedor", data: "name" },
+        {
+          title: "Estado",
+          data: "status",
+          render: function (data) {
+            if (data === "HABILITADO") {
+              return `<span class="badge bg-success">${data}</span>`;
+            }
+            return `<span class="badge bg-danger">${data}</span>`;
+          },
+          width: "5%",
+        },
+      ],
+      [
+        {
+          targets: "_all",
+          className: "text-nowrap",
+        },
+      ]
+    );
+  });
+</script>
+<script nonce="<%= cspNonce %>">
+  $(document).ready(function () {
+    $("#registerForm").submit(function (event) {
+      event.preventDefault();
+      const messages = document.getElementById("messageBox");
+      const data = Object.fromEntries(new FormData(this).entries());
+      $.ajax({
+        url: "/devices/suppliers/add",
+        method: "POST",
+        contentType: "application/json",
+        data: JSON.stringify(data),
+        success: function (response) {
+          messages.innerHTML = `<div class="alert alert-success mb-1 py-1"><strong>¡Hecho!</strong> ${response.result}</div>`;
+          setTimeout(() => {
+            messages.innerHTML = "";
+            $("#registerForm")[0].reset();
+            $(`#crearModal`).modal("hide");
+            $("#DataTable").DataTable().ajax.reload();
+          }, 1000);
+        },
+        error: function (err) {
+          const result = err.responseJSON;
+          displayErrors(messages, result.errors);
+          setTimeout(() => {
+            messages.innerHTML = "";
+          }, 5000);
+        },
+      });
+    });
+  });
+</script>
+<script nonce="<%= cspNonce %>">
+  $(document).ready(function () {
+    $("#editForm").submit(function (event) {
+      event.preventDefault();
+      const messages = document.getElementById("editMessageBox");
+      const data = Object.fromEntries(new FormData(this).entries());
+      $.ajax({
+        url: "/devices/suppliers/edit",
+        method: "POST",
+        contentType: "application/json",
+        data: JSON.stringify(data),
+        success: function (response) {
+          messages.innerHTML = `<div class="alert alert-success mb-1 py-1"><strong>¡Hecho!</strong> ${response.result}</div>`;
+          setTimeout(() => {
+            messages.innerHTML = "";
+            $("#editForm")[0].reset();
+            $(`#editarModal`).modal("hide");
+            $("#DataTable").DataTable().ajax.reload();
+          }, 1000);
+        },
+        error: function (err) {
+          const result = err.responseJSON;
+          displayErrors(messages, result.errors);
+          setTimeout(() => {
+            messages.innerHTML = "";
+          }, 5000);
+        },
+      });
+    });
+  });
+</script>

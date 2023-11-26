@@ -1,3 +1,20 @@
+<h1 class="mt-4">Clientes</h1>
+<ol class="breadcrumb mb-4">
+  <li class="breadcrumb-item"><a href="/">Dashboard</a></li>
+  <li class="breadcrumb-item active">Clientes</li>
+</ol>
+<div class="card mb-4">
+  <div class="card-header">
+    <i class="fa-solid fa-building-user me-1"></i>
+    Clientes
+  </div>
+  <div class="card-body">
+    <table
+      id="DataTable"
+      class="display responsive table table-hover wrap w-100 fs-6"
+    ></table>
+  </div>
+</div>
 <!-- Crear usuario -->
 <div
   class="modal fade"
@@ -70,6 +87,9 @@
                   autocomplete="false"
                   required
                 >
+                  <option value="" disabled selected>
+                    Seleccione una opción
+                  </option>
                   <% provinces.forEach(province => { %>
                   <option value="<%= province.id %>">
                     <%= province.name %>
@@ -130,7 +150,7 @@
       </div>
       <div class="modal-body">
         <form method="post" id="editForm">
-          <input type="text" id="clientId" name="clientId" class="d-none" />
+          <input type="text" id="id" name="id" class="d-none" />
           <div class="row">
             <div class="col-12 mb-2 mb-md-3">
               <div class="form-floating">
@@ -187,6 +207,9 @@
                   autocomplete="false"
                   required
                 >
+                  <option value="" disabled selected>
+                    Seleccione una opción
+                  </option>
                   <% provinces.forEach(province => { %>
                   <option value="<%= province.id %>">
                     <%= province.name %>
@@ -207,6 +230,9 @@
                   autocomplete="false"
                   required
                 >
+                  <option value="" disabled selected>
+                    Seleccione una opción
+                  </option>
                   <% status.forEach(value => { %>
                   <option value="<%= value.id %>"><%= value.info %></option>
                   <% }); %>
@@ -248,3 +274,133 @@
     </div>
   </div>
 </div>
+
+<%- include('partials/errorRowModal.ejs') %> <%- contentFor('styles') %> <%-
+contentFor('scripts') %>
+<!--Datatables-->
+<script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+<script src="https://cdn.datatables.net/1.13.6/js/dataTables.bootstrap5.min.js"></script>
+<script src="https://cdn.datatables.net/responsive/2.2.9/js/dataTables.responsive.min.js"></script>
+<script src="https://cdn.datatables.net/select/1.7.0/js/dataTables.select.min.js"></script>
+<script src="https://cdn.datatables.net/buttons/2.4.2/js/dataTables.buttons.min.js"></script>
+<script src="/public/js/charCount.js"></script>
+<script nonce="<%=cspNonce%>">
+  function showEditModal(form, data) {
+    const selectedProvince = $("#editProvinces option")
+      .filter(function () {
+        return $(this).text().trim() === data.province_name;
+      })
+      .val();
+
+    const selectedStatus = $("#editStatus option")
+      .filter(function () {
+        return $(this).text().trim() === data.status;
+      })
+      .val();
+
+    $("#id").val(data.id);
+    $("#editInputName").val(data.name);
+    $("#editInputPhone").val(data.phone);
+    $("#editInputEmail").val(data.email);
+    $("#editInputAddress").val(data.address).trigger("input");
+    $("#editProvinces").val(selectedProvince);
+    $("#editStatus").val(selectedStatus);
+    $("#editarModal").modal("show");
+  }
+</script>
+<script nonce="<%= cspNonce %>">
+  $(document).ready(function () {
+    const table = datatableConfig(
+      "#DataTable",
+      "/api/clients",
+      [
+        { title: "Id", data: "id" },
+        { title: "Cliente", data: "name" },
+        { title: "Teléfono", data: "phone" },
+        { title: "Correo", data: "email" },
+        { title: "Dirección", data: "address" }, // Ajusta el ancho de la columna de dirección al 30% del contenedor
+        { title: "Provincia", data: "province_name", width: "5%" },
+        {
+          title: "Estado",
+          data: "status",
+          render: function (data) {
+            if (data === "HABILITADO") {
+              return `<span class="badge bg-success">${data}</span>`;
+            }
+            return `<span class="badge bg-danger">${data}</span>`;
+          },
+          width: "5%",
+        },
+      ],
+      [
+        {
+          targets: [1, 2, 3, 5, 6],
+          className: "text-nowrap",
+        },
+        { targets: 4, class: "text-md-nowrap" },
+      ]
+    );
+  });
+</script>
+<script nonce="<%= cspNonce %>">
+  $(document).ready(function () {
+    $("#registerForm").submit(function (event) {
+      event.preventDefault();
+      const messages = document.getElementById("messageBox");
+      const data = Object.fromEntries(new FormData(this).entries());
+      $.ajax({
+        url: "/clients/add",
+        method: "POST",
+        contentType: "application/json",
+        data: JSON.stringify(data),
+        success: function (response) {
+          messages.innerHTML = `<div class="alert alert-success mb-1 py-1"><strong>¡Hecho!</strong> ${response.result}</div>`;
+          setTimeout(() => {
+            messages.innerHTML = "";
+            $("#registerForm")[0].reset();
+            $(`#crearModal`).modal("hide");
+            $("#DataTable").DataTable().ajax.reload();
+          }, 1000);
+        },
+        error: function (err) {
+          const result = err.responseJSON;
+          displayErrors(messages, result.errors);
+          setTimeout(() => {
+            messages.innerHTML = "";
+          }, 5000);
+        },
+      });
+    });
+  });
+</script>
+<script nonce="<%= cspNonce %>">
+  $(document).ready(function () {
+    $("#editForm").submit(function (event) {
+      event.preventDefault();
+      const messages = document.getElementById("editMessageBox");
+      const data = Object.fromEntries(new FormData(this).entries());
+      $.ajax({
+        url: "/clients/edit",
+        method: "POST",
+        contentType: "application/json",
+        data: JSON.stringify(data),
+        success: function (response) {
+          messages.innerHTML = `<div class="alert alert-success mb-1 py-1"><strong>¡Hecho!</strong> ${response.result}</div>`;
+          setTimeout(() => {
+            messages.innerHTML = "";
+            $("#editForm")[0].reset();
+            $(`#editarModal`).modal("hide");
+            $("#DataTable").DataTable().ajax.reload();
+          }, 1000);
+        },
+        error: function (err) {
+          const result = err.responseJSON;
+          displayErrors(messages, result.errors);
+          setTimeout(() => {
+            messages.innerHTML = "";
+          }, 5000);
+        },
+      });
+    });
+  });
+</script>

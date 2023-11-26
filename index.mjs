@@ -18,7 +18,6 @@ const require = createRequire(import.meta.url);
 import passport from "passport";
 import passport_config from "./config/passport-config.mjs";
 const MySQLStore = require("express-mysql-session")(session);
-import socket_config from "./config/socket-config.mjs";
 
 import http from "http";
 import { router } from "./app/router/index.mjs";
@@ -104,7 +103,7 @@ const sessionMiddleware = session({
 app.use(sessionMiddleware);
 
 // Middleware para actualizar el tiempo de la sesión en cada solicitud
-app.use((req, res, next) => {
+app.use((req, _res, next) => {
   if (req.session) {
     req.session.cookie.maxAge = 1 * 3_600_000;
   }
@@ -118,7 +117,6 @@ app.use(passport.session());
 
 // Utlizando ejs como motor de vistas
 app.set("view engine", "ejs");
-app.set("views", "app/views");
 app.use("/views", express.static(path.join(__dirname, "views")));
 
 // para permitir usar un master page.
@@ -152,13 +150,7 @@ app.use((_req, res, _next) => {
   return;
 });
 
-// Configuración de sockets
 const server = http.createServer(app);
-const io = socket_config(server);
-
-io.use((socket, next) => {
-  sessionMiddleware(socket.request, {}, next);
-});
 
 server.listen(PORT, function () {
   console.log("Running into http://localhost:3000");

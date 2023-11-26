@@ -9,8 +9,29 @@ import {
   handleValidation,
 } from "../middlewares/validation.mjs";
 import UserModel from "../models/UserModel.mjs";
+import { ensureAuthenticated, justForAdmins } from "../middlewares/auth.mjs";
+import { provinces, roles, status } from "../models/utils/index.mjs";
 
 const router = Router();
+
+// Vistas
+
+router.get(
+  "/",
+  ensureAuthenticated,
+  justForAdmins,
+  async (req, res, _next) => {
+    res.render("users", {
+      title: "Usuarios",
+      active: "users",
+      user: req.user,
+      userRoles: await roles(),
+      status: await status(),
+      provinces: await provinces(),
+    });
+    return;
+  }
+);
 
 // Manejo de registro
 router.post("/add", async (req, res, _next) => {
@@ -76,9 +97,9 @@ router.post("/edit", async (req, res, _next) => {
   const error = handleValidation(validations, req);
   if (error) return res.status(422).json({ errors: error });
   try {
-    if (req.user.id != req.body.userId) {
+    if (req.user.id != req.body.id) {
       const result = await UserController.edit(
-        parseInt(req.body.userId),
+        parseInt(req.body.id),
         req.body.email.toLowerCase().trim(),
         req.body.password.trim(),
         parseInt(req.body.role),
