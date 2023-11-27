@@ -49,7 +49,7 @@
             </div>
           </div>
           <div class="row">
-            <div class="col-sm-6 col-12 mb-2 mb-md-3">
+            <div class="col-12 mb-2 mb-md-3">
               <div class="form-floating">
                 <select
                   class="form-select"
@@ -67,27 +67,6 @@
                 </select>
                 <label for="deviceClass" class="form-label"
                   >Clase (Escoge uno):
-                </label>
-              </div>
-            </div>
-            <div class="col-sm-6 col-12 mb-2 mb-md-3">
-              <div class="form-floating">
-                <select
-                  class="form-select"
-                  id="deviceSupplier"
-                  name="deviceSupplier"
-                  autocomplete="false"
-                  required
-                >
-                  <option value="" disabled selected>
-                    Seleccione una opción
-                  </option>
-                  <% deviceSupplier.forEach(value => { %>
-                  <option value="<%= value.id %>"><%= value.name %></option>
-                  <% }); %>
-                </select>
-                <label for="deviceSupplier" class="form-label"
-                  >Proveedor (Escoge uno):
                 </label>
               </div>
             </div>

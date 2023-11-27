@@ -81,6 +81,7 @@ router.get(
 
 // handlers
 
+// devices
 router.post("/add", async (req, res, _next) => {
   const validations = [
     (req) => checkMaxLength(req.body.name, 20, "modelo"),
@@ -145,7 +146,7 @@ router.post("/edit", async (req, res) => {
       return res.status(422).json({
         errors: [
           {
-            msg: `Para poder continuar, revisa que la clase del dispositivo y el tipo esten habilitados.`,
+            msg: `Para poder continuar, revisa que la clase del dispositivo, el tipo y el proveedor esten habilitados.`,
           },
         ],
       });
@@ -160,6 +161,7 @@ router.post("/edit", async (req, res) => {
   }
 });
 
+// device's class
 router.post("/classes/add", async (req, res, _next) => {
   const validations = [
     (req) => checkNotEmpty(req.body.name, "nombre"),
@@ -209,6 +211,7 @@ router.post("/classes/edit", async (req, res, _next) => {
   }
 });
 
+// device's supplier
 router.post("/suppliers/add", async (req, res, _next) => {
   const validations = [
     (req) => checkNotEmpty(req.body.name, "nombre"),
@@ -260,6 +263,7 @@ router.post("/suppliers/edit", async (req, res, _next) => {
   }
 });
 
+// device's type
 router.post("/types/add", async (req, res, _next) => {
   const validations = [
     (req) => checkNotEmpty(req.body.name, "nombre"),
