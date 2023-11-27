@@ -48,6 +48,28 @@
             </div>
           </div>
           <div class="row">
+            <div class="col-12 mb-2 mb-md-3">
+              <div class="form-floating">
+                <select
+                  class="form-select"
+                  name="supplier"
+                  id="supplier"
+                  autocomplete="false"
+                  required
+                >
+                  <option value="" disabled selected>
+                    Seleccione una opción
+                  </option>
+
+                  <% deviceSupplier.forEach(value => { %>
+                  <option value="<%= value.id %>"><%= value.name %></option>
+                  <% }); %>
+                </select>
+                <label for="supplier">Proveedor</label>
+              </div>
+            </div>
+          </div>
+          <div class="row">
             <div class="col-sm-6 col-12 mb-2 mb-md-3">
               <div class="form-floating">
                 <select
@@ -78,10 +100,12 @@
                   id="type"
                   autocomplete="false"
                   disabled
-                ></select>
-                <label for="editStatus" class="form-label"
-                  >Tipo: (elige uno):</label
                 >
+                  <option value="" disabled selected>
+                    Selecciona una clase
+                  </option>
+                </select>
+                <label for="type" class="form-label">Tipo: (elige uno):</label>
               </div>
             </div>
           </div>

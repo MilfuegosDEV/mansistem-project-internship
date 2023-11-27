@@ -5,7 +5,19 @@ import { Router } from "express";
 
 const router = Router();
 
-// dispositivos
+// Obtiene un listado de dispositivos mediante su clase de dispositivo
+router.get("/getByClass", async (req, res, next) => {
+  try {
+    const results = await DeviceTypeModel.getEnabledByClass(
+      req.query.deviceClass
+    );
+    return res.status(200).json(results);
+  } catch (err) {
+    next(err);
+  }
+});
+
+// Utilizado para DataTables
 router.get("/", async (req, res, _next) => {
   const columns = [
     { title: "DEVICE.id", data: "id" },
@@ -74,17 +86,6 @@ router.get("/", async (req, res, _next) => {
     // Handle errors
     console.error("Error al recuperar los dispositivos:", err);
     res.status(500).send("Error del servidor al recuperar los dispositivos");
-  }
-});
-
-router.get("/getByClass", async (req, res, next) => {
-  try {
-    const results = await DeviceTypeModel.getEnabledByClass(
-      req.query.deviceClass
-    );
-    return res.status(200).json(results);
-  } catch (err) {
-    next(err);
   }
 });
 
@@ -224,7 +225,6 @@ router.get("/types", async (req, res, _next) => {
     { title: "DEVICE_TYPE.id", data: "id" },
     { title: "DEVICE_TYPE.name", data: "tipo" },
     { title: "DEVICE_CLASS.name", data: "clase" },
-    { title: "DEVICE_SUPPLIER.name", data: "proveedor" },
     { title: "STATUS.info", data: "estado" },
   ];
 
@@ -251,7 +251,6 @@ router.get("/types", async (req, res, _next) => {
           FROM DEVICE_TYPE
           INNER JOIN STATUS ON DEVICE_TYPE.status_id = STATUS.id
           INNER JOIN DEVICE_CLASS ON DEVICE_TYPE.device_class_id = DEVICE_CLASS.id
-          INNER JOIN DEVICE_SUPPLIER ON DEVICE_TYPE.device_supplier_id = DEVICE_SUPPLIER.id
           WHERE ${likeClauses}`;
 
     // SQL queries
@@ -262,7 +261,6 @@ router.get("/types", async (req, res, _next) => {
             DEVICE_TYPE.id, 
             DEVICE_TYPE.name,
             DEVICE_CLASS.name AS class,
-            DEVICE_SUPPLIER.name AS supplier,
             STATUS.info AS status
           ${baseQuery}
           ORDER BY ${orderByColumn} ${orderDirection}

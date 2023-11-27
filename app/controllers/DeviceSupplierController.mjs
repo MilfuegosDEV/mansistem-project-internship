@@ -42,10 +42,6 @@ class DeviceSupplierController extends Triggers {
 
       if (status === 0) {
         await db.query(
-          "UPDATE DEVICE_TYPE set status_id=0 WHERE device_supplier_id=?",
-          updated_id
-        );
-        await db.query(
           "UPDATE DEVICE set status_id=0 WHERE device_supplier_id=?",
           updated_id
         );

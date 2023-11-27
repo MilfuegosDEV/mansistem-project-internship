@@ -15,6 +15,7 @@ import { ensureAuthenticated, justForAdmins } from "../middlewares/auth.mjs";
 import DeviceTypeModel from "../models/DeviceTypeModel.mjs";
 import DeviceTypeController from "../controllers/DeviceTypeController.mjs";
 import DeviceController from "../controllers/DeviceController.mjs";
+import DeviceModel from "../models/DeviceModel.mjs";
 
 const router = Router();
 
@@ -27,6 +28,7 @@ router.get("/", ensureAuthenticated, justForAdmins, async (req, res, _next) => {
     user: req.user,
     status: await status(),
     deviceClass: await DeviceClassModel.getEnabled(),
+    deviceSupplier: await DeviceSupplierModel.getEnabled(),
   });
 });
 
@@ -84,23 +86,30 @@ router.post("/add", async (req, res, _next) => {
     (req) => checkMaxLength(req.body.name, 20, "modelo"),
     (req) => checkNotEmpty(req.body.name, "modelo"),
     (req) => checkNotEmpty(req.body.deviceClass, "clase"),
+    (req) => checkNotEmpty(req.body.supplier, "proveedor"),
     (req) => checkNotEmpty(req.body.type, "tipo"),
   ];
-
-  // req.body.type = "id del tipo - id del proveedor proveedor"
-  // 1-2 = id del tipo es 1 y el id del proveedor es 2.
 
   const err = handleValidation(validations, req);
   if (err) return res.status(422).json({ errors: err });
 
-  const [typeId, supplierId] = req.body.type.split("-");
-
   try {
+    const foundDevice = await DeviceModel.find(
+      req.body.name,
+      req.body.type,
+      req.body.deviceClass,
+      req.body.supplier
+    );
+    if (foundDevice)
+      return res
+        .status(422)
+        .json({ errors: [{ msg: "El dispositivo ya fue agregado." }] });
+
     const result = await DeviceController.add(
       req.body.name.toUpperCase().trim(),
       parseInt(req.body.deviceClass),
-      parseInt(supplierId),
-      parseInt(typeId),
+      parseInt(req.body.supplier),
+      parseInt(req.body.type),
       req.user.id
     );
 
@@ -136,7 +145,7 @@ router.post("/edit", async (req, res) => {
       return res.status(422).json({
         errors: [
           {
-            msg: `Para poder continuar, revisa que el proveedor, la clase del dispositivo y el tipo esten habilitados.`,
+            msg: `Para poder continuar, revisa que la clase del dispositivo y el tipo esten habilitados.`,
           },
         ],
       });
@@ -262,8 +271,7 @@ router.post("/types/add", async (req, res, _next) => {
   try {
     const foundType = await DeviceTypeModel.findType(
       req.body.name,
-      parseInt(req.body.deviceClass),
-      parseInt(req.body.deviceSupplier)
+      parseInt(req.body.deviceClass)
     );
     if (foundType)
       return res.status(422).json({
@@ -271,7 +279,6 @@ router.post("/types/add", async (req, res, _next) => {
       });
     const result = await DeviceTypeController.add(
       req.body.name.toUpperCase().trim(),
-      parseInt(req.body.deviceSupplier),
       parseInt(req.body.deviceClass),
       req.user.id
     );
@@ -294,7 +301,6 @@ router.post("/types/edit", async (req, res, _next) => {
     const result = await DeviceTypeController.edit(
       parseInt(req.body.id),
       req.body.className.toUpperCase().trim(),
-      req.body.supplier.toUpperCase().trim(),
       parseInt(req.body.status),
       parseInt(req.user.id)
     );

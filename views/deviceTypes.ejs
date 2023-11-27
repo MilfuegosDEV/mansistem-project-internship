@@ -1,12 +1,8 @@
 <h1 class="mt-4">Tipos de dispositivos</h1>
-<p class="lead">
-  Una descripción más detallada de la clase del producto. Ejemplo:
-</p>
-<p class="small">Tipo: PORTÁTIL | Clase: PC | Proveedor: LENOVO</p>
 <ol class="breadcrumb mb-4">
   <li class="breadcrumb-item"><a href="/">Dashboard</a></li>
   <li class="breadcrumb-item"><a href="/devices">Dispositivos</a></li>
-  <li class="breadcrumb-item active">Tipos de dispositivos.</li>
+  <li class="breadcrumb-item active">Tipos</li>
 </ol>
 <div class="card mb-4">
   <div class="card-header">
@@ -162,22 +158,6 @@
               <div class="form-floating">
                 <select
                   class="form-select"
-                  name="supplier"
-                  id="editDeviceSupplier"
-                  autocomplete="false"
-                  disabled
-                >
-                  <option></option>
-                </select>
-                <label for="editDeviceSupplier">Proveedor</label>
-              </div>
-            </div>
-          </div>
-          <div class="row">
-            <div class="col-12 mb-2 mb-md-3">
-              <div class="form-floating">
-                <select
-                  class="form-select"
                   name="status"
                   id="editStatus"
                   autocomplete="false"
@@ -199,11 +179,7 @@
         <button type="button" class="btn btn-danger" data-bs-dismiss="modal">
           Cerrar
         </button>
-        <button
-          type="submit"
-          class="btn btn-success"
-          form="editForm"
-        >
+        <button type="submit" class="btn btn-success" form="editForm">
           Registrar
         </button>
       </div>
@@ -231,7 +207,6 @@ contentFor('scripts') %>
     $("#id").val(data.id);
     $("#editInputName").val(data.name);
     $("#editClass option").val(data.class).text(data.class);
-    $("#editDeviceSupplier option").val(data.supplier).text(data.supplier);
     $("#editStatus").val(selectedStatus);
     $("#editarModal").modal("show");
   }
@@ -245,7 +220,6 @@ contentFor('scripts') %>
         { title: "Id", data: "id" },
         { title: "Tipo", data: "name" },
         { title: "Clase", data: "class" },
-        { title: "Proveedor", data: "supplier" },
         {
           title: "Estado",
           data: "status",
@@ -306,7 +280,6 @@ contentFor('scripts') %>
       const data = Object.fromEntries(new FormData(this).entries());
       const supplierValue = $("#editDeviceSupplier").val();
       const classValue = $("#editClass").val();
-      data.supplier = supplierValue;
       data.className = classValue;
 
       $.ajax({
