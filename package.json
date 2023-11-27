@@ -4,7 +4,7 @@
   "description": "administrador para el control de tiquetes de mantenimientos del tipo preventivo y correctivo",
   "main": "index.mjs",
   "scripts": {
-    "test": "test.mjs"
+    "test": "jest"
   },
   "repository": {
     "type": "git",
