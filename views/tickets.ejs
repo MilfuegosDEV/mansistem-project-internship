@@ -1,0 +1,99 @@
+<h1 class="mt-4">Proveedores</h1>
+<ol class="breadcrumb mb-4">
+  <li class="breadcrumb-item"><a href="/">Dashboard</a></li>
+  <li class="breadcrumb-item active">Casos</li>
+</ol>
+
+<div class="card mb-4">
+  <div class="card-header">
+    <i class="fa-solid fa-building-user me-1"></i>
+    Clientes
+  </div>
+  <div class="card-body">
+    <table
+      id="DataTable"
+      class="display responsive table table-hover wrap w-100 fs-6"
+    ></table>
+  </div>
+</div>
+
+<%- include('partials/errorRowModal.ejs') %> <%- contentFor('styles') %> <%-
+contentFor('scripts') %>
+<!--Datatables-->
+<script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+<script src="https://cdn.datatables.net/1.13.6/js/dataTables.bootstrap5.min.js"></script>
+<script src="https://cdn.datatables.net/responsive/2.2.9/js/dataTables.responsive.min.js"></script>
+<script src="https://cdn.datatables.net/select/1.7.0/js/dataTables.select.min.js"></script>
+<script src="https://cdn.datatables.net/buttons/2.4.2/js/dataTables.buttons.min.js"></script>
+<script
+  type="text/javascript"
+  src="https://cdn.datatables.net/plug-ins/1.10.24/sorting/datetime-moment.js"
+></script>
+<script src="https://cdn.datatables.net/plug-ins/1.13.7/filtering/row-based/range_dates.js"></script>
+<script src="/public/js/charCount.js"></script>
+
+<script nonce="<%= cspNonce %>">
+  $(document).ready(function () {
+    const table = datatableConfig(
+      "#DataTable",
+      "/api/tickets",
+      [
+        { title: "Id", data: "id" },
+        { title: "ms", data: "id_ticket_client" },
+        { title: "Negocio", data: "client" },
+        { title: "Area", data: "ticket_area" },
+        { title: "Usuario", data: "device_user", visible: false },
+        { title: "Info", data: "info",},
+        { title: "Asignado a", data: "assigned_to" },
+        { title: "Inicio", data: "creation_date" },
+        { title: "Fin", data: "close_date" },
+        {
+          title: "Estado",
+          data: "ticket_status",
+          render: function (data) {
+            switch (data) {
+              case "ABIERTO":
+                return `<span class="badge bg-primary">${data}</span>`;
+              case "ENESPERA":
+                return `<span class="badge bg-warning">${data}</span>`;
+              case "ENCURSO":
+                return `<span class="badge" style="background-color: #fd7e14">${data}</span>`;
+              case "SOLUCIONADO":
+                return `<span class="badge bg-success">${data}</span>`;
+              case "CERRADO":
+                return `<span class="badge bg-danger">${data}</span>`;
+            }
+          },
+          width: "5%",
+        },
+      ],
+      [
+        { targets: [0, 1,3], className: "text-nowrap" },
+        {
+          targets: [5],
+          className: "text-md-nowrap", 
+        },
+        {
+          targets: [7, 8], // Indices of the "Creado" and "Finalizado" columns
+          render: function (data, type, row) {
+            if (type === "display" && data) {
+              // Assuming the date is in a standard format, you might want to use a library like moment.js for more advanced formatting
+              return new Date(data).toLocaleString(); // Basic date formatting
+            }
+            return data;
+          },
+          className: 'text-nowrap'
+        },
+      ]
+    );
+
+    // Escuchar el evento click en una fila de la tabla
+    $("#DataTable tbody").on("click", "tr", function () {
+      // Obtener los datos de la fila seleccionada
+      const rowData = table.row(this).data();
+
+      // Mostrar la información en la consola
+      console.log("Información de la fila seleccionada:", rowData);
+    });
+  });
+</script>

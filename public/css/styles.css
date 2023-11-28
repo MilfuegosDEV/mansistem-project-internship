@@ -287,3 +287,7 @@ table td {
   vertical-align: top;
   white-space: normal !important;
 }
+
+.word-wrap {
+  word-wrap:break-word;
+}
