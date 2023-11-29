@@ -41,3 +41,13 @@ export async function provinces() {
     throw new Error(err);
   }
 }
+
+export async function ticket_areas() {
+  try {
+    const QUERY = "SELECT id, name FROM TICKET_AREA";
+    const [results] = await db.query(QUERY);
+    return results;
+  } catch (err) {
+    throw new Error(err);
+  }
+}

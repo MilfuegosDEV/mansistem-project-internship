@@ -11,7 +11,7 @@ router.get("/", async (req, res, next) => {
     { title: "CLIENT.name", data: "negocio" },
     { title: "TICKET_AREA.name", data: "area" },
     { title: "TICKET.device_user", data: "usuario" },
-    { title: "TICKET.info", data: "info" },
+    { title: "TICKET.info", data: "información" },
     {
       title: "CONCAT(ASSIGNED_TO.name , ' ' ,  ASSIGNED_TO.last_name)",
       data: "asignado_a",
