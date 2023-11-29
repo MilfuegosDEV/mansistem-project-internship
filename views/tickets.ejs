@@ -1,4 +1,4 @@
-<h1 class="mt-4">Proveedores</h1>
+<h1 class="mt-4">Casos</h1>
 <ol class="breadcrumb mb-4">
   <li class="breadcrumb-item"><a href="/">Dashboard</a></li>
   <li class="breadcrumb-item active">Casos</li>
@@ -7,13 +7,172 @@
 <div class="card mb-4">
   <div class="card-header">
     <i class="fa-solid fa-building-user me-1"></i>
-    Clientes
+    Casos
   </div>
   <div class="card-body">
+    <div class="mb-3">
+      <button
+        class="btn btn-success btn-sm"
+        data-bs-toggle="modal"
+        data-bs-target="#crearModal"
+      >
+        CREAR
+      </button>
+      <button
+        class="btn btn-warning btn-sm"
+        data-bs-toggle="modal"
+        id="editToggleModal"
+      >
+        Editar
+      </button>
+    </div>
     <table
       id="DataTable"
       class="display responsive table table-hover wrap w-100 fs-6"
     ></table>
+  </div>
+</div>
+
+<!-- Crear usuario -->
+<div
+  class="modal fade"
+  id="crearModal"
+  tabindex="-1"
+  aria-labelledby="crearModalLabel"
+  aria-hidden="true"
+>
+  <div class="modal-dialog modal-lg modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header d-block">
+        <h5 class="modal-title mb-2" id="crearModalLabel">Nuevo Cliente</h5>
+        <div id="messageBox"></div>
+      </div>
+      <div class="modal-body">
+        <form method="post" id="registerForm">
+          <div class="row">
+            <div class="col-sm-8 col-12 mb-2 mb-md-3">
+              <div class="form-floating">
+                <input
+                  class="form-control"
+                  id="idMs"
+                  type="text"
+                  placeholder="Número de caso Megasuper"
+                  name="name"
+                  autocomplete="false"
+                  required
+                />
+                <label for="idMs">Número de caso Megasuper</label>
+              </div>
+            </div>
+            <div class="col-sm-4 col-12 mb-2 mb-md-3">
+              <div class="form-floating">
+                <select
+                  class="form-select"
+                  id="usersSelect"
+                  name="assign_to_user_id"
+                  autocomplete="false"
+                  required
+                >
+                  <option value="" disabled selected>
+                    Seleccione una opción
+                  </option>
+                  <% users.forEach(value => { %>
+                  <option value="<%= value.id %>">
+                    <%= value.name + " " + value.last_name %>
+                  </option>
+                  <% }); %>
+                </select>
+                <label for="usersSelect" class="form-label"
+                  >Asignar a (elige uno):</label
+                >
+              </div>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-sm-4 col-12 mb-2 mb-md-3">
+              <div class="form-floating">
+                <select
+                  class="form-select"
+                  id="client"
+                  name="client_id"
+                  autocomplete="false"
+                  required
+                >
+                  <option value="" disabled selected>
+                    Seleccione una opción
+                  </option>
+                  <% clients.forEach(value => { %>
+                  <option value="<%= value.id %>"><%= value.name %></option>
+                  <% }); %>
+                </select>
+                <label for="client" class="form-label"
+                  >Negocio (elige uno):</label
+                >
+              </div>
+            </div>
+            <div class="col-sm-4 col-12 mb-2 mb-md-3">
+              <div class="form-floating">
+                <select
+                  class="form-select"
+                  id="ticket_area"
+                  name="ticket_area_id"
+                  autocomplete="false"
+                  required
+                >
+                  <option value="" disabled selected>
+                    Seleccione una opción
+                  </option>
+                  <% ticket_areas.forEach(value => { %>
+                  <option value="<%= value.id %>"><%= value.name %></option>
+                  <% }); %>
+                </select>
+                <label for="ticket_area" class="form-label"
+                  >Area (elige una):</label
+                >
+              </div>
+            </div>
+            <div class="col-sm-4 col-12 mb-2 mb-md-3">
+              <div class="form-floating">
+                <input
+                  type="text"
+                  class="form-control"
+                  id="device_user"
+                  name="device_user"
+                  placeholder="Usuario del dispositivo"
+                  required
+                />
+                <label for="device_user">Usuario del dispositivo</label>
+              </div>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-12">
+              <div class="form-floating">
+                <textarea
+                  class="form-control charCount auto-resize"
+                  id="infoTextArea"
+                  type="text"
+                  placeholder="Información"
+                  name="address"
+                  required
+                  maxlength="500"
+                ></textarea>
+                <p><span class="charCountDisplay">0</span> / 500 caracteres</p>
+                <label for="infoTextArea">Información</label>
+              </div>
+            </div>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-danger" data-bs-dismiss="modal">
+          Cerrar
+        </button>
+        <button type="submit" class="btn btn-success" form="registerForm">
+          Registrar
+        </button>
+      </div>
+    </div>
   </div>
 </div>
 
@@ -25,11 +184,6 @@ contentFor('scripts') %>
 <script src="https://cdn.datatables.net/responsive/2.2.9/js/dataTables.responsive.min.js"></script>
 <script src="https://cdn.datatables.net/select/1.7.0/js/dataTables.select.min.js"></script>
 <script src="https://cdn.datatables.net/buttons/2.4.2/js/dataTables.buttons.min.js"></script>
-<script
-  type="text/javascript"
-  src="https://cdn.datatables.net/plug-ins/1.10.24/sorting/datetime-moment.js"
-></script>
-<script src="https://cdn.datatables.net/plug-ins/1.13.7/filtering/row-based/range_dates.js"></script>
 <script src="/public/js/charCount.js"></script>
 
 <script nonce="<%= cspNonce %>">
@@ -43,7 +197,7 @@ contentFor('scripts') %>
         { title: "Negocio", data: "client" },
         { title: "Area", data: "ticket_area" },
         { title: "Usuario", data: "device_user", visible: false },
-        { title: "Info", data: "info",},
+        { title: "Información", data: "info" },
         { title: "Asignado a", data: "assigned_to" },
         { title: "Inicio", data: "creation_date" },
         { title: "Fin", data: "close_date" },
@@ -68,21 +222,28 @@ contentFor('scripts') %>
         },
       ],
       [
-        { targets: [0, 1,3], className: "text-nowrap" },
+        { targets: [0, 1, 3], className: "text-nowrap" },
         {
           targets: [5],
-          className: "text-md-nowrap", 
+          className: "text-md-nowrap",
         },
         {
           targets: [7, 8], // Indices of the "Creado" and "Finalizado" columns
           render: function (data, type, row) {
             if (type === "display" && data) {
-              // Assuming the date is in a standard format, you might want to use a library like moment.js for more advanced formatting
-              return new Date(data).toLocaleString(); // Basic date formatting
+              const opts = {
+                year: "2-digit",
+                month: "2-digit",
+                day: "2-digit",
+                hour: "numeric",
+                minute: "numeric",
+              };
+
+              return new Date(data).toLocaleString("es-Es", opts);
             }
             return data;
           },
-          className: 'text-nowrap'
+          className: "text-nowrap",
         },
       ]
     );
@@ -95,5 +256,6 @@ contentFor('scripts') %>
       // Mostrar la información en la consola
       console.log("Información de la fila seleccionada:", rowData);
     });
+    // Agregar un botón personalizado después de la inicialización
   });
 </script>
