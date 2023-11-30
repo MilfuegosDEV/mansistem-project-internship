@@ -10,6 +10,22 @@
     Proveedores
   </div>
   <div class="card-body">
+    <div class="mb-3">
+      <button
+        class="btn btn-success btn-sm"
+        data-bs-toggle="modal"
+        data-bs-target="#crearModal"
+      >
+        Crear
+      </button>
+      <button
+        class="btn btn-warning btn-sm"
+        data-bs-toggle="modal"
+        id="editToggleModal"
+      >
+        Editar
+      </button>
+    </div>
     <table
       id="DataTable"
       class="display responsive table table-hover wrap w-100 fs-6"
@@ -149,18 +165,42 @@ contentFor('scripts') %>
 <script src="https://cdn.datatables.net/buttons/2.4.2/js/dataTables.buttons.min.js"></script>
 <script src="/public/js/charCount.js"></script>
 <script nonce="<%=cspNonce%>">
-  function showEditModal(form, data) {
-    const selectedStatus = $("#editStatus option")
-      .filter(function () {
-        return $(this).text().trim() === data.status;
-      })
-      .val();
+  $(document).ready(function () {
+    $("#editToggleModal").on("click", function () {
+      const selectedData = $("#DataTable")
+        .DataTable()
+        .row({ selected: true })
+        .data();
 
-    $("#id").val(data.id);
-    $("#editInputName").val(data.name);
-    $("#editStatus").val(selectedStatus);
-    $("#editarModal").modal("show");
-  }
+      if (selectedData) {
+        showEditModal(selectedData);
+      } else {
+        $("#rowErrorModal").modal("show");
+      }
+    });
+
+    function showEditModal(data) {
+      const mapDataToElement = (selector, dataField) => {
+        const value = data[dataField];
+        $(selector).val(value);
+      };
+
+      mapDataToElement("#id", "id");
+      mapDataToElement("#editInputName", "name");
+
+      selectOptionByText("#editStatus", data.status);
+
+      // Mostrar el modal de edición
+      $("#editarModal").modal("show");
+    }
+
+    function selectOptionByText(selectId, text) {
+      const option = $(`${selectId} option:contains("${text}")`);
+      if (option.length) {
+        $(selectId).val(option.val());
+      }
+    }
+  });
 </script>
 <script nonce="<%= cspNonce %>">
   $(document).ready(function () {
