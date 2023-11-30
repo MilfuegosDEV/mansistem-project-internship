@@ -12,8 +12,8 @@ window.addEventListener("DOMContentLoaded", (event) => {
   const sidebarToggle = document.body.querySelector("#sidebarToggle");
   if (sidebarToggle) {
     // Uncomment Below to persist sidebar toggle between refreshes
-    if (localStorage.getItem('sb|sidebar-toggle') === 'true') {
-        document.body.classList.toggle('sb-sidenav-toggled');
+    if (localStorage.getItem("sb|sidebar-toggle") === "true") {
+      document.body.classList.toggle("sb-sidenav-toggled");
     }
     sidebarToggle.addEventListener("click", (event) => {
       event.preventDefault();
@@ -52,31 +52,48 @@ function datatableConfig(selector, url, columnsConfig, columnDefs) {
       url: "https://cdn.datatables.net/plug-ins/1.13.6/i18n/es-ES.json",
       searchPlaceholder: "Buscar...",
     },
-
-    dom: '<"d-sm-flex justify-content-sm-between"lf><"my-1 d-flex justify-content-center" B>rt<"d-flex justify-content-center" i><"d-flex justify-content-center"p>',
-    buttons: [
-      {
-        text: '<i class="fas fa-plus"></i> Crear',
-        action: function (e, dt, node, config) {
-          $("#crearModal").modal("show");
-        },
-        className: "btn btn-success btn-sm",
-      },
-      {
-        text: '<i class="fas fa-pencil-alt"></i> Editar',
-        action: function (e, dt, node, config) {
-          // Obtener la fila seleccionada
-          const data = table.row({ selected: true }).data();
-          const editForm = $("#editForm");
-          if (data) {
-            showEditModal(editForm, data);
-          } else {
-            $("#rowErrorModal").modal("show");
-          }
-        },
-        className: "btn btn-warning btn-sm",
-      },
-    ],
   });
   return table;
+}
+
+document.getElementById("editToggleModal").addEventListener("click", function () {
+  // Obtener la fila seleccionada
+  const dataTable = document.getElementById('DataTable').DataTable();
+  const selectedData = dataTable.row({ selected: true }).data();
+  const editForm = document.getElementById("editForm");
+
+  if (selectedData) {
+    showEditModal(editForm, selectedData);
+  } else {
+    document.getElementById("rowErrorModal").modal("show");
+  }
+});
+
+function showEditModal(editForm, selectedData) {
+  const selectedRole = $("#editRoles option")
+    .filter(function () {
+      return $(this).text().trim() === selectedData.rol_name;
+    })
+    .val();
+
+  const selectedProvince = $("#editProvinces option")
+    .filter(function () {
+      return $(this).text().trim() === selectedData.province_name;
+    })
+    .val();
+
+  const selectedStatus = $("#editStatus option")
+    .filter(function () {
+      return $(this).text().trim() === selectedData.status;
+    })
+    .val();
+
+  $("#id").val(selectedData.id);
+  $("#editInputFirstName").val(selectedData.name);
+  $("#editInputLastName").val(selectedData.last_name);
+  $("#editInputEmail").val(selectedData.email);
+  $("#editRoles").val(selectedRole);
+  $("#editProvinces").val(selectedProvince);
+  $("#editStatus").val(selectedStatus);
+  $("#editarModal").modal("show");
 }

@@ -4,6 +4,7 @@ import auth from "./auth/index.mjs";
 import users from "./users.mjs";
 import clients from "./clients.mjs";
 import devices from "./devices.mjs";
+import tickets from "./tickets.mjs";
 import { Router } from "express";
 const router = Router();
 
@@ -19,4 +20,5 @@ router.use("/", auth);
 router.use("/users", users);
 router.use("/clients", clients);
 router.use("/devices", devices);
+router.use("/tickets", tickets);
 export { router };
