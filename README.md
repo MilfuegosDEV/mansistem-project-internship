@@ -254,8 +254,5 @@ DATABASE_NAME = schema_name
 
 > Este usuario es administrador. Además tiene todos los privilegios, puede crear nuevos usuarios, clientes Y dispositivos.
 
-
-### Desarrollado por: [MILFUEGOSDEV]('https://github.com/milfuegosdev') 
-
 #### Información de contacto: 
 Correo: milfuegosdev@gmail.com
