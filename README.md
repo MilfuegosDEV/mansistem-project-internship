@@ -250,7 +250,7 @@ DATABASE_NAME = schema_name
 > Reemplaza los valores, por tú configuración.
 
 ### Iniciar a la plataforma.
-![Usuario de prueba](assets\first_user.png)
+![Usuario de prueba](.\assets\first_user.png)
 
 > Este usuario es administrador. Además tiene todos los privilegios, puede crear nuevos usuarios, clientes Y dispositivos.
 
@@ -258,4 +258,4 @@ DATABASE_NAME = schema_name
 ### Desarrollado por: [MILFUEGOSDEV]('https://github.com/milfuegosdev') 
 
 #### Información de contacto: 
-Correo: [milfuegosdev]('mailto:milfuegosdev@gmailc.om')
+Correo: milfuegosdev@gmail.com
