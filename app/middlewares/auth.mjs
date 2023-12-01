@@ -16,7 +16,7 @@ export const forwardAuthenticated = (req, res, next) => {
 };
 
 export const justForAdmins = (req, _res, next) => {
-  if (req.user.role_id === 1) {
+  if ([1,2].includes(req.user.role_id)) {
     return next();
   }
   return next(401);
